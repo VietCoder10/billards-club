@@ -23,10 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         using: function () {
             Route::middleware('siteAdmin')
-                ->prefix('admin')
+                // ->prefix('admin')
                 ->group(base_path('routes/admin.php'));
-            Route::middleware('siteUser')
-                ->group(base_path('routes/user.php'));
+            // Route::middleware('siteUser')
+            //     ->group(base_path('routes/user.php'));
 
             // Route::middleware('web')
             //     ->group(base_path('routes/web.php'));

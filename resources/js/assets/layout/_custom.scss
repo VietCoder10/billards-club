@@ -1,6 +1,6 @@
 .p-error {
-  color: red;
-  font-size: 0.8rem;
+  color: var(--color-error);
+  font-size: 12px;
   margin-top: 0.2rem;
 }
 .p-toast-message-text {
@@ -219,4 +219,16 @@
 }
 .p-toast-message-success {
   border-color: var(--p-button-primary-background) !important;
+}
+.p-invalid {
+  border-color: var(--color-error) !important;
+  ::placeholder {
+    color: var(--color-error) !important;
+  }
+  input[type="password"] {
+    border-color: var(--color-error) !important;
+  }
+}
+.p-invalid::placeholder {
+  color: var(--color-error) !important;
 }

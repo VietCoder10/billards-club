@@ -3,6 +3,7 @@ import { useLayout } from '@/Layouts/Admin/Composables/layout';
 import AppConfigurator from '@/Layouts/Admin/AppConfigurator.vue';
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
+import logo from '@/assets/imgs/logo.svg';
 </script>
 
 <template>
@@ -12,7 +13,8 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
         <i class="pi pi-bars"></i>
       </button>
       <Link :href="route('admin.dashboard.index')" class="layout-topbar-logo">
-        <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <img :src="logo" class="logo" />
+        <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"
@@ -28,9 +30,9 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
               fill="var(--primary-color)"
             />
           </g>
-        </svg>
+        </svg> -->
 
-        <span>LARAVEL</span>
+        <!-- <span>LARAVEL</span> -->
       </Link>
     </div>
 
@@ -78,3 +80,8 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
     </div>
   </div>
 </template>
+<style scoped>
+.logo {
+  width: 50%;
+}
+</style>

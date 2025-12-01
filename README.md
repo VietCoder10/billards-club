@@ -39,7 +39,7 @@ $ npm run dev
 # generate interface and repository run command
 $ php artisan make:repository name
 
-# login with account admin@gmail.com/Laravel@2024
+# login with account admin@gmail.com/Laravel2025
 
 # generate jwt secret
 $ php artisan jwt:secret

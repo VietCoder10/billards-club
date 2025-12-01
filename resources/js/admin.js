@@ -44,6 +44,23 @@ defineRule('password_rule', (value) => {
 
   return lower && upper && number && special;
 });
+defineRule('password_str', (value) => {
+  if (!value) {
+    return true;
+  }
+  let lower = /[a-z]/g.test(value);
+  let upper = /[A-Z]/g.test(value);
+
+  return lower && upper;
+});
+defineRule('password_number', (value) => {
+  if (!value) {
+    return true;
+  }
+  let number = /[0-9]/g.test(value);
+
+  return number;
+});
 defineRule('telephone', (value) => {
   return /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) || /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) || /^0(\d{9,10})+$/i.test(value.trim());
 });
@@ -73,10 +90,10 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 
 app.component('notyf', Notyf);
-const appName = 'Laravel';
+const appName = 'トビラーク';
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => `${title} | ${appName}`,
   resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue'), import.meta.glob('./Pages/**/**/*.vue')),
   setup({ el, app, props, plugin }) {
     return (
@@ -226,7 +243,7 @@ createInertiaApp({
   }
 });
 
-InertiaProgress.init({ color: '#10b981' });
+InertiaProgress.init({ color: '#eb142c' });
 Inertia.on('start', () => {
   useRequestStore().showLoading();
   NProgress.start();
