@@ -53,7 +53,60 @@ class AdminHandleInertiaRequests extends Middleware
                 'icon' => 'pi pi-fw pi-users',
                 'to' => route('admin.user.index'),
                 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
-            ]
+            ],
+            [
+                'label' => 'Hierarchy',
+                'icon' => 'pi pi-fw pi-align-justify',
+                'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
+                'items' => [
+                    [
+                        'label' => 'Submenu 1',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                        // 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
+                        'items' => [
+                            [
+                                'label' => 'Submenu 1.1',
+                                'icon'  => 'pi pi-fw pi-bookmark',
+                                'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update', 'admin.dashboard.index']),
+                                'items' => [
+                                    ['label' => 'Submenu 1.1.1', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.user.index'), 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),],
+                                    ['label' => 'Submenu 1.1.2', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.dashboard.index'),
+                'active' => in_array($routeName, ['admin.dashboard.index']),],
+                                    ['label' => 'Submenu 1.1.3', 'icon' => 'pi pi-fw pi-bookmark'],
+                                ],
+                            ],
+                            [
+                                'label' => 'Submenu 1.2',
+                                'icon'  => 'pi pi-fw pi-bookmark',
+                                'items' => [
+                                    ['label' => 'Submenu 1.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'label' => 'Submenu 2',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                        'items' => [
+                            [
+                                'label' => 'Submenu 2.1',
+                                'icon'  => 'pi pi-fw pi-bookmark',
+                                'items' => [
+                                    ['label' => 'Submenu 2.1.1', 'icon' => 'pi pi-fw pi-bookmark'],
+                                    ['label' => 'Submenu 2.1.2', 'icon' => 'pi pi-fw pi-bookmark'],
+                                ],
+                            ],
+                            [
+                                'label' => 'Submenu 2.2',
+                                'icon'  => 'pi pi-fw pi-bookmark',
+                                'items' => [
+                                    ['label' => 'Submenu 2.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
         $breadcrumbs = [
             ['label' => 'ホーム', 'icon' => 'pi pi-home', 'url' => route('admin.dashboard.index')],
@@ -73,8 +126,8 @@ class AdminHandleInertiaRequests extends Middleware
             'dataSession' => $dataSession,
             'leftMenu' => $leftMenu,
             'breadcrumbs' => $breadcrumbs,
-            'menuDashboardActive' => in_array($routeName, ['admin.dashboard.index']),
-            'menuUserActive' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
+            // 'menuDashboardActive' => in_array($routeName, ['admin.dashboard.index']),
+            // 'menuUserActive' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
         ]);
     }
 }
