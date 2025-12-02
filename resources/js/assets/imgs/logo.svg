@@ -1,1 +1,12 @@
-<svg id="レイヤー_1" data-name="レイヤー 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 316"><defs><style>.cls-1{fill:none;}.cls-2{fill:#d80f26;}</style></defs><rect class="cls-1" width="620" height="316"/><path class="cls-2" d="M93.77,141.19V257L151,214.69V98.83L61,59V194.24l16.32,7.21V85.56l57.29,25.32Zm23.53,57.95a7.19,7.19,0,1,1,7.14-7.19A7.16,7.16,0,0,1,117.3,199.14Z"/><path class="cls-2" d="M259.89,167.36l-5.65,10.76L218.71,162.7v38.17H207V110.22h11.71v39.33Z"/><path class="cls-2" d="M288.3,145.82v43.62h51.84l-6.05,11.43H276.46V109.82H288.3v24.31h50l-6.19,11.69Z"/><path class="cls-2" d="M358.37,131.87H428L399.63,201H368.46l-5.92-11.29h29.2l19.52-46.81H358.37Z"/><path class="cls-2" d="M478.55,173.48H431.86V161.92h46.69Z"/><path class="cls-2" d="M521.13,118.19H561L527.14,201h-28l-5.79-11H519l24.78-60.35H516.53L503.37,163l-10.26-5.45L513.5,106l10.27,5.58Z"/><polygon class="cls-2" points="328.99 117.06 322.36 123.76 314.74 116.05 321.36 109.36 328.99 117.06"/><polygon class="cls-2" points="339.25 106.7 332.62 113.4 324.99 105.69 331.62 99 339.25 106.7"/><polygon class="cls-2" points="369.23 111.41 369.23 122.31 419.44 122.31 423.9 111.41 369.23 111.41"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 316">
+  <rect width="820" height="316" fill="none"/>
+
+  <g transform="translate(0, 0)">
+    <path fill="#d80f26" d="M93.77,141.19V257L151,214.69V98.83L61,59V194.24l16.32,7.21V85.56l57.29,25.32Zm23.53,57.95a7.19,7.19,0,1,1,7.14-7.19A7.16,7.16,0,0,1,117.3,199.14Z"/>
+  </g>
+
+  <text x="350" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-size="150" font-weigh="bold" font-family="Arial, sans-serif" fill="#d80f26">
+    ABK
+  </text>
+</svg>

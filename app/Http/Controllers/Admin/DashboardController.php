@@ -13,7 +13,7 @@ class DashboardController extends BaseController
      */
     public function index()
     {
-        return Inertia::render('Admin/Dashboard/Index', [
+        return Inertia::render('Admin/Dashboard/Index2', [
             'data' => [
                 'title' => 'ホーム',
             ],
