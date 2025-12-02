@@ -2,29 +2,13 @@
 import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { useRequestStore } from '@/store/request';
-// import { ref, onMounted, reactive } from 'vue';
-// import axios from 'axios';
-// const state = reactive({
-//   urlDownload: {}
-// });
-// const exportCsv = () => {
-//   axios
-//     .post(route('admin.ledger.exportCsv', props.data.request))
-//     .then(function (res) {
-//       state.urlDownload = res.data.url;
-//       // setTimeout(function () {
-//       //   that.$refs.linkDownload.click();
-//       //   $(".loading-div").addClass("hidden");
-//       // }, 500);
-//     })
-//     .catch(() => {});
-// };
+
 </script>
 <template>
   <AdminLayout>
     <template #content>
       <Panel :header="$page.props.data.title">
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.ledger.index'" :createUrl="route('admin.ledger.create')" :csvRoute="'admin.building.exportCsv'"></FormSearch>
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.building.index'" :createUrl="route('admin.building.create')" :csvRoute="'admin.building.exportCsv'"></FormSearch>
         <template v-if="$page.props.data.buildings.length">
           <div class="flex">
             <div class="group-select-page">
@@ -61,11 +45,11 @@ import { useRequestStore } from '@/store/request';
                     <td>{{ building.construction_reason }}</td>
                     <td>
                       <BtnAction
-                        :urlEdit="route('admin.ledger.edit', building.id)"
-                        :urlDelete="route('admin.ledger.destroy', building.id)"
+                        :urlEdit="route('admin.building.edit', building.id)"
+                        :urlDelete="route('admin.building.destroy', building.id)"
                         messageConfirm="このユーザーを削除しますか？"
                         :request="$page.props.data.request"
-                        :routeName="'admin.ledger.index'"
+                        :routeName="'admin.building.index'"
                       ></BtnAction>
                     </td>
                   </tr>

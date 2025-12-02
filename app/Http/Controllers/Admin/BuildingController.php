@@ -11,7 +11,7 @@ use App\Enums\StatusCode;
 use App\Http\Requests\Admin\Building\BuildingRequest;
 use Carbon\Carbon;
 
-class LedgerController extends BaseController
+class BuildingController extends BaseController
 {
     private $building;
 
@@ -28,11 +28,11 @@ class LedgerController extends BaseController
         session()->forget('admin.building.list');
         session()->push('admin.building.list', url()->full());
 
-        return Inertia::render('Admin/Ledger/Index', $this->mergeSession([
+        return Inertia::render('Admin/Building/Index', $this->mergeSession([
             'data' => [
                 'title' => '建物一覧',
                 'buildings' => $buildings->items(),
-                'sortLinks' => $this->sortLinks('admin.ledger.index', [
+                'sortLinks' => $this->sortLinks('admin.building.index', [
                     ['key' => 'building_code', 'name' => '建物コード'],
                     ['key' => 'building_name', 'name' => '建物名'],
                     ['key' => 'building_name_kana', 'name' => 'ふりがな'],
@@ -48,10 +48,10 @@ class LedgerController extends BaseController
 
     public function create()
     {
-        return Inertia::render('Admin/Ledger/Form', [
+        return Inertia::render('Admin/Building/Form', [
             'data' => [
                 'title' => '建物新規登録',
-                'urlBack' => session()->get('admin.building.list')[0] ?? route('admin.ledger.index'),
+                'urlBack' => session()->get('admin.building.list')[0] ?? route('admin.building.index'),
             ],
         ]);
     }
@@ -63,11 +63,11 @@ class LedgerController extends BaseController
     {
         if (! $this->building->store($request)) {
             $this->setFlash(__('エラーが発生しました。'), 'error');
-            return redirect()->route('admin.ledger.create');
+            return redirect()->route('admin.building.create');
         }
         $this->setFlash(__('建物を新規登録しました。'), 'success');
 
-        return redirect()->route('admin.ledger.index');
+        return redirect()->route('admin.building.index');
     }
 
     /**
@@ -87,15 +87,15 @@ class LedgerController extends BaseController
         if (! $building) {
             $this->setFlash(__('エラーが発生しました。'), 'error');
 
-            return redirect()->route('admin.ledger.index');
+            return redirect()->route('admin.building.index');
         }
 
-        return Inertia::render('Admin/Ledger/Form', [
+        return Inertia::render('Admin/Building/Form', [
             'data' => [
                 'title' => '建物登録の編集',
                 'building' => $building,
                 'isEdit' => true,
-                'urlBack' => session()->get('admin.building.list')[0] ?? route('admin.ledger.index'),
+                'urlBack' => session()->get('admin.building.list')[0] ?? route('admin.building.index'),
             ],
         ]);
     }
@@ -109,15 +109,15 @@ class LedgerController extends BaseController
         if (! $building) {
             $this->setFlash(__('エラーが発生しました。'), 'error');
 
-            return redirect()->route('admin.ledger.index');
+            return redirect()->route('admin.building.index');
         }
         if (! $this->building->update($request, $id)) {
             $this->setFlash(__('エラーが発生しました。'), 'error');
 
-            return redirect()->route('admin.ledger.edit', ['ledger' => $id]);
+            return redirect()->route('admin.building.edit', ['building' => $id]);
         }
         $this->setFlash(__('建物情報を更新しました。'), 'success');
-        return redirect()->route('admin.ledger.index');
+        return redirect()->route('admin.building.index');
     }
 
     /**
@@ -125,7 +125,7 @@ class LedgerController extends BaseController
      */
     public function destroy(string $id)
     {
-        if (! $this->user->destroy($id)) {
+        if (! $this->building->destroy($id)) {
             return response()->json([
                 'message' => 'エラーが発生しました。',
             ], StatusCode::INTERNAL_ERR);

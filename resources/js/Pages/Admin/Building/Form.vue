@@ -91,10 +91,10 @@ configure({
 });
 const onSubmit = () => {
   if (props.data.isEdit) {
-    useForm(state.model).put(route('admin.ledger.update', props.data.building.id));
+    useForm(state.model).put(route('admin.building.update', props.data.building.id));
     return;
   }
-  useForm(state.model).post(route('admin.ledger.store'));
+  useForm(state.model).post(route('admin.building.store'));
 };
 </script>
 <template>

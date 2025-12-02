@@ -23,7 +23,7 @@ class BuildingRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->ledger;
+        $id = $this->building;
         return [
             'building_name' => [
                 'required',
