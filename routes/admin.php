@@ -53,6 +53,8 @@ Route::group([
         Route::resource('send-request', SendRequestController::class);
         Route::resource('setting', SettingController::class);
         Route::resource('user', UserController::class);
+        Route::post('check-ledger-code', [LedgerController::class, 'checkCode'])->name('building.checkCode');
+        Route::post('building-export-csv', [LedgerController::class, 'exportCsv'])->name('building.exportCsv');
         Route::post('check-email', [UserController::class, 'checkEmail'])->name('user.checkEmail');
     });
 });

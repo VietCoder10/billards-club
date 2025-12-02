@@ -138,7 +138,7 @@ class BaseController extends Controller
         ]);
     }
 
-    public function convertShijis($text)
+    public function convertShiftJis($text)
     {
         return mb_convert_encoding($text, 'SJIS', 'UTF-8');
     }

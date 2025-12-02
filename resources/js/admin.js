@@ -22,7 +22,12 @@ Object.keys(rules).forEach((rule) => {
 defineRule('custom_confirm', (value, arg) => {
   return /^[A-Za-z0-9]*$/i.test(value);
 });
-
+defineRule('code_rule', (value) => {
+  if (!value) {
+    return true;
+  }
+  return /^[A-Za-z0-9]*$/i.test(value)
+})
 defineRule('password_rule_admin', (value) => {
   return /^[A-Za-z0-9]*$/i.test(value);
 });
@@ -65,7 +70,10 @@ defineRule('telephone', (value) => {
   return /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) || /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) || /^0(\d{9,10})+$/i.test(value.trim());
 });
 defineRule('kata', (value) => {
-  return /^([ァ-ン]|ー)*$/i.test(value);
+  if (!value) {
+    return true;
+  }
+  return /^([ァ-ンｧ-ﾝﾞﾟ]|ー|　| |（|）|\(|\))*$/i.test(value)
 });
 
 import BtnAction from '@/Components/Common/BtnAction.vue';

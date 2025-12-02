@@ -52,7 +52,7 @@ class AdminHandleInertiaRequests extends Middleware
                 'label' => '台帳登録',
                 'icon' => 'pi pi-fw pi-pencil',
                 'to' => route('admin.ledger.index'),
-                'active' => in_array($routeName, ['admin.ledger.index']),
+                'active' => in_array($routeName, ['admin.ledger.index', 'admin.ledger.create', 'admin.ledger.store']),
             ],
             [
                 'label' => '調査・入金・返金・延滞',
@@ -186,8 +186,14 @@ class AdminHandleInertiaRequests extends Middleware
                 $breadcrumbs[] = ['label' => 'ユーザー追加', 'icon' => 'pi pi-user-plus', 'url' => route('admin.user.create')];
             }
         }
-        if (in_array($routeName, ['admin.ledger.index'])) {
-            $breadcrumbs[] = ['label' => '台帳登録', 'icon' => 'pi pi-list', 'url' => route('admin.ledger.index')];
+        if (in_array($routeName, ['admin.ledger.index', 'admin.ledger.create', 'admin.ledger.store', 'admin.user.edit', 'admin.user.update'])) {
+            $breadcrumbs[] = ['label' => '建物一覧', 'icon' => 'pi pi-list', 'url' => route('admin.ledger.index')];
+            if (in_array($routeName, ['admin.ledger.create', 'admin.ledger.store'])) {
+                $breadcrumbs[] = ['label' => '建物新規登録', 'icon' => 'pi pi-pencil', 'url' => route('admin.ledger.create')];
+            }
+            if (in_array($routeName, ['admin.ledger.edit', 'admin.ledger.update'])) {
+                $breadcrumbs[] = ['label' => '建物登録の編集', 'icon' => 'pi pi-pencil', 'url' => route('admin.ledger.edit', $request->ledger)];
+            }
         }
         if (in_array($routeName, ['admin.payment.index'])) {
             $breadcrumbs[] = ['label' => '調査・入金・返金・延滞', 'icon' => 'pi pi-list', 'url' => route('admin.payment.index')];
