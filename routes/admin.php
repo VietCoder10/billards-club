@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\ForgotPasswordController;
+use App\Http\Controllers\Admin\ResetPasswordController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +23,8 @@ Route::group([
 ], function () {
     Route::get('/', [LoginController::class, 'index']);
     Route::resource('login', LoginController::class);
+    Route::resource('forgot-password', ForgotPasswordController::class);
+    Route::resource('reset-password', ResetPasswordController::class);
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::group([
         'middleware' => ['assign.guard:admin', 'admin'],

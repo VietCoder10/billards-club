@@ -6,6 +6,8 @@ use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Requests\Admin\Login\AdminForgotPasswordRequest;
+use App\Http\Requests\Admin\Login\AdminResetPasswordRequest;
 
 interface UserInterface
 {
@@ -22,4 +24,10 @@ interface UserInterface
     public function saveLoginHistory(): bool;
 
     public function checkEmail(Request $request): bool;
+
+    public function sendResetPasswordLink(AdminForgotPasswordRequest $request): bool;
+
+    public function checkToken(string $token): ?User;
+
+    public function resetPassword(AdminResetPasswordRequest $request, string $token): bool;
 }

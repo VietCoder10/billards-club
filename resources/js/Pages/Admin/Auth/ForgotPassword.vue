@@ -10,15 +10,11 @@ import { localize } from '@vee-validate/i18n';
 const state = reactive({
   model: {
     email: '',
-    password: '',
-    remember_me: 0,
-    url_redirect: ''
   },
-  message: ''
 });
 const props = defineProps(['data']);
 const onSubmit = () => {
-  useForm(state.model).post(route('admin.login.store'));
+  useForm(state.model).post(route('admin.forgot-password.store'));
 };
 const onInvalidSubmit = ({ errors }) => {
   let firstInputError = Object.entries(errors)[0][0];
@@ -51,13 +47,6 @@ let messError = {
         email: 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
         max: '255文字以下で入力してください'
       },
-      password: {
-        required: '値を入力してください',
-        max: '100文字以下で入力してください',
-        min: '8文字以上で入力してください',
-        password_str: '半角英小文字・半角英大文字をパスワードに含めてください',
-        password_number: '半角数字をパスワードに含めてください'
-      }
     }
   }
 };
@@ -97,38 +86,10 @@ configure({
                     </div>
                     <ErrorMessage class="p-error" name="email" />
                   </div>
-                  <div class="mb-4">
-                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード</label>
-                    <Field name="password" rules="required|max:100|min:8|password_str|password_number" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
-                      <Password
-                        v-bind="field"
-                        v-model="state.model.password"
-                        inputClass="w-full"
-                        :class="{
-                          'p-invalid': !metaField.valid && metaField.touched
-                        }"
-                        placeholder="パスワード"
-                        hideIcon="pi pi-eye"
-                        showIcon="pi pi-eye-slash"
-                        :feedback="false"
-                        aria-describedby="password-error"
-                        :inputProps="{ autocomplete: 'off' }"
-                        v-on:update:model-value="handleChange"
-                        toggleMask
-                        fluid
-                        class="w-full"
-                      />
-                      <ErrorMessage class="p-error" name="password" />
-                    </Field>
-                  </div>
-                  <div class="flex items-center justify-between mt-2 mb-4 gap-8 warning-password">
-                    ※半角英小文字・半角英大文字・半角数字をそれぞれ含めてください<br />
-                    ※8文字以上で入力してください
-                  </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.forgot-password.index')">パスワードをお忘れの方はこちら </Link>
+                    <Link :href="route('admin.login.index')">ログイン画面に戻る</Link>
                   </div>
-                  <Button label="ログイン" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="パスワードを忘れた" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>

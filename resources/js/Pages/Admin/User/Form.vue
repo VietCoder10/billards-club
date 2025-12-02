@@ -107,7 +107,7 @@ const onSubmit = () => {
             <div class="form-group">
               <label class="form-label" require>メールアドレス: </label>
               <div class="form-input">
-                <Field name="email" :rules="flagValidateUnique ? 'required|email|unique_custom|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
+                <Field name="email" :rules="flagValidateUnique ? 'required|email|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
                   <InputText
                     class="w-full"
                     @keypress="flagValidateUnique = false"

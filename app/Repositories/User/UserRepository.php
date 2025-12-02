@@ -11,6 +11,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Admin\Login\AdminForgotPasswordRequest;
+use App\Http\Requests\Admin\Login\AdminResetPasswordRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPassword;
 
 class UserRepository implements UserInterface
 {
@@ -95,5 +100,48 @@ class UserRepository implements UserInterface
             }
             $query->where(['email' => $request['value']]);
         })->exists();
+    }
+
+    public function sendResetPasswordLink(AdminForgotPasswordRequest $request): bool
+    {
+        $user = $this->user->where('email', $request->email)->first();
+        if (! $user) {
+            return false;
+        }
+        $token = Str::random(64);
+        $user->reset_password_token = $token;
+        $user->reset_password_token_expire = Carbon::now()->addMinutes(30);
+
+        if (! $user->save()) {
+            return false;
+        }
+        $url = route('admin.reset-password.show', $token);
+        Mail::to($request->email)->send(new ForgotPassword([
+            'url' => $url,
+            'name' => $user->name,
+        ]));
+        return true;
+    }
+
+    public function checkToken(string $token): ?User
+    {
+        $user = $this->user->where('reset_password_token', $token)
+            ->where('reset_password_token_expire', '>', Carbon::now())
+            ->first();
+
+        return $user;
+    }
+
+    public function resetPassword(AdminResetPasswordRequest $request, string $token): bool
+    {
+        $user = $this->checkToken($token);
+        if (! $user) {
+            return false;
+        }
+        $user->password = Hash::make($request->password);
+        $user->reset_password_token = null;
+        $user->reset_password_token_expire = null;
+
+        return $user->save();
     }
 }

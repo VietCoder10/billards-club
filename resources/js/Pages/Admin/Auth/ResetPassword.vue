@@ -8,17 +8,11 @@ import $ from 'jquery';
 import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
 import { localize } from '@vee-validate/i18n';
 const state = reactive({
-  model: {
-    email: '',
-    password: '',
-    remember_me: 0,
-    url_redirect: ''
-  },
-  message: ''
+  model: {}
 });
 const props = defineProps(['data']);
 const onSubmit = () => {
-  useForm(state.model).post(route('admin.login.store'));
+  useForm(state.model).put(route('admin.reset-password.update', props.data.token));
 };
 const onInvalidSubmit = ({ errors }) => {
   let firstInputError = Object.entries(errors)[0][0];
@@ -34,29 +28,25 @@ const onInvalidSubmit = ({ errors }) => {
     500
   );
 };
-onMounted(() => {
-  state.model.url_redirect = props.data.request.url_redirect;
-});
+onMounted(() => {});
 watch(
   () => props.data,
   () => {
-    state.message = props.data.message;
   }
 );
 let messError = {
   en: {
     fields: {
-      email: {
-        required: '値を入力してください',
-        email: 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
-        max: '255文字以下で入力してください'
-      },
       password: {
         required: '値を入力してください',
         max: '100文字以下で入力してください',
         min: '8文字以上で入力してください',
         password_str: '半角英小文字・半角英大文字をパスワードに含めてください',
         password_number: '半角数字をパスワードに含めてください'
+      },
+      password_confirmation: {
+        required: '値を入力してください',
+        confirmed: 'パスワードと確認用パスワードが一致しません'
       }
     }
   }
@@ -78,25 +68,6 @@ configure({
                   <div class="text-center mb-8">
                     <img :src="logo" class="logo" />
                   </div>
-
-                  <div class="mb-4">
-                    <div>
-                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">メールアドレス</label>
-                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="メールアドレス" v-slot="{ field, meta: metaField, handleChange }">
-                        <InputText
-                          v-model="state.model.email"
-                          v-bind="field"
-                          :class="{
-                            'p-invalid': !metaField.valid && metaField.touched
-                          }"
-                          @update:model-value="handleChange"
-                          class="w-full md:w-[30rem]"
-                          placeholder="メールアドレス"
-                        />
-                      </Field>
-                    </div>
-                    <ErrorMessage class="p-error" name="email" />
-                  </div>
                   <div class="mb-4">
                     <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード</label>
                     <Field name="password" rules="required|max:100|min:8|password_str|password_number" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
@@ -109,6 +80,8 @@ configure({
                         }"
                         placeholder="パスワード"
                         hideIcon="pi pi-eye"
+                        name="password"
+                        id="password"
                         showIcon="pi pi-eye-slash"
                         :feedback="false"
                         aria-describedby="password-error"
@@ -116,9 +89,33 @@ configure({
                         v-on:update:model-value="handleChange"
                         toggleMask
                         fluid
-                        class="w-full"
+                        class="w-full md:w-[30rem]"
                       />
                       <ErrorMessage class="p-error" name="password" />
+                    </Field>
+                  </div>
+                  <div class="mb-4">
+                    <label for="password_confirmation" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード（確認用）</label>
+                    <Field name="password_confirmation" rules="required|confirmed:@password" v-model="state.model.password_confirmation" v-slot="{ field, meta: metaField, handleChange }">
+                      <Password
+                        v-bind="field"
+                        v-model="state.model.password_confirmation"
+                        inputClass="w-full"
+                        :class="{
+                          'p-invalid': !metaField.valid && metaField.touched
+                        }"
+                        placeholder="パスワード（確認用）"
+                        hideIcon="pi pi-eye"
+                        showIcon="pi pi-eye-slash"
+                        :feedback="false"
+                        aria-describedby="password-confirmation-error"
+                        :inputProps="{ autocomplete: 'off' }"
+                        v-on:update:model-value="handleChange"
+                        toggleMask
+                        fluid
+                        class="w-full"
+                      />
+                      <ErrorMessage class="p-error" name="password_confirmation" />
                     </Field>
                   </div>
                   <div class="flex items-center justify-between mt-2 mb-4 gap-8 warning-password">
@@ -126,9 +123,9 @@ configure({
                     ※8文字以上で入力してください
                   </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.forgot-password.index')">パスワードをお忘れの方はこちら </Link>
+                    <Link :href="route('admin.login.index')">ログイン画面に戻る</Link>
                   </div>
-                  <Button label="ログイン" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="パスワードをリセットする" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>
