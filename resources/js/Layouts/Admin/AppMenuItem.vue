@@ -27,17 +27,31 @@ const isActiveMenu = ref(false);
 const itemKey = ref(null);
 
 onBeforeMount(() => {
-  itemKey.value = props.parentItemKey ? props.parentItemKey + '-' + props.index : String(props.index);
+  itemKey.value = props.parentItemKey
+    ? props.parentItemKey + '-' + props.index
+    : String(props.index);
 
   const activeItem = layoutState.activeMenuItem;
 
-  isActiveMenu.value = activeItem === itemKey.value || activeItem ? activeItem.startsWith(itemKey.value + '-') : false;
+  const hasActiveChild = props.item.items?.some(c => c.active);
+
+  isActiveMenu.value =
+    props.item.active ||
+    hasActiveChild ||
+    activeItem === itemKey.value ||
+    (activeItem ? activeItem.startsWith(itemKey.value + '-') : false);
 });
 
 watch(
   () => layoutState.activeMenuItem,
   (newVal) => {
-    isActiveMenu.value = newVal === itemKey.value || newVal.startsWith(itemKey.value + '-');
+    const hasActiveChild = props.item.items?.some(c => c.active);
+
+    isActiveMenu.value =
+      props.item.active ||
+      hasActiveChild ||
+      newVal === itemKey.value ||
+      newVal.startsWith(itemKey.value + '-');
   }
 );
 
