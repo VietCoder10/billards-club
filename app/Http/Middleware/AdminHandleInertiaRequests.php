@@ -48,11 +48,60 @@ class AdminHandleInertiaRequests extends Middleware
                 'to' => route('admin.dashboard.index'),
                 'active' => in_array($routeName, ['admin.dashboard.index']),
             ],
+            // [
+            //     'label' => '台帳登録',
+            //     'icon' => 'pi pi-fw pi-pencil',
+            //     'to' => route('admin.building.index'),
+            //     'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
+            // ],
             [
-                'label' => '台帳登録',
+                'label' => '建物',
                 'icon' => 'pi pi-fw pi-pencil',
-                'to' => route('admin.building.index'),
                 'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
+                'items' => [
+                    [
+                        'label' => 'Building',
+                        'icon'  => 'pi pi-fw pi-building',
+                        'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
+                        'items' => [
+                            [
+                                'label' => '建物一覧',
+                                'icon'  => 'pi pi-fw pi-list',
+                                'to' => route('admin.building.index'),
+                                'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
+                                // 'items' => [
+                                //     ['label' => 'Submenu 1.1.1', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.user.index'), 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),],
+                                //     ['label' => 'Submenu 1.1.2', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.dashboard.index'),
+                                //         'active' => in_array($routeName, ['admin.dashboard.index']),],
+                                //     ['label' => 'Submenu 1.1.3', 'icon' => 'pi pi-fw pi-bookmark'],
+                                // ],
+                            ],
+                            [
+                                'label' => '部屋一覧',
+                                'icon'  => 'pi pi-fw pi-bookmark',
+                                // 'items' => [
+                                //     ['label' => 'Submenu 1.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
+                                // ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'label' => '管理委託契約',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                    [
+                        'label' => '口座',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                    [
+                        'label' => '契約台帳',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                    [
+                        'label' => '履歴の追加',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                ],
             ],
             [
                 'label' => '調査・入金・返金・延滞',
