@@ -55,12 +55,12 @@ class AdminHandleInertiaRequests extends Middleware
             //     'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
             // ],
             [
-                'label' => '建物',
+                'label' => '台帳登録',
                 'icon' => 'pi pi-fw pi-pencil',
                 'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
                 'items' => [
                     [
-                        'label' => 'Building',
+                        'label' => '建物',
                         'icon'  => 'pi pi-fw pi-building',
                         'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
                         'items' => [
