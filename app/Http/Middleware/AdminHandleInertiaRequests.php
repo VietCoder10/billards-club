@@ -235,7 +235,7 @@ class AdminHandleInertiaRequests extends Middleware
                 $breadcrumbs[] = ['label' => 'ユーザー追加', 'icon' => 'pi pi-user-plus', 'url' => route('admin.user.create')];
             }
         }
-        if (in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update'])) {
+        if (in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.building.edit', 'admin.building.update'])) {
             $breadcrumbs[] = ['label' => '建物一覧', 'icon' => 'pi pi-list', 'url' => route('admin.building.index')];
             if (in_array($routeName, ['admin.building.create', 'admin.building.store'])) {
                 $breadcrumbs[] = ['label' => '建物新規登録', 'icon' => 'pi pi-pencil', 'url' => route('admin.building.create')];
