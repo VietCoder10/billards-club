@@ -13,10 +13,7 @@ import logo from '@/assets/imgs/logo.svg';
         <i class="pi pi-bars"></i>
       </button>
       <Link :href="route('admin.dashboard.index')" class="layout-topbar-logo">
-      <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">
-          Việt Vũ Billards
-      </div>
-
+        <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">Việt Vũ Billards</div>
 
         <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -45,7 +42,7 @@ import logo from '@/assets/imgs/logo.svg';
         <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
           <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
         </button>
-        <div class="relative">
+        <!-- <div class="relative">
           <button
             v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
             type="button"
@@ -54,7 +51,7 @@ import logo from '@/assets/imgs/logo.svg';
             <i class="pi pi-palette"></i>
           </button>
           <AppConfigurator />
-        </div>
+        </div> -->
       </div>
 
       <button
