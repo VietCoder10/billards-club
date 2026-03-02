@@ -32,10 +32,10 @@ const exportCsv = () => {
     <VeeForm as="div" v-slot="{ handleSubmit }">
       <form class="form-inline" method="POST" @submit="handleSubmit($event, onSubmit)" ref="formData">
         <div>
-          <InputText type="text" class="w-300" name="free_word" id="free_word" placeholder="検索" v-model="model.free_word" />
+          <InputText type="text" class="w-300" name="free_word" id="free_word" placeholder="Search" v-model="model.free_word" />
           <a :href="state.urlDownload" id="linkDownload" ref="linkDownload" download></a>
-          <Button type="submit" class="ml-2"> <i class="pi pi-search"></i> &nbsp; 検索 </Button>
-          <Link v-if="createUrl" :href="createUrl" class="ml-2"><Button icon="pi pi-plus" label="新規登録" /></Link>
+          <Button type="submit" class="ml-2"> <i class="pi pi-search"></i> &nbsp; Search </Button>
+          <Link v-if="createUrl" :href="createUrl" class="ml-2"><Button icon="pi pi-plus" label="Add" /></Link>
           <Button v-if="csvRoute" @click.stop="exportCsv" class="ml-2" type="button" icon="pi pi-download" label="CSV出力" />
         </div>
       </form>

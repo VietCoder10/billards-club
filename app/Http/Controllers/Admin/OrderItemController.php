@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class CompanyController extends BaseController
+class OrderItemController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Admin/Company/Index', [
+        //
+        return Inertia::render('Admin/Order/OrderItem', [
             'data' => [
-                'title' => '会社',
-            ],
+                'title' => 'order-item'
+            ]
         ]);
     }
 

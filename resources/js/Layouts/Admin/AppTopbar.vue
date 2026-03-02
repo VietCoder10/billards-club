@@ -13,7 +13,11 @@ import logo from '@/assets/imgs/logo.svg';
         <i class="pi pi-bars"></i>
       </button>
       <Link :href="route('admin.dashboard.index')" class="layout-topbar-logo">
-        <img :src="logo" class="logo" />
+      <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">
+          Việt Vũ Billards
+      </div>
+
+
         <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
@@ -71,7 +75,7 @@ import logo from '@/assets/imgs/logo.svg';
           >
             <div class="flex flex-col gap-4">
               <Link :href="route('admin.logout')">
-                <Button variant="link" label="ログアウト" icon="pi pi-sign-out" />
+                <Button variant="link" label="Logout" icon="pi pi-sign-out" />
               </Link>
             </div>
           </div>

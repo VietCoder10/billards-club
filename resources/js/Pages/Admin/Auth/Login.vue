@@ -47,16 +47,16 @@ let messError = {
   en: {
     fields: {
       email: {
-        required: '値を入力してください',
-        email: 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
-        max: '255文字以下で入力してください'
+        required: 'Please enter a value.',
+        email: 'Please enter a valid email address format (xxx@yyyy.zzz).',
+        max: 'Please enter 255 characters or fewer.'
       },
       password: {
-        required: '値を入力してください',
-        max: '100文字以下で入力してください',
-        min: '8文字以上で入力してください',
-        password_str: '半角英小文字・半角英大文字をパスワードに含めてください',
-        password_number: '半角数字をパスワードに含めてください'
+        required: 'Please enter a value.',
+        max: 'Please enter 100 characters or fewer.',
+        min: 'Please enter at least 8 characters.',
+        password_str: 'The password must include both uppercase and lowercase letters.',
+        password_number: 'The password must include at least one number.'
       }
     }
   }
@@ -76,13 +76,13 @@ configure({
               <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
                   <div class="text-center mb-8">
-                    <img :src="logo" class="logo" />
+                    <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">Việt Vũ Billards</div>
                   </div>
 
                   <div class="mb-4">
                     <div>
-                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">メールアドレス</label>
-                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="メールアドレス" v-slot="{ field, meta: metaField, handleChange }">
+                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">Email Address</label>
+                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="Email Address" v-slot="{ field, meta: metaField, handleChange }">
                         <InputText
                           v-model="state.model.email"
                           v-bind="field"
@@ -91,14 +91,14 @@ configure({
                           }"
                           @update:model-value="handleChange"
                           class="w-full md:w-[30rem]"
-                          placeholder="メールアドレス"
+                          placeholder="Email Address"
                         />
                       </Field>
                     </div>
                     <ErrorMessage class="p-error" name="email" />
                   </div>
                   <div class="mb-4">
-                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード</label>
+                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">Password</label>
                     <Field name="password" rules="required|max:100|min:8|password_str|password_number" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
@@ -107,7 +107,7 @@ configure({
                         :class="{
                           'p-invalid': !metaField.valid && metaField.touched
                         }"
-                        placeholder="パスワード"
+                        placeholder="Password"
                         hideIcon="pi pi-eye"
                         showIcon="pi pi-eye-slash"
                         :feedback="false"
@@ -122,13 +122,13 @@ configure({
                     </Field>
                   </div>
                   <div class="flex items-center justify-between mt-2 mb-4 gap-8 warning-password">
-                    ※半角英小文字・半角英大文字・半角数字をそれぞれ含めてください<br />
-                    ※8文字以上で入力してください
+                    ※The password must include lowercase letters, uppercase letters, and numbers.<br />
+                    ※Please enter at least 8 characters
                   </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.forgot-password.index')">パスワードをお忘れの方はこちら </Link>
+                    <Link :href="route('admin.forgot-password.index')">Forgot your password? </Link>
                   </div>
-                  <Button label="ログイン" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="Login" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>

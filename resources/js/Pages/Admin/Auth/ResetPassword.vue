@@ -38,15 +38,15 @@ let messError = {
   en: {
     fields: {
       password: {
-        required: '値を入力してください',
-        max: '100文字以下で入力してください',
-        min: '8文字以上で入力してください',
-        password_str: '半角英小文字・半角英大文字をパスワードに含めてください',
-        password_number: '半角数字をパスワードに含めてください'
+        required: 'Please enter a value.',
+        max: 'Please enter 100 characters or fewer.',
+        min: 'Please enter at least 8 characters.',
+        password_str: 'The password must include both uppercase and lowercase letters.',
+        password_number: 'The password must include at least one number.'
       },
       password_confirmation: {
-        required: '値を入力してください',
-        confirmed: 'パスワードと確認用パスワードが一致しません'
+        required: 'Please enter a value.',
+        confirmed: 'The password confirmation does not match.'
       }
     }
   }
@@ -69,7 +69,7 @@ configure({
                     <img :src="logo" class="logo" />
                   </div>
                   <div class="mb-4">
-                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード</label>
+                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">Password</label>
                     <Field name="password" rules="required|max:100|min:8|password_str|password_number" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
@@ -78,7 +78,7 @@ configure({
                         :class="{
                           'p-invalid': !metaField.valid && metaField.touched
                         }"
-                        placeholder="パスワード"
+                        placeholder="Password"
                         hideIcon="pi pi-eye"
                         name="password"
                         id="password"
@@ -95,7 +95,7 @@ configure({
                     </Field>
                   </div>
                   <div class="mb-4">
-                    <label for="password_confirmation" class="block text-surface-900 dark:text-surface-0 mb-1">パスワード（確認用）</label>
+                    <label for="password_confirmation" class="block text-surface-900 dark:text-surface-0 mb-1">Password (Confirmation)</label>
                     <Field name="password_confirmation" rules="required|confirmed:@password" v-model="state.model.password_confirmation" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
@@ -104,7 +104,7 @@ configure({
                         :class="{
                           'p-invalid': !metaField.valid && metaField.touched
                         }"
-                        placeholder="パスワード（確認用）"
+                        placeholder="  Password (Confirmation)"
                         hideIcon="pi pi-eye"
                         showIcon="pi pi-eye-slash"
                         :feedback="false"
@@ -119,13 +119,13 @@ configure({
                     </Field>
                   </div>
                   <div class="flex items-center justify-between mt-2 mb-4 gap-8 warning-password">
-                    ※半角英小文字・半角英大文字・半角数字をそれぞれ含めてください<br />
-                    ※8文字以上で入力してください
+                    ※The password must include lowercase letters, uppercase letters, and numbers.<br />
+                    ※Please enter at least 8 characters.
                   </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.login.index')">ログイン画面に戻る</Link>
+                    <Link :href="route('admin.login.index')">Back to Login</Link>
                   </div>
-                  <Button label="パスワードをリセットする" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="Reset Password" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>

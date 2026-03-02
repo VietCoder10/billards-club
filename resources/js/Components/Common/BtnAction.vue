@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-content-center">
-    <Button type="button" iconPos="right" icon="pi pi-spin pi-cog" label="操作選択" @click="toggle" class="btn-action" aria-haspopup="true" aria-controls="overlay_menu" />
+    <Button type="button" iconPos="right" icon="pi pi-spin pi-cog" label="Select Action" @click="toggle" class="btn-action" aria-haspopup="true" aria-controls="overlay_menu" />
     <Menu :submenuLabel="null" ref="menu" id="overlay_menu" class="menu-action w-140px" :model="items" :popup="true">
       <template #item="{ item, props }">
         <Link v-if="!item.deleteFlag" class="flex align-items-center" :href="item.url" v-bind="props.action">
@@ -34,12 +34,12 @@ const items = ref([
   {
     items: [
       {
-        label: '編集',
+        label: 'Edit',
         url: props.urlEdit,
         icon: 'pi pi-file-edit'
       },
       {
-        label: '削除',
+        label: 'Delete',
         deleteFlag: true,
         url: props.urlDelete,
         icon: 'pi pi-trash'
@@ -54,8 +54,8 @@ const confirmDelete = () => {
     showCancelButton: true,
     confirmButtonColor: 'var(--p-button-primary-background)',
     cancelButtonColor: '#d33',
-    confirmButtonText: '削除',
-    cancelButtonText: 'キャンセル'
+    confirmButtonText: 'Delete',
+    cancelButtonText: 'Cancel'
   }).then((result) => {
     if (result.isConfirmed) {
       useRequestStore().showLoading();
@@ -70,7 +70,7 @@ const confirmDelete = () => {
         })
         .catch((error) => {
           useRequestStore().hideLoading();
-          toast.add({ severity: 'error', summary: 'エラーが発生しました。', life: 3000 });
+          toast.add({ severity: 'error', summary: 'An error occurred.', life: 3000 });
         });
     }
   });

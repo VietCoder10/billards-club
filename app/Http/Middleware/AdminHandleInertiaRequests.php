@@ -43,188 +43,69 @@ class AdminHandleInertiaRequests extends Middleware
         }
         $leftMenu = [
             [
-                'label' => 'ホーム',
+                'label' => 'Home',
                 'icon' => 'pi pi-fw pi-home',
                 'to' => route('admin.dashboard.index'),
                 'active' => in_array($routeName, ['admin.dashboard.index']),
             ],
-            // [
-            //     'label' => '台帳登録',
-            //     'icon' => 'pi pi-fw pi-pencil',
-            //     'to' => route('admin.building.index'),
-            //     'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
-            // ],
             [
-                'label' => '台帳登録',
+                'label' => 'Play Session',
+                'icon' => 'pi pi-play-circle',
+                'to' => route('admin.order.index'),
+            ],
+            [
+                'label' => 'Management',
                 'icon' => 'pi pi-fw pi-pencil',
-                'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
                 'items' => [
                     [
-                        'label' => '建物',
+                        'label' => 'Service Management',
                         'icon'  => 'pi pi-fw pi-building',
-                        'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
                         'items' => [
                             [
-                                'label' => '建物一覧',
+                                'label' => 'Supplier Management',
                                 'icon'  => 'pi pi-fw pi-list',
-                                'to' => route('admin.building.index'),
-                                'active' => in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.user.edit', 'admin.user.update']),
-                                // 'items' => [
-                                //     ['label' => 'Submenu 1.1.1', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.user.index'), 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),],
-                                //     ['label' => 'Submenu 1.1.2', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.dashboard.index'),
-                                //         'active' => in_array($routeName, ['admin.dashboard.index']),],
-                                //     ['label' => 'Submenu 1.1.3', 'icon' => 'pi pi-fw pi-bookmark'],
-                                // ],
+                                'to' => route('admin.supplier.index'),
+                                'active' => in_array($routeName, ['admin.supplier.index', 'admin.suppler.store', 'admin.suppler.update']),
                             ],
                             [
-                                'label' => '部屋一覧',
+                                'label' => 'Product Management',
                                 'icon'  => 'pi pi-fw pi-bookmark',
-                                // 'items' => [
-                                //     ['label' => 'Submenu 1.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
-                                // ],
                             ],
                         ],
                     ],
                     [
-                        'label' => '管理委託契約',
+                        'label' => 'Staff Management',
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                     [
-                        'label' => '口座',
+                        'label' => 'Table Management',
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                     [
-                        'label' => '契約台帳',
+                        'label' => 'Voucher Management',
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                     [
-                        'label' => '履歴の追加',
+                        'label' => 'Playtime Management',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                    [
+                        'label' => 'Bill Management',
+                        'icon'  => 'pi pi-fw pi-bookmark',
+                    ],
+                    [
+                        'label' => 'Order Management',
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                 ],
             ],
             [
-                'label' => '調査・入金・返金・延滞',
-                'icon' => 'pi pi-fw pi-paypal',
-                'to' => route('admin.payment.index'),
-                'active' => in_array($routeName, ['admin.payment.index']),
-            ],
-            [
-                'label' => 'EB（インターネットバンキング）',
-                'icon' => 'pi pi-fw pi-arrow-right-arrow-left',
-                'to' => route('admin.internet-banking.index'),
-                'active' => in_array($routeName, ['admin.internet-banking.index']),
-            ],
-            [
-                'label' => '集計',
+                'label' => 'Revenue',
                 'icon' => 'pi pi-fw pi-chart-bar',
-                'to' => route('admin.counting.index'),
-                'active' => in_array($routeName, ['admin.counting.index']),
             ],
-            [
-                'label' => 'メンテナンス',
-                'icon' => 'pi pi-fw pi-wrench',
-                'to' => route('admin.maintenance.index'),
-                'active' => in_array($routeName, ['admin.maintenance.index']),
-            ],
-            [
-                'label' => '請求',
-                'icon' => 'pi pi-fw pi-search',
-                'to' => route('admin.billing.index'),
-                'active' => in_array($routeName, ['admin.billing.index']),
-            ],
-            [
-                'label' => '契約',
-                'icon' => 'pi pi-fw pi-file-check',
-                'to' => route('admin.contract.index'),
-                'active' => in_array($routeName, ['admin.contract.index']),
-            ],
-            [
-                'label' => '照会',
-                'icon' => 'pi pi-fw pi-question-circle',
-                'to' => route('admin.inquiry.index'),
-                'active' => in_array($routeName, ['admin.inquiry.index']),
-            ],
-            [
-                'label' => '会社',
-                'icon' => 'pi pi-fw pi-building',
-                'to' => route('admin.company.index'),
-                'active' => in_array($routeName, ['admin.company.index']),
-            ],
-            [
-                'label' => '送信依頼・受信情報',
-                'icon' => 'pi pi-fw pi-send',
-                'to' => route('admin.send-request.index'),
-                'active' => in_array($routeName, ['admin.send-request.index']),
-            ],
-            [
-                'label' => '設定',
-                'icon' => 'pi pi-fw pi-cog',
-                'to' => route('admin.setting.index'),
-                'active' => in_array($routeName, ['admin.setting.index']),
-            ],
-            // [
-            //     'label' => 'ユーザー一覧',
-            //     'icon' => 'pi pi-fw pi-users',
-            //     'to' => route('admin.user.index'),
-            //     'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
-            // ],
-            // [
-            //     'label' => 'Hierarchy',
-            //     'icon' => 'pi pi-fw pi-align-justify',
-            //     'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
-            //     'items' => [
-            //         [
-            //             'label' => 'Submenu 1',
-            //             'icon'  => 'pi pi-fw pi-bookmark',
-            //             // 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
-            //             'items' => [
-            //                 [
-            //                     'label' => 'Submenu 1.1',
-            //                     'icon'  => 'pi pi-fw pi-bookmark',
-            //                     'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update', 'admin.dashboard.index']),
-            //                     'items' => [
-            //                         ['label' => 'Submenu 1.1.1', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.user.index'), 'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),],
-            //                         ['label' => 'Submenu 1.1.2', 'icon' => 'pi pi-fw pi-bookmark', 'to' => route('admin.dashboard.index'),
-            //     'active' => in_array($routeName, ['admin.dashboard.index']),],
-            //                         ['label' => 'Submenu 1.1.3', 'icon' => 'pi pi-fw pi-bookmark'],
-            //                     ],
-            //                 ],
-            //                 [
-            //                     'label' => 'Submenu 1.2',
-            //                     'icon'  => 'pi pi-fw pi-bookmark',
-            //                     'items' => [
-            //                         ['label' => 'Submenu 1.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
-            //                     ],
-            //                 ],
-            //             ],
-            //         ],
-            //         [
-            //             'label' => 'Submenu 2',
-            //             'icon'  => 'pi pi-fw pi-bookmark',
-            //             'items' => [
-            //                 [
-            //                     'label' => 'Submenu 2.1',
-            //                     'icon'  => 'pi pi-fw pi-bookmark',
-            //                     'items' => [
-            //                         ['label' => 'Submenu 2.1.1', 'icon' => 'pi pi-fw pi-bookmark'],
-            //                         ['label' => 'Submenu 2.1.2', 'icon' => 'pi pi-fw pi-bookmark'],
-            //                     ],
-            //                 ],
-            //                 [
-            //                     'label' => 'Submenu 2.2',
-            //                     'icon'  => 'pi pi-fw pi-bookmark',
-            //                     'items' => [
-            //                         ['label' => 'Submenu 2.2.1', 'icon' => 'pi pi-fw pi-bookmark'],
-            //                     ],
-            //                 ],
-            //             ],
-            //         ],
-            //     ],
-            // ],
         ];
         $breadcrumbs = [
-            ['label' => 'ホーム', 'icon' => 'pi pi-home', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Home', 'icon' => 'pi pi-home', 'url' => route('admin.dashboard.index')],
         ];
         if (in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update'])) {
             $breadcrumbs[] = ['label' => 'ユーザー一覧', 'icon' => 'pi pi-list', 'url' => session()->get('admin.user.list')[0] ?? route('admin.user.index')];
@@ -235,44 +116,17 @@ class AdminHandleInertiaRequests extends Middleware
                 $breadcrumbs[] = ['label' => 'ユーザー追加', 'icon' => 'pi pi-user-plus', 'url' => route('admin.user.create')];
             }
         }
-        if (in_array($routeName, ['admin.building.index', 'admin.building.create', 'admin.building.store', 'admin.building.edit', 'admin.building.update'])) {
-            $breadcrumbs[] = ['label' => '建物一覧', 'icon' => 'pi pi-list', 'url' => route('admin.building.index')];
-            if (in_array($routeName, ['admin.building.create', 'admin.building.store'])) {
-                $breadcrumbs[] = ['label' => '建物新規登録', 'icon' => 'pi pi-pencil', 'url' => route('admin.building.create')];
+        if (in_array($routeName, ['admin.supplier.index', 'admin.supplier.create', 'admin.supplier.store', 'admin.supplier.edit', 'admin.supplier.update'])) {
+            $breadcrumbs[] = ['label' => 'Supplier', 'icon' => 'pi pi-list', 'url' => route('admin.supplier.index')];
+            if (in_array($routeName, ['admin.supplier.create', 'admin.supplier.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm', 'icon' => 'pi pi-pencil', 'url' => route('admin.supplier.create')];
             }
             if (in_array($routeName, ['admin.building.edit', 'admin.building.update'])) {
-                $breadcrumbs[] = ['label' => '建物登録の編集', 'icon' => 'pi pi-pencil', 'url' => route('admin.building.edit', $request->building)];
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa', 'icon' => 'pi pi-pencil', 'url' => route('admin.supplier.edit', $request->supplier)];
             }
         }
         if (in_array($routeName, ['admin.payment.index'])) {
             $breadcrumbs[] = ['label' => '調査・入金・返金・延滞', 'icon' => 'pi pi-list', 'url' => route('admin.payment.index')];
-        }
-        if (in_array($routeName, ['admin.internet-banking.index'])) {
-            $breadcrumbs[] = ['label' => 'EB（インターネットバンキング）', 'icon' => 'pi pi-list', 'url' => route('admin.internet-banking.index')];
-        }
-        if (in_array($routeName, ['admin.counting.index'])) {
-            $breadcrumbs[] = ['label' => '集計', 'icon' => 'pi pi-list', 'url' => route('admin.counting.index')];
-        }
-        if (in_array($routeName, ['admin.maintenance.index'])) {
-            $breadcrumbs[] = ['label' => 'メンテナンス', 'icon' => 'pi pi-list', 'url' => route('admin.maintenance.index')];
-        }
-        if (in_array($routeName, ['admin.billing.index'])) {
-            $breadcrumbs[] = ['label' => '請求', 'icon' => 'pi pi-list', 'url' => route('admin.billing.index')];
-        }
-        if (in_array($routeName, ['admin.contract.index'])) {
-            $breadcrumbs[] = ['label' => '契約', 'icon' => 'pi pi-list', 'url' => route('admin.contract.index')];
-        }
-        if (in_array($routeName, ['admin.inquiry.index'])) {
-            $breadcrumbs[] = ['label' => '照会', 'icon' => 'pi pi-list', 'url' => route('admin.inquiry.index')];
-        }
-        if (in_array($routeName, ['admin.company.index'])) {
-            $breadcrumbs[] = ['label' => '会社', 'icon' => 'pi pi-list', 'url' => route('admin.company.index')];
-        }
-        if (in_array($routeName, ['admin.send-request.index'])) {
-            $breadcrumbs[] = ['label' => '送信依頼・受信情報', 'icon' => 'pi pi-list', 'url' => route('admin.send-request.index')];
-        }
-        if (in_array($routeName, ['admin.setting.index'])) {
-            $breadcrumbs[] = ['label' => '設定', 'icon' => 'pi pi-list', 'url' => route('admin.setting.index')];
         }
 
         return array_merge(parent::share($request), [
@@ -280,8 +134,6 @@ class AdminHandleInertiaRequests extends Middleware
             'dataSession' => $dataSession,
             'leftMenu' => $leftMenu,
             'breadcrumbs' => $breadcrumbs,
-            // 'menuDashboardActive' => in_array($routeName, ['admin.dashboard.index']),
-            // 'menuUserActive' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update']),
         ]);
     }
 }

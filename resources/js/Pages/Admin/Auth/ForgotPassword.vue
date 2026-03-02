@@ -9,8 +9,8 @@ import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee
 import { localize } from '@vee-validate/i18n';
 const state = reactive({
   model: {
-    email: '',
-  },
+    email: ''
+  }
 });
 const props = defineProps(['data']);
 const onSubmit = () => {
@@ -43,10 +43,10 @@ let messError = {
   en: {
     fields: {
       email: {
-        required: '値を入力してください',
-        email: 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
-        max: '255文字以下で入力してください'
-      },
+        required: 'Please enter a value.',
+        email: 'Please enter a valid email address (xxx@yyyy.zzz).',
+        max: 'Please enter 255 characters or fewer.'
+      }
     }
   }
 };
@@ -65,13 +65,13 @@ configure({
               <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
                 <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
                   <div class="text-center mb-8">
-                    <img :src="logo" class="logo" />
+                    <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">Việt Vũ Billards</div>
                   </div>
 
                   <div class="mb-4">
                     <div>
-                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">メールアドレス</label>
-                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="メールアドレス" v-slot="{ field, meta: metaField, handleChange }">
+                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">Email</label>
+                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="Email" v-slot="{ field, meta: metaField, handleChange }">
                         <InputText
                           v-model="state.model.email"
                           v-bind="field"
@@ -80,16 +80,16 @@ configure({
                           }"
                           @update:model-value="handleChange"
                           class="w-full md:w-[30rem]"
-                          placeholder="メールアドレス"
+                          placeholder="Email"
                         />
                       </Field>
                     </div>
                     <ErrorMessage class="p-error" name="email" />
                   </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.login.index')">ログイン画面に戻る</Link>
+                    <Link :href="route('admin.login.index')">Back to Login</Link>
                   </div>
-                  <Button label="パスワードを忘れた" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="Forgot Password" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>

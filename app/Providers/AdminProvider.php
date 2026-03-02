@@ -19,7 +19,6 @@ class AdminProvider extends ServiceProvider
             $this->app['request']->server->set('HTTPS', true);
         }
         $this->app->bind(UserInterface::class, UserRepository::class);
-        $this->app->bind(BuildingInterface::class, BuildingRepository::class);
     }
 
     /**

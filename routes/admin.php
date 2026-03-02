@@ -41,20 +41,10 @@ Route::group([
         'middleware' => ['assign.guard:admin', 'admin'],
     ], function () {
         Route::resource('dashboard', DashboardController::class)->only(['index']);
-        Route::resource('billing', BillingController::class);
-        Route::resource('company', CompanyController::class);
-        Route::resource('contract', ContractController::class);
-        Route::resource('counting', CountingController::class);
-        Route::resource('inquiry', InquiryController::class);
-        Route::resource('internet-banking', InternetBankingController::class);
-        Route::resource('building', BuildingController::class);
-        Route::resource('maintenance', MaintenanceController::class);
-        Route::resource('payment', PaymentController::class);
-        Route::resource('send-request', SendRequestController::class);
-        Route::resource('setting', SettingController::class);
         Route::resource('user', UserController::class);
-        Route::post('check-building-code', [BuildingController::class, 'checkCode'])->name('building.checkCode');
-        Route::post('building-export-csv', [BuildingController::class, 'exportCsv'])->name('building.exportCsv');
         Route::post('check-email', [UserController::class, 'checkEmail'])->name('user.checkEmail');
+        Route::resource('supplier', \App\Http\Controllers\Admin\SuppliersController::class);
+        Route::resource('order-item', \App\Http\Controllers\Admin\OrderItemController::class);
+        Route::resource('order', \App\Http\Controllers\Admin\OrderController::class);
     });
 });

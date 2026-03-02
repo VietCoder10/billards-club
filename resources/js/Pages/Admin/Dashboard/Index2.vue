@@ -16,10 +16,7 @@ const calendarRef = ref(null);
 
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
-  // initialView: 'timeGridDay',
-  // initialView: 'timeGridWeek',
   initialView: 'dayGridMonth',
-  locale: jaLocale,
   timeZone: 'Asia/Tokyo',
   headerToolbar: {
     end: 'today prev,next',
@@ -31,23 +28,7 @@ const calendarOptions = reactive({
   },
   events: []
 });
-// const fetchData = async (info) => {
-//   useRequestStore().showLoading();
-//   calendarOptions.events = [];
-//   state.initialView = info.view.type;
-//   axios
-//     .post(route('admin.dashboard.store'), {
-//       start_date: moment(info.startStr).format('YYYY-MM-DD'),
-//       end_date: moment(info.endStr).format('YYYY-MM-DD'),
-//       view: info.view.type,
-//       user_id: state.model.user_id
-//     })
-//     .then((res) => {
-//       state.statistical = res.data;
-//       calendarOptions.events = res.data.events;
-//       useRequestStore().hideLoading();
-//     });
-// };
+
 const state = reactive({
   model: {},
   initialView: 'dayGridMonth',
