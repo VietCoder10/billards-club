@@ -67,7 +67,7 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/index.js';
 
 app.component('notyf', Notyf);
-const appName = 'ABK';
+const appName = 'Billards';
 
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,

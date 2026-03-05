@@ -16,21 +16,18 @@ return new class extends Migration
             $table->foreignId('table_id')
                 ->constrained('tables')
                 ->cascadeOnDelete();
-
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete(); // nhân viên tạo order
-
-            $table->enum('status', [
-                'pending',
-                'serving',
-                'completed',
-                'cancelled'
-            ])->default('pending');
-
+            $table->integer('status')->default(0); // 0: đang phục vụ, 1: đã thanh toán, 2: đã hủy
             $table->timestamp('started_at')->nullable();
             $table->timestamp('ended_at')->nullable();
+            $table->decimal('price_per_hour', 10, 2);
+            $table->integer('total_minutes')->default(0);
+            $table->decimal('table_total', 12, 2)->default(0);
+            $table->decimal('service_total', 12, 2)->default(0);
+            $table->decimal('final_total', 12, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

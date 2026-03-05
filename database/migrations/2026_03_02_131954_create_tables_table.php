@@ -14,12 +14,13 @@ return new class extends Migration
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
-            $table->string('table_number', 20);
+            $table->string('table_name', 20);
 
             // 0: có sẵn, 1: đang sử dụng, 2: bảo trì
-            $table->enum('status', TableStatus::getValues())->default(TableStatus::AVAILABLE);
-
-            $table->decimal('price_per_hour', 10, 2);
+            $table->integer('status')->default(TableStatus::AVAILABLE);
+            $table->foreignId('table_price_id')
+                ->constrained('table_price_master')
+                ->restrictOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

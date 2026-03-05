@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kyslik\ColumnSortable\Sortable;
@@ -9,12 +10,12 @@ use Kyslik\ColumnSortable\Sortable;
 class Supplier extends Model
 {
     //
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
     use Sortable;
     protected $primaryKey = 'id';
     protected $table = "suppliers";
     protected $fillable = [
-        'name',
+        'supplier_name',
         'contact_person',
         'email',
         'phone',

@@ -6,46 +6,32 @@ import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
 import TableItem from '@/Components/Billiard/TableItem.vue';
 import { Inertia } from '@inertiajs/inertia';
 
-const props = defineProps(['data', 'tables']);
-
-const tablesDisplay = computed(() => {
-  return (
-    props.tables || [
-      { id: 1, name: 'Bàn 01', status: 'playing', playing_time: '01:20' },
-      { id: 2, name: 'Bàn 02', status: 'empty' },
-      { id: 3, name: 'Bàn 03', status: 'playing', playing_time: '00:45' },
-      { id: 4, name: 'Bàn 04', status: 'empty' },
-      { id: 5, name: 'Bàn 05', status: 'empty' },
-      { id: 6, name: 'Bàn 06', status: 'playing', playing_time: '02:10' },
-      { id: 7, name: 'Bàn 07', status: 'empty' },
-      { id: 8, name: 'Bàn 08', status: 'empty' },
-      { id: 9, name: 'Bàn 09', status: 'empty' },
-      { id: 10, name: 'Bàn 10', status: 'empty' }
-    ]
-  );
-});
+const props = defineProps(['data']);
 
 const handleTableClick = (table) => {
-  // Navigate to order item details
   Inertia.get(route('admin.order-item.index', { id: table.id }));
 };
 
 const tabs = reactive([
   { title: 'Tất cả bàn', value: 'all', show: true },
   { title: 'Bàn Trống', value: 'table_no', show: true },
-  { title: 'Bàn Đang Chơi', value: 'table_playing', show: true }
+  { title: 'Bàn Đang Chơi', value: 'table_playing', show: true },
+  { title: 'Bàn Đang Bảo Trì', value: 'table_cleaning', show: true }
 ]);
 
 const activeTab = ref('all');
 
 const filteredTables = computed(() => {
   if (activeTab.value === 'table_no') {
-    return tablesDisplay.value.filter((t) => t.status === 'empty');
+    return props.data.tables.filter((t) => t.status === 0);
   }
   if (activeTab.value === 'table_playing') {
-    return tablesDisplay.value.filter((t) => t.status === 'playing');
+    return props.data.tables.filter((t) => t.status === 1);
   }
-  return tablesDisplay.value;
+  if (activeTab.value === 'table_cleaning') {
+    return props.data.tables.filter((t) => t.status === 2);
+  }
+  return props.data.tables;
 });
 </script>
 
@@ -66,6 +52,7 @@ const filteredTables = computed(() => {
                   <span v-if="tab.value === 'all'"><i class="pi pi-th-large"></i></span>
                   <span v-if="tab.value === 'table_no'"><i class="pi pi-circle text-green-500"></i></span>
                   <span v-if="tab.value === 'table_playing'"><i class="pi pi-circle-fill text-red-500"></i></span>
+                  <span v-if="tab.value === 'table_cleaning'"><i class="pi pi-wrench text-yellow-500"></i></span>
                   {{ tab.title }}
                 </div>
               </Tab>

@@ -26,7 +26,7 @@ defineRule('code_rule', (value) => {
   if (!value) {
     return true;
   }
-  return /^[A-Za-z0-9]*$/i.test(value);
+  return /^[A-Za-z\-0-9]*$/i.test(value);
 });
 defineRule('password_rule_admin', (value) => {
   return /^[A-Za-z0-9]*$/i.test(value);
@@ -45,9 +45,8 @@ defineRule('password_rule', (value) => {
   let lower = /[a-z]/g.test(value);
   let upper = /[A-Z]/g.test(value);
   let number = /[0-9]/g.test(value);
-  let special = /[!#$%&*+-=?@_]/g.test(value);
 
-  return lower && upper && number && special;
+  return lower && upper && number;
 });
 defineRule('password_str', (value) => {
   if (!value) {
@@ -67,7 +66,72 @@ defineRule('password_number', (value) => {
   return number;
 });
 defineRule('telephone', (value) => {
-  return /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) || /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) || /^0(\d{9,10})+$/i.test(value.trim());
+  if (!value) {
+    return true;
+  }
+  return (
+    /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) ||
+    /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{9,10})+$/i.test(value.trim()) ||
+    /^\+\d{2}\d{9,10}$/i.test(value.trim()) ||
+    /^\(\+\d{2}\)\d{9,10}$/i.test(value.trim())
+  );
+});
+defineRule('tel', (value) => {
+  if (!value) {
+    return true;
+  }
+  return (
+    /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) ||
+    /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{9,10})+$/i.test(value.trim()) ||
+    /^\+\d{2}\d{9,10}$/i.test(value.trim()) ||
+    /^\(\+\d{2}\)\d{9,10}$/i.test(value.trim())
+  );
+});
+defineRule('mobile', (value) => {
+  if (!value) {
+    return true;
+  }
+  return (
+    /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) ||
+    /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{9,10})+$/i.test(value.trim()) ||
+    /^\+\d{2}\d{9,10}$/i.test(value.trim()) ||
+    /^\(\+\d{2}\)\d{9,10}$/i.test(value.trim())
+  );
+});
+defineRule('fax', (value) => {
+  if (!value) {
+    return true;
+  }
+  return (
+    /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) ||
+    /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) ||
+    /^0(\d{9,10})+$/i.test(value.trim()) ||
+    /^\+\d{2}\d{9,10}$/i.test(value.trim()) ||
+    /^\(\+\d{2}\)\d{9,10}$/i.test(value.trim())
+  );
+});
+defineRule('kata', (value) => {
+  if (!value) {
+    return true;
+  }
+  return /^([ァ-ンｧ-ﾝﾞﾟ]|ー|　| |（|）|\(|\))*$/i.test(value);
+});
+defineRule('hiragana', (value) => {
+  if (!value) {
+    return true;
+  }
+  return /^([ぁ-ん]|ー|　| |（|）|\(|\))*$/i.test(value);
 });
 
 import BtnAction from '@/Components/Common/BtnAction.vue';
@@ -105,16 +169,18 @@ createInertiaApp({
         .use(PrimeVue, {
           theme: {
             preset: Lara,
-            options: { darkModeSelector: '.app-dark' }
+            options: {
+              darkModeSelector: '.app-dark'
+            }
           },
           locale: {
             startsWith: 'Starts with',
             contains: 'Contains',
-            notContains: 'Does not contain',
+            notContains: 'Not contains',
             endsWith: 'Ends with',
             equals: 'Equals',
             notEquals: 'Not equals',
-            noFilter: 'No filter',
+            noFilter: 'No Filter',
             lt: 'Less than',
             lte: 'Less than or equal to',
             gt: 'Greater than',
@@ -125,22 +191,22 @@ createInertiaApp({
             dateAfter: 'Date is after',
             clear: 'Clear',
             apply: 'Apply',
-            matchAll: 'Match all',
-            matchAny: 'Match any',
-            addRule: 'Add rule',
-            removeRule: 'Remove rule',
+            matchAll: 'Match All',
+            matchAny: 'Match Any',
+            addRule: 'Add Rule',
+            removeRule: 'Remove Rule',
             accept: 'Yes',
             reject: 'No',
             choose: 'Choose',
             upload: 'Upload',
             cancel: 'Cancel',
-            dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-            dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            dayNamesMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            today: 'Today',
-            weekHeader: 'Week',
+            dayNames: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+            dayNamesShort: ['日', '月', '火', '水', '木', '金', '土'],
+            dayNamesMin: ['日', '月', '火', '水', '木', '金', '土'],
+            monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            monthNamesShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            today: '今日',
+            weekHeader: '週',
             firstDayOfWeek: 0,
             dateFormat: 'yy-mm-dd',
             chooseYear: 'Choose Year',
@@ -158,13 +224,13 @@ createInertiaApp({
             nextMinute: 'Next Minute',
             prevSecond: 'Previous Second',
             nextSecond: 'Next Second',
-            am: 'AM',
-            pm: 'PM',
+            am: 'am',
+            pm: 'pm',
             weak: 'Weak',
             medium: 'Medium',
             strong: 'Strong',
             passwordPrompt: 'Enter a password',
-            emptyFilterMessage: 'No results found',
+            emptyFilterMessage: 'No results found', // @deprecated Use 'emptySearchMessage' option instead.
             searchMessage: '{0} results are available',
             selectionMessage: '{0} items selected',
             emptySelectionMessage: 'No selected item',
@@ -173,56 +239,55 @@ createInertiaApp({
             aria: {
               trueLabel: 'True',
               falseLabel: 'False',
-              nullLabel: 'Not selected',
+              nullLabel: 'Not Selected',
               star: '1 star',
               stars: '{star} stars',
-              selectAll: 'Select all items',
-              unselectAll: 'Unselect all items',
+              selectAll: 'All items selected',
+              unselectAll: 'All items unselected',
               close: 'Close',
               previous: 'Previous',
               next: 'Next',
               navigation: 'Navigation',
-              scrollTop: 'Scroll top',
-              moveTop: 'Move top',
-              moveUp: 'Move up',
-              moveDown: 'Move down',
-              moveBottom: 'Move bottom',
-              moveToTarget: 'Move to target',
-              moveToSource: 'Move to source',
-              moveAllToTarget: 'Move all to target',
-              moveAllToSource: 'Move all to source',
+              scrollTop: 'Scroll Top',
+              moveTop: 'Move Top',
+              moveUp: 'Move Up',
+              moveDown: 'Move Down',
+              moveBottom: 'Move Bottom',
+              moveToTarget: 'Move to Target',
+              moveToSource: 'Move to Source',
+              moveAllToTarget: 'Move All to Target',
+              moveAllToSource: 'Move All to Source',
               pageLabel: '{page}',
-              firstPageLabel: 'First page',
-              lastPageLabel: 'Last page',
-              nextPageLabel: 'Next page',
-              prevPageLabel: 'Previous page',
+              firstPageLabel: 'First Page',
+              lastPageLabel: 'Last Page',
+              nextPageLabel: 'Next Page',
+              prevPageLabel: 'Previous Page',
               rowsPerPageLabel: 'Rows per page',
-              jumpToPageDropdownLabel: 'Jump to page dropdown',
-              jumpToPageInputLabel: 'Jump to page input',
-              selectRow: 'Row selected',
-              unselectRow: 'Row unselected',
-              expandRow: 'Expand row',
-              collapseRow: 'Collapse row',
-              showFilterMenu: 'Show filter menu',
-              hideFilterMenu: 'Hide filter menu',
-              filterOperator: 'Filter operator',
-              filterConstraint: 'Filter constraint',
-              editRow: 'Edit row',
-              saveEdit: 'Save edit',
-              cancelEdit: 'Cancel edit',
-              listView: 'List view',
-              gridView: 'Grid view',
+              jumpToPageDropdownLabel: 'Jump to Page Dropdown',
+              jumpToPageInputLabel: 'Jump to Page Input',
+              selectRow: 'Row Selected',
+              unselectRow: 'Row Unselected',
+              expandRow: 'Row Expanded',
+              collapseRow: 'Row Collapsed',
+              showFilterMenu: 'Show Filter Menu',
+              hideFilterMenu: 'Hide Filter Menu',
+              filterOperator: 'Filter Operator',
+              filterConstraint: 'Filter Constraint',
+              editRow: 'Row Edit',
+              saveEdit: 'Save Edit',
+              cancelEdit: 'Cancel Edit',
+              listView: 'List View',
+              gridView: 'Grid View',
               slide: 'Slide',
-              slideNumber: 'Slide {slideNumber}',
-              zoomImage: 'Zoom image',
-              zoomIn: 'Zoom in',
-              zoomOut: 'Zoom out',
-              rotateRight: 'Rotate right',
-              rotateLeft: 'Rotate left'
+              slideNumber: '{slideNumber}',
+              zoomImage: 'Zoom Image',
+              zoomIn: 'Zoom In',
+              zoomOut: 'Zoom Out',
+              rotateRight: 'Rotate Right',
+              rotateLeft: 'Rotate Left'
             }
           }
         })
-
         .use(ToastService)
         .use(createPinia())
         // .component('InputText', InputText)
@@ -244,7 +309,7 @@ createInertiaApp({
   }
 });
 
-InertiaProgress.init({ color: '#eb142c' });
+InertiaProgress.init({ color: '#163374' });
 Inertia.on('start', () => {
   useRequestStore().showLoading();
   NProgress.start();
@@ -253,3 +318,7 @@ Inertia.on('finish', () => {
   useRequestStore().hideLoading();
   NProgress.done();
 });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/serviceworker.js');
+}

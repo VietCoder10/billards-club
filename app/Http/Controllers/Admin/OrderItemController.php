@@ -15,7 +15,7 @@ class OrderItemController
         //
         return Inertia::render('Admin/Order/OrderItem', [
             'data' => [
-                'title' => 'order-item'
+                'title' => 'Chi tiết đơn hàng',
             ]
         ]);
     }

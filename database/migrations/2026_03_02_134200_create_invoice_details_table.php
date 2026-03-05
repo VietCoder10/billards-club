@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('quantity');
 
             $table->decimal('price', 12, 2);
-            $table->decimal('subtotal', 12, 2);
+            $table->decimal('sub_total', 12, 2);
 
             $table->decimal('discount', 12, 2)->default(0);
             $table->decimal('final_line_amount', 12, 2);

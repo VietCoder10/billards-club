@@ -1,0 +1,9 @@
+<?php
+
+namespace App\Repositories\Option;
+
+interface OptionInterface
+{
+    public function getSupplier();
+    public function getProduct();
+}

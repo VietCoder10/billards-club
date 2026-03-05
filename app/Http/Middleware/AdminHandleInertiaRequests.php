@@ -51,7 +51,8 @@ class AdminHandleInertiaRequests extends Middleware
             [
                 'label' => 'Phiên chơi',
                 'icon' => 'pi pi-play-circle',
-                'to' => route('admin.order.index'),
+                'to' => route('admin.order.indexSession'),
+                'active' => in_array($routeName, ['admin.order.indexSession']),
             ],
             [
                 'label' => 'Quản lý',
@@ -63,13 +64,15 @@ class AdminHandleInertiaRequests extends Middleware
                         'items' => [
                             [
                                 'label' => 'Quản lý nhà cung cấp',
-                                'icon'  => 'pi pi-fw pi-list',
+                                'icon'  => 'pi pi-fw pi-briefcase',
                                 'to' => route('admin.supplier.index'),
-                                'active' => in_array($routeName, ['admin.supplier.index', 'admin.suppler.store', 'admin.suppler.update']),
+                                'active' => in_array($routeName, ['admin.supplier.index', 'admin.supplier.store', 'admin.supplier.update']),
                             ],
                             [
                                 'label' => 'Quản lý sản phẩm',
-                                'icon'  => 'pi pi-fw pi-bookmark',
+                                'icon'  => 'pi pi-fw pi-box',
+                                'to' => route('admin.product.index'),
+                                'active' => in_array($routeName, ['admin.product.index', 'admin.product.store', 'admin.product.update'])
                             ],
                         ],
                     ],
@@ -80,6 +83,7 @@ class AdminHandleInertiaRequests extends Middleware
                     [
                         'label' => 'Quản lý bàn',
                         'icon'  => 'pi pi-fw pi-bookmark',
+                        'to' => route('admin.table.index'),
                     ],
                     [
                         'label' => 'Quản lý voucher',
@@ -94,8 +98,10 @@ class AdminHandleInertiaRequests extends Middleware
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                     [
-                        'label' => 'Quản lý order',
+                        'label' => 'Quản lý đơn hàng',
                         'icon'  => 'pi pi-fw pi-bookmark',
+                        'to' => route('admin.order.index'),
+                        'active' => in_array($routeName, ['admin.order.index', 'admin.order.store', 'admin.order.update'])
                     ],
                 ],
             ],
@@ -107,6 +113,19 @@ class AdminHandleInertiaRequests extends Middleware
         $breadcrumbs = [
             ['label' => 'Trang chủ', 'icon' => 'pi pi-home', 'url' => route('admin.dashboard.index')],
         ];
+        if (in_array($routeName, ['admin.order.indexSession'])) {
+            $breadcrumbs[] = ['label' => 'Phiên chơi', 'icon' => 'pi pi-play-circle', 'url' => session()->get('admin.order.list')[0] ?? route('admin.order.indexSession')];
+        }
+
+        if (in_array($routeName, ['admin.order.create', 'admin.order.edit', 'admin.order.store', 'admin.order.update'])) {
+            $breadcrumbs[] = ['label' => 'Danh sách đơn hàng', 'icon' => 'pi pi-list', 'url' => session()->get('admin.order.list')[0] ?? route('admin.order.index')];
+            if (in_array($routeName, ['admin.order.edit', 'admin.order.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa đơn hàng', 'icon' => 'pi pi-user-edit', 'url' => route('admin.order.edit', $request->order)];
+            }
+            if (in_array($routeName, ['admin.order.create', 'admin.order.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm đơn hàng', 'icon' => 'pi pi-user-plus', 'url' => route('admin.order.create')];
+            }
+        }
         if (in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update'])) {
             $breadcrumbs[] = ['label' => 'Danh sách người dùng', 'icon' => 'pi pi-list', 'url' => session()->get('admin.user.list')[0] ?? route('admin.user.index')];
             if (in_array($routeName, ['admin.user.edit', 'admin.user.update'])) {
@@ -117,7 +136,7 @@ class AdminHandleInertiaRequests extends Middleware
             }
         }
         if (in_array($routeName, ['admin.supplier.index', 'admin.supplier.create', 'admin.supplier.store', 'admin.supplier.edit', 'admin.supplier.update'])) {
-            $breadcrumbs[] = ['label' => 'Quản lí nhà cung cấp', 'icon' => 'pi pi-list', 'url' => route('admin.supplier.index')];
+            $breadcrumbs[] = ['label' => 'Quản lí nhà cung cấp', 'icon' => 'pi pi-fw pi-briefcase', 'url' => route('admin.supplier.index')];
             if (in_array($routeName, ['admin.supplier.create', 'admin.supplier.store'])) {
                 $breadcrumbs[] = ['label' => 'Thêm nhà cung cấp', 'icon' => 'pi pi-pencil', 'url' => route('admin.supplier.create')];
             }
@@ -125,8 +144,14 @@ class AdminHandleInertiaRequests extends Middleware
                 $breadcrumbs[] = ['label' => 'Chỉnh sửa nhà cung cấp', 'icon' => 'pi pi-pencil', 'url' => route('admin.supplier.edit', $request->supplier)];
             }
         }
-        if (in_array($routeName, ['admin.payment.index'])) {
-            $breadcrumbs[] = ['label' => 'Điều tra・Nhập kim・Trả kim・Trễ hạn', 'icon' => 'pi pi-list', 'url' => route('admin.payment.index')];
+        if (in_array($routeName, ['admin.product.index', 'admin.product.create', 'admin.product.store', 'admin.product.edit', 'admin.product.update'])) {
+            $breadcrumbs[] = ['label' => 'Quản lí sản phẩm', 'icon' => 'pi pi-fw pi-box', 'url' => route('admin.product.index')];
+            if (in_array($routeName, ['admin.product.create', 'admin.product.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm sản phẩm', 'icon' => 'pi pi-pencil', 'url' => route('admin.product.create')];
+            }
+            if (in_array($routeName, ['admin.product.edit', 'admin.product.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa sản phẩm', 'icon' => 'pi pi-pencil', 'url' => route('admin.product.edit', $request->product)];
+            }
         }
 
         return array_merge(parent::share($request), [

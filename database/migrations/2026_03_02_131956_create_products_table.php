@@ -14,14 +14,16 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('product_name');
-            $table->string('image')->nullable();
-            $table->string('category')->nullable();
+            $table->string('avatar')->nullable();
+            $table->tinyInteger('category')->default(1)->comment('1: Đồ ăn, 2: Đồ uống, 3: Thuê Gậy');
             $table->string('sku')->unique(); // Mã sản phẩm
             $table->foreignId('supplier_id')
                 ->constrained('suppliers')
                 ->cascadeOnDelete();
-            $table->decimal('price', 10, 2);
+            $table->decimal('cost_price', 10, 2)->default(0);  // Giá nhập
+            $table->decimal('sale_price', 10, 2)->default(0);  // Giá bán            
             $table->integer('quantity')->default(0);
+            $table->decimal('total_amount', 10, 2)->nullable();
             $table->text('description')->nullable();
 
             $table->softDeletes();

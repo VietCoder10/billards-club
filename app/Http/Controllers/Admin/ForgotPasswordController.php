@@ -30,7 +30,7 @@ class ForgotPasswordController extends BaseController
 
         return Inertia::render('Admin/Auth/ForgotPassword', $this->mergeSession([
             'data' => [
-                'title' => 'パスワードを忘れた',
+                'title' => 'Quên mật khẩu',
                 'request' => $request->all(),
             ],
         ]));
@@ -50,12 +50,12 @@ class ForgotPasswordController extends BaseController
     public function store(AdminForgotPasswordRequest $request)
     {
         if (!$this->user->sendResetPasswordLink($request)) {
-            $this->setFlash(__('パスワードリセットリンクの送信に失敗しました。'), 'error');
-            return redirect()->back()->with('error', 'パスワードリセットリンクの送信に失敗しました。');
+            $this->setFlash(__('Gửi liên kết đặt lại mật khẩu thất bại.'), 'error');
+            return redirect()->back()->with('error', 'Gửi liên kết đặt lại mật khẩu thất bại.');
         }
 
-        $this->setFlash(__('パスワードリセットリンクをメールで送信しました。'));
-        return redirect()->route('admin.login.index')->with('success', 'パスワードリセットリンクをメールで送信しました。');
+        $this->setFlash(__('Gửi liên kết đặt lại mật khẩu thành công.'));
+        return redirect()->route('admin.login.index')->with('success', 'Gửi liên kết đặt lại mật khẩu thành công.');
         //
     }
 

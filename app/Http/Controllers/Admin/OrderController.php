@@ -2,37 +2,72 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Components\SearchQueryComponent;
+use App\Http\Controllers\BaseController;
+use App\Models\Order;
+use App\Models\Table;
+use App\Repositories\Option\OptionInterface;
+use App\Repositories\Order\OrderInterface;
+use App\Repositories\Tables\TableInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\In;
 use Inertia\Inertia;
+use League\Uri\Idna\Option;
 
-class OrderController
+class OrderController extends BaseController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    private OptionInterface $option;
+    private TableInterface $table;
+    private OrderInterface $order;
+    public function __construct(TableInterface $table, OrderInterface $order, OptionInterface $option)
     {
-        //
-        return Inertia::render('Admin/Order/Order', [
+        $this->table = $table;
+        $this->order = $order;
+        $this->option = $option;
+    }
+    public function index(Request $request)
+    {
+        $orders = $this->order->get($request);
+        session()->forget('admin.order.list');
+        session()->push('admin.order.list', url()->full());
+        return Inertia::render('Admin/Order/Index', $this->mergeSession([
             'data' => [
-                'title' => 'Danh sách bàn'
+                'title' => 'Danh sách đơn hàng',
+                'orders' => $orders->items(),
+                'sortLinks' => $this->sortLinks('admin.order.index', [
+                    ['key' => 'table_name', 'name' => 'Tên bàn'],
+                    ['key' => 'started_at', 'name' => 'Ngày tạo'],
+                    ['key' => 'ended_at', 'name' => 'Ngày kết thúc'],
+                    ['key' => 'table_total', 'name' => 'Tổng tiền bàn'],
+                    ['key' => 'server_total', 'name' => 'Tổng tiền dịch vụ'],
+                    ['key' => 'final_total', 'name' => 'Tổng tiền đơn hàng'],
+                    ['key' => 'status', 'name' => 'Trạng thái'],
+                ], $request),
+                'request' => $request->all(),
+                'paginator' => $this->paginator($orders->appends(SearchQueryComponent::alterQuery($request)))
             ],
-            'tables' => [
-                ['id' => 1, 'name' => 'Bàn 01', 'status' => 'playing', 'playing_time' => '01:20'],
-                ['id' => 2, 'name' => 'Bàn 02', 'status' => 'empty'],
-                ['id' => 3, 'name' => 'Bàn 03', 'status' => 'playing', 'playing_time' => '00:45'],
-                ['id' => 4, 'name' => 'Bàn 04', 'status' => 'empty'],
-                ['id' => 5, 'name' => 'Bàn 05', 'status' => 'empty'],
-                ['id' => 6, 'name' => 'Bàn 06', 'status' => 'playing', 'playing_time' => '02:10'],
-                ['id' => 7, 'name' => 'Bàn 07', 'status' => 'empty'],
-                ['id' => 8, 'name' => 'Bàn 08', 'status' => 'empty'],
-                ['id' => 9, 'name' => 'Bàn 09', 'status' => 'empty'],
-                ['id' => 10, 'name' => 'Bàn 10', 'status' => 'empty'],
-            ]
-        ]);
+        ]));
     }
 
+    public function indexSession(Request $request)
+    {
+        //
+        $table = $this->table->get($request);
+        session()->forget('admin.order.list');
+        session()->push('admin.order.list', url()->full());
+        return Inertia::render('Admin/Order/Order', $this->mergeSession([
+            'data' => [
+                'title' => 'Danh sách đơn hàng',
+                'tables' => $table->items(),
+                'request' => $request->all(),
+                'paginator' => $this->paginator($table->appends(SearchQueryComponent::alterQuery($request)))
+            ],
+
+        ]));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -55,6 +90,12 @@ class OrderController
     public function show(string $id)
     {
         //
+        return Inertia::render('Admin/Order/Form', $this->mergeSession([
+            'data' => [
+                'title' => 'Chỉnh sửa đơn hàng',
+                'productOptions' => $this->option->getProduct(),
+            ],
+        ]));
     }
 
     /**

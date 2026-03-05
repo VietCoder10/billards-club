@@ -14,19 +14,15 @@ return new class extends Migration
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')
-                ->constrained()
+                ->constrained('orders')
                 ->cascadeOnDelete();
-
             $table->foreignId('product_id')
-                ->constrained()
+                ->constrained('products')
                 ->cascadeOnDelete();
-
             $table->string('product_name'); // lưu snapshot tên
             $table->integer('quantity')->default(1);
-
             $table->decimal('price', 12, 2); // giá tại thời điểm order
-            $table->decimal('subtotal', 12, 2);
-
+            $table->decimal('sub_total', 12, 2);
             $table->softDeletes();
             $table->timestamps();
         });

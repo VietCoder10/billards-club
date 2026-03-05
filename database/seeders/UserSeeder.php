@@ -15,10 +15,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User;
-        $user->name = 'admin';
-        $user->email = 'admin@gmail.com';
-        $user->password = Hash::make('Laravel2025');
-        $user->save();
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Quản trị viên',
+                'password' => Hash::make('Laravel2025'),
+            ]
+        );
     }
 }

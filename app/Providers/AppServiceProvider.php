@@ -14,6 +14,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\App\Providers\AdminProvider::class);
         $this->app->register(\App\Providers\Domain\AuthDomainProvider::class);
         $this->app->register(\App\Providers\SupplierProvider::class);
+        $this->app->register(\App\Providers\ProductProvider::class);
+        $this->app->register(\App\Providers\OptionProvider::class);
+        $this->app->register(\App\Providers\TableProvider::class);
+        $this->app->register(\App\Providers\OrderProvider::class);
     }
 
     /**

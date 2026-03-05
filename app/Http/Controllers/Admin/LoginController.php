@@ -33,7 +33,7 @@ class LoginController extends BaseController
 
         return Inertia::render('Admin/Auth/Login', $this->mergeSession([
             'data' => [
-                'title' => 'ログイン',
+                'title' => 'Đăng nhập',
                 'request' => $request->all(),
             ],
         ]));
@@ -62,7 +62,7 @@ class LoginController extends BaseController
 
             return redirect($request->url_redirect ? $request->url_redirect : route('admin.dashboard.index'));
         }
-        $this->setFlash(__('ログインIDとパスワードが一致しません。'), 'error');
+        $this->setFlash(__('Tên đăng nhập và mật khẩu không khớp.'), 'error');
 
         return redirect()->route('admin.login.index');
     }
