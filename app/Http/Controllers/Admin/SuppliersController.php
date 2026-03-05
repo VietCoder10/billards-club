@@ -29,16 +29,16 @@ class SuppliersController extends BaseController
         session()->push('admin.supplier.list', url()->full());
         return Inertia::render('Admin/Supplier/Index', $this->mergeSession([
             'data' => [
-                'title' => 'Suppliers List',
+                'title' => 'Danh sách nhà cung cấp',
                 'suppliers' => $suppliers->items(),
                 'sortLinks' => $this->sortLinks('admin.supplier.index', [
-                    ['key' => 'supplier_name', 'name' => 'Name'],
-                    ['key' => 'contact_person', 'name' => 'Contact Person'],
+                    ['key' => 'supplier_name', 'name' => 'Tên'],
+                    ['key' => 'contact_person', 'name' => 'Người liên hệ'],
                     ['key' => 'email', 'name' => 'Email'],
-                    ['key' => 'phone', 'name' => 'Phone'],
-                    ['key' => 'address', 'name' => 'Address'],
-                    ['key' => 'note', 'name' => 'Note'],
-                    ['key' => 'status', 'name' => 'Status']
+                    ['key' => 'phone', 'name' => 'Số điện thoại'],
+                    ['key' => 'address', 'name' => 'Địa chỉ'],
+                    ['key' => 'note', 'name' => 'Ghi chú'],
+                    ['key' => 'status', 'name' => 'Trạng thái']
                 ], $request),
                 'request' => $request->all(),
                 'paginator' => $this->paginator($suppliers->appends(SearchQueryComponent::alterQuery($request))),
@@ -54,7 +54,7 @@ class SuppliersController extends BaseController
         //
         return Inertia::render('Admin/Supplier/Form', [
             'data' => [
-                'title' => 'Add Supplier',
+                'title' => 'Thêm nhà cung cấp',
                 'urlBack' => session()->get('admin.supplier.list')[0] ?? route('admin.supplier.index')
             ]
         ]);
@@ -68,11 +68,11 @@ class SuppliersController extends BaseController
         //
         $supplier = $this->supplier->store($request);
         if (! $supplier) {
-            $this->setFlash('Add Supplier Unsuccessfully', 'error');
+            $this->setFlash('Thêm nhà cung cấp thất bại', 'error');
             return redirect()->route('admin.supplier.create');
         }
 
-        $this->setFlash('Add Supplier is Successfully', 'success');
+        $this->setFlash('Thêm nhà cung cấp thành công', 'success');
         return redirect()->route('admin.supplier.index');
     }
 
@@ -92,13 +92,13 @@ class SuppliersController extends BaseController
         //
         $supplier = $this->supplier->getById($id);
         if (! $supplier) {
-            $this->setFlash(__('An error has occurred.'), 'error');
+            $this->setFlash(__('Không tìm thấy nhà cung cấp'), 'error');
 
             return redirect()->route('admin.supplier.index');
         }
         return Inertia::render('Admin/Supplier/Form', [
             'data' => [
-                'title' => 'Edit Supplier',
+                'title' => 'Chỉnh sửa nhà cung cấp',
                 'supplier' => $supplier,
                 'isEdit' => true,
                 'urlBack' => session()->get('admin.supplier.list')[0] ?? route('admin.supplier.index'),
@@ -114,10 +114,10 @@ class SuppliersController extends BaseController
         //
         $supplier = $this->supplier->update($request, $id);
         if (! $supplier) {
-            $this->setFlash('An error has occurred.', 'error');
-            return redirect()->route('admin.supplier.edit');
+            $this->setFlash('Cập nhật nhà cung cấp thất bại', 'error');
+            return redirect()->route('admin.supplier.edit', $id);
         }
-        $this->setFlash(__('Update Is Successfully'), 'success');
+        $this->setFlash(__('Cập nhật nhà cung cấp thành công'), 'success');
         return redirect()->route('admin.supplier.index');
     }
 
@@ -130,11 +130,11 @@ class SuppliersController extends BaseController
         $supplier = $this->supplier->destroy($id);
         if (! $supplier) {
             return response()->json([
-                'message' => 'Delete Supplier Is Unsuccessfully'
+                'message' => 'Xóa nhà cung cấp không thành công'
             ], StatusCode::INTERNAL_ERR);
         }
         return response()->json([
-            'message' => 'Delete Supplier Successfully'
+            'message' => 'Xóa nhà cung cấp thành công'
         ], StatusCode::OK);
     }
 }

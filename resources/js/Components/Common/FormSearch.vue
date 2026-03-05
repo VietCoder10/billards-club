@@ -34,9 +34,9 @@ const exportCsv = () => {
         <div>
           <InputText type="text" class="w-300" name="free_word" id="free_word" placeholder="Search" v-model="model.free_word" />
           <a :href="state.urlDownload" id="linkDownload" ref="linkDownload" download></a>
-          <Button type="submit" class="ml-2"> <i class="pi pi-search"></i> &nbsp; Search </Button>
-          <Link v-if="createUrl" :href="createUrl" class="ml-2"><Button icon="pi pi-plus" label="Add" /></Link>
-          <Button v-if="csvRoute" @click.stop="exportCsv" class="ml-2" type="button" icon="pi pi-download" label="CSV出力" />
+          <Button type="submit" class="ml-2"> <i class="pi pi-search"></i> &nbsp; Tìm kiếm </Button>
+          <Link v-if="createUrl" :href="createUrl" class="ml-2"><Button icon="pi pi-plus" label="Thêm mới" /></Link>
+          <Button v-if="csvRoute" @click.stop="exportCsv" class="ml-2" type="button" icon="pi pi-download" label="Xuất CSV" />
         </div>
       </form>
     </VeeForm>

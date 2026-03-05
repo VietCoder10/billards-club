@@ -9,12 +9,7 @@ import { useRequestStore } from '@/store/request';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch
-          :request="$page.props.data.request"
-          :routeName="'admin.supplier.index'"
-          :createUrl="route('admin.supplier.create')"
-          :csvRoute="'admin.supplier.exportCsv'"
-        />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.supplier.index'" :createUrl="route('admin.supplier.create')" :csvRoute="'admin.supplier.exportCsv'" />
 
         <!-- Bảng dữ liệu suppliers -->
         <template v-if="$page.props.data.suppliers.length">
@@ -32,9 +27,9 @@ import { useRequestStore } from '@/store/request';
               <table role="table" class="p-datatable-table">
                 <thead class="p-datatable-thead" role="rowgroup" style="position: sticky">
                   <tr>
-                    <th class="p-datatable-header-cell w-140px">Number</th>
+                    <th class="p-datatable-header-cell w-140px">STT</th>
                     <GenerateSort :data="$page.props.data.sortLinks" />
-                    <th class="p-datatable-header-cell w-140px">Actions</th>
+                    <th class="p-datatable-header-cell w-140px">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody class="p-datatable-tbody">
@@ -46,7 +41,7 @@ import { useRequestStore } from '@/store/request';
                       'p-row-even': index % 2 !== 0
                     }"
                   >
-                    <td>{{ index+1 }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ supplier.supplier_name }}</td>
                     <td>{{ supplier.contact_person }}</td>
                     <td>{{ supplier.email }}</td>

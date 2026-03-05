@@ -78,9 +78,9 @@ const formatPrice = (value) => {
         </template>
         <template #icons>
           <Link :href="$page.props.data.urlBack">
-            <Button label="Back " icon="pi pi-arrow-left" class="btn-action"></Button>
+            <Button label="Quay lại" icon="pi pi-arrow-left" class="btn-action"></Button>
           </Link>
-          <Button label="Save" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
+          <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
         </template>
         <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
           <form @submit="handleSubmit($event, onSubmit)" id="order-form" class="form-data">

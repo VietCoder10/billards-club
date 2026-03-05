@@ -44,19 +44,19 @@ watch(
   }
 );
 let messError = {
-  en: {
+  vi: {
     fields: {
       email: {
-        required: 'Please enter a value.',
-        email: 'Please enter a valid email address format (xxx@yyyy.zzz).',
-        max: 'Please enter 255 characters or fewer.'
+        required: 'Vui lòng nhập email.',
+        email: 'Vui lòng nhập đúng định dạng email (xxx@yyyy.zzz).',
+        max: 'Vui lòng nhập tối đa 255 ký tự.'
       },
       password: {
-        required: 'Please enter a value.',
-        max: 'Please enter 100 characters or fewer.',
-        min: 'Please enter at least 8 characters.',
-        password_str: 'The password must include both uppercase and lowercase letters.',
-        password_number: 'The password must include at least one number.'
+        required: 'Vui lòng nhập mật khẩu.',
+        max: 'Vui lòng nhập tối đa 100 ký tự.',
+        min: 'Vui lòng nhập ít nhất 8 ký tự.',
+        password_str: 'Mật khẩu phải bao gồm cả chữ hoa và chữ thường.',
+        password_number: 'Mật khẩu phải bao gồm ít nhất một chữ số.'
       }
     }
   }
@@ -81,8 +81,8 @@ configure({
 
                   <div class="mb-4">
                     <div>
-                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">Email Address</label>
-                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="Email Address" v-slot="{ field, meta: metaField, handleChange }">
+                      <label for="email" class="block text-surface-900 dark:text-surface-0 mb-1">Địa chỉ Email</label>
+                      <Field name="email" rules="required|max:255|email" v-model="state.model.email" placeholder="Địa chỉ Email" v-slot="{ field, meta: metaField, handleChange }">
                         <InputText
                           v-model="state.model.email"
                           v-bind="field"
@@ -91,14 +91,14 @@ configure({
                           }"
                           @update:model-value="handleChange"
                           class="w-full md:w-[30rem]"
-                          placeholder="Email Address"
+                          placeholder="Địa chỉ Email"
                         />
                       </Field>
                     </div>
                     <ErrorMessage class="p-error" name="email" />
                   </div>
                   <div class="mb-4">
-                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">Password</label>
+                    <label for="password" class="block text-surface-900 dark:text-surface-0 mb-1">Mật khẩu</label>
                     <Field name="password" rules="required|max:100|min:8|password_str|password_number" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
@@ -107,7 +107,7 @@ configure({
                         :class="{
                           'p-invalid': !metaField.valid && metaField.touched
                         }"
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         hideIcon="pi pi-eye"
                         showIcon="pi pi-eye-slash"
                         :feedback="false"
@@ -121,14 +121,14 @@ configure({
                       <ErrorMessage class="p-error" name="password" />
                     </Field>
                   </div>
-                  <div class="flex items-center justify-between mt-2 mb-4 gap-8 warning-password">
-                    ※The password must include lowercase letters, uppercase letters, and numbers.<br />
-                    ※Please enter at least 8 characters
+                  <div class="flex flex-col items-start mt-2 mb-4 gap-1 warning-password">
+                    <span>※ Mật khẩu phải bao gồm chữ thường, chữ hoa và số.</span>
+                    <span>※ Vui lòng nhập ít nhất 8 ký tự.</span>
                   </div>
                   <div class="flex items-center justify-between mt-2 gap-8 forgot-password">
-                    <Link :href="route('admin.forgot-password.index')">Forgot your password? </Link>
+                    <Link :href="route('admin.forgot-password.index')">Quên mật khẩu? </Link>
                   </div>
-                  <Button label="Login" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
+                  <Button label="Đăng nhập" type="submit" icon="pi pi-sign-in" class="w-full mx-auto mt-5"></Button>
                 </div>
               </div>
             </div>

@@ -1,3 +1,3 @@
 <template>
-  <div class="data-empty mt-2">No data available</div>
+  <div class="data-empty mt-2">Không có dữ liệu</div>
 </template>

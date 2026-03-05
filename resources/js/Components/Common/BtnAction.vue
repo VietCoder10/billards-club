@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-content-center">
-    <Button type="button" iconPos="right" icon="pi pi-spin pi-cog" label="Select Action" @click="toggle" class="btn-action" aria-haspopup="true" aria-controls="overlay_menu" />
+    <Button type="button" iconPos="right" icon="pi pi-spin pi-cog" label="Thao tác" @click="toggle" class="btn-action" aria-haspopup="true" aria-controls="overlay_menu" />
     <Menu :submenuLabel="null" ref="menu" id="overlay_menu" class="menu-action w-140px" :model="items" :popup="true">
       <template #item="{ item, props }">
         <Link v-if="!item.deleteFlag" class="flex align-items-center" :href="item.url" v-bind="props.action">
@@ -34,12 +34,12 @@ const items = ref([
   {
     items: [
       {
-        label: 'Edit',
+        label: 'Chỉnh sửa',
         url: props.urlEdit,
         icon: 'pi pi-file-edit'
       },
       {
-        label: 'Delete',
+        label: 'Xóa',
         deleteFlag: true,
         url: props.urlDelete,
         icon: 'pi pi-trash'
@@ -54,8 +54,8 @@ const confirmDelete = () => {
     showCancelButton: true,
     confirmButtonColor: 'var(--p-button-primary-background)',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel'
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy'
   }).then((result) => {
     if (result.isConfirmed) {
       useRequestStore().showLoading();

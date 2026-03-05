@@ -65,14 +65,14 @@ import logo from '@/assets/imgs/logo.svg';
         <div class="layout-topbar-menu-content">
           <button v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }" type="button" class="layout-topbar-action">
             <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <span>Hồ sơ</span>
           </button>
           <div
             class="config-panel hidden absolute top-[3.25rem] right-10 w-50 p-0 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
           >
             <div class="flex flex-col gap-4">
               <Link :href="route('admin.logout')">
-                <Button variant="link" label="Logout" icon="pi pi-sign-out" />
+                <Button variant="link" label="Đăng xuất" icon="pi pi-sign-out" />
               </Link>
             </div>
           </div>

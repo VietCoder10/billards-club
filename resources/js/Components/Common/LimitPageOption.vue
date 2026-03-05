@@ -6,11 +6,11 @@
       <Column field="category" header="Category"></Column>
       <Column field="quantity" header="Quantity"></Column>
     </DataTable>
-    <span class="left">Display number</span>
+    <span class="left">Số trang</span>
     <Select v-model="limit" :options="limitPageOption" class="w-120 ml-2">
       <template #value="slotProps">
         <span>
-          {{ slotProps.value + 'page' }}
+          {{ slotProps.value + ' trang' }}
         </span>
       </template>
     </Select>
