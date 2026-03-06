@@ -8,6 +8,7 @@ use App\Models\Table;
 interface TableInterface
 {
     public function get($request);
+    public function getTableSession($request);
 
     public function getById($id);
 

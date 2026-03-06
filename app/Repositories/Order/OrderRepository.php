@@ -53,7 +53,7 @@ class OrderRepository implements OrderInterface
             ->where('id', $id)
             ->first();
     }
-    public function create(\Illuminate\Http\Request $request)
+    public function create(OrderRequest $request)
     {
         $order = new Order();
         $order->table_id = $request->table_id;
@@ -61,16 +61,14 @@ class OrderRepository implements OrderInterface
         $order->status = OrderStatus::PENDING;
         $order->started_at = now();
         $order->order_number = 'ORD-' . strtoupper(\Illuminate\Support\Str::random(8));
-        
-        $table = \App\Models\Table::find($request->table_id);
+
+        $table = Table::find($request->table_id);
         if ($table) {
             $order->price_per_hour = $table->tablePrice->price_per_hour ?? 0;
-            
-            // Update table status to PLAYING (assuming 2 is playing based on TableItem.vue)
-            $table->status = 2; 
+            $table->status = 2;
             $table->save();
         }
-        
+
         $order->save();
         return $order;
     }
@@ -84,9 +82,9 @@ class OrderRepository implements OrderInterface
             $order = $this->fillOrderData($request, $order);
             $order->save();
 
-            $itemIds = collect($request->details)->pluck('id')->filter()->toArray();
+            $itemIds = collect($request->order_details)->pluck('id')->filter()->toArray();
             $order->details()->whereNotIn('id', $itemIds)->delete();
-            foreach ($request->details ?? [] as $value) {
+            foreach ($request->order_details ?? [] as $value) {
                 $row = [
                     'order_id' => $order->id,
                     'product_id' => $value['product_id'],

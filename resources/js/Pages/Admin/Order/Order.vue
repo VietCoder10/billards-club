@@ -6,6 +6,7 @@ import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
 import TableItem from '@/Components/Billiard/TableItem.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { useToast } from 'primevue/usetoast';
+import Swal from 'sweetalert2';
 
 const props = defineProps(['data']);
 const toast = useToast();
@@ -22,12 +23,21 @@ const handleTableClick = (table) => {
   }
 
   if (table.status === 1) {
-    // Confirm before starting a new order
-    if (confirm(`Bạn muốn bắt đầu mở ${table.table_name}?`)) {
-      useForm({
-        table_id: table.id
-      }).post(route('admin.order.store'));
-    }
+    Swal.fire({
+      title: `Bạn muốn bắt đầu mở ${table.table_name}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Mở bàn',
+      cancelButtonText: 'Hủy',
+      confirmButtonColor: 'var(--p-button-primary-background)',
+      cancelButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        useForm({
+          table_id: table.id
+        }).post(route('admin.order.store'));
+      }
+    });
   } else if (table.status === 2 && table.order_id) {
     Inertia.get(route('admin.order-item.edit', table.order_id));
   }

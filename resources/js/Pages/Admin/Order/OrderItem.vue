@@ -12,7 +12,7 @@ const toast = useToast();
 const state = reactive({
   model: {
     order: {},
-    details: []
+    order_details: []
   }
 });
 
@@ -26,9 +26,9 @@ const filteredProducts = computed(() => {
 
 const initData = () => {
   state.model.order = { ...props.data.order };
-  state.model.details = (props.data.order.details || []).map((item) => ({
+  state.model.order_details = (props.data.order.details || []).map((item) => ({
     ...item,
-    index: 'key_' + Math.random().toString(36).substr(2, 9)
+    index: 'key_' + (Math.random() * 100000000000000000).toFixed(0)
   }));
   calculatePlayTime();
 };
@@ -53,12 +53,12 @@ onBeforeUnmount(() => {
 });
 
 const addToOrder = (product) => {
-  const found = state.model.details.find((i) => i.product_id === product.id);
+  const found = state.model.order_details.find((i) => i.product_id === product.id);
   if (found) {
     found.quantity++;
     found.sub_total = found.quantity * found.price;
   } else {
-    state.model.details.push({
+    state.model.order_details.push({
       product_id: product.id,
       product_name: product.product_name,
       price: product.sale_price,
@@ -70,7 +70,7 @@ const addToOrder = (product) => {
   }
 };
 
-const serviceTotal = computed(() => state.model.details.reduce((s, i) => s + (Number(i.sub_total) || 0), 0));
+const serviceTotal = computed(() => state.model.order_details.reduce((s, i) => s + (Number(i.sub_total) || 0), 0));
 const finalTotal = computed(() => (Number(state.model.order.table_total) || 0) + serviceTotal.value);
 
 const increaseQty = (item) => {
@@ -83,14 +83,14 @@ const decreaseQty = (item) => {
     item.quantity--;
     item.sub_total = item.quantity * item.price;
   } else {
-    state.model.details = state.model.details.filter((i) => i.index !== item.index);
+    state.model.order_details = state.model.order_details.filter((i) => i.index !== item.index);
   }
 };
 
 const onSubmit = () => {
   const submitData = {
     ...state.model.order,
-    details: state.model.details,
+    order_details: state.model.order_details,
     service_total: serviceTotal.value,
     final_total: finalTotal.value
   };
@@ -149,7 +149,7 @@ const formatPrice = (value) => {
                     </div>
 
                     <!-- Order Items -->
-                    <div v-for="(item, i) in state.model.details" :key="item.index" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
+                    <div v-for="(item, i) in state.model.order_details" :key="item.index" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
                       <div class="flex items-center gap-3">
                         <img :src="item.image || '/images/default-avatar.svg'" class="w-12 h-12 rounded-md object-cover" />
                         <div>
@@ -175,7 +175,7 @@ const formatPrice = (value) => {
                       </div>
                     </div>
 
-                    <div v-if="state.model.details.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400 opacity-60">
+                    <div v-if="state.model.order_details.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400 opacity-60">
                       <i class="pi pi-shopping-bag text-4xl mb-2"></i>
                       <p>Chưa có món nào được thêm</p>
                     </div>

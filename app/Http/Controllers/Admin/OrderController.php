@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Admin\Order\OrderRequest;
 use App\Models\Order;
 use App\Models\Table;
 use App\Repositories\Option\OptionInterface;
@@ -55,15 +56,14 @@ class OrderController extends BaseController
     public function indexSession(Request $request)
     {
         //
-        $table = $this->table->get($request);
+        $table = $this->table->getTableSession($request);
         session()->forget('admin.order.list');
         session()->push('admin.order.list', url()->full());
         return Inertia::render('Admin/Order/Order', $this->mergeSession([
             'data' => [
                 'title' => 'Danh sách đơn hàng',
-                'tables' => $table->items(),
+                'tables' => $table,
                 'request' => $request->all(),
-                'paginator' => $this->paginator($table->appends(SearchQueryComponent::alterQuery($request)))
             ],
 
         ]));
@@ -79,7 +79,7 @@ class OrderController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
         $order = $this->order->create($request);
         return redirect()->route('admin.order-item.edit', $order->id);

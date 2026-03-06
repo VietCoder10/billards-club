@@ -153,11 +153,11 @@ watch(
 watch(
   () => state.model.order_details.map((item) => ({ product_id: item.product_id })),
   (v) => {
-    const details = state.model.order_details;
+    const order_details = state.model.order_details;
     const seen = {};
     const toRemove = [];
 
-    details.forEach((item, index) => {
+    order_details.forEach((item, index) => {
       const product = props.data.productOptions.find((p) => p.value == item.product_id);
       if (product) {
         item.price = Number(product.sale_price || 0);
@@ -167,11 +167,11 @@ watch(
       if (item.product_id) {
         if (seen[item.product_id] !== undefined) {
           const prevIndex = seen[item.product_id];
-          details[prevIndex].quantity += item.quantity;
+          order_details[prevIndex].quantity += item.quantity;
 
           // Keep the ID if the current item has one but the previous one doesn't
-          if (item.id && !details[prevIndex].id) {
-            details[prevIndex].id = item.id;
+          if (item.id && !order_details[prevIndex].id) {
+            order_details[prevIndex].id = item.id;
           }
 
           toRemove.push(index);
@@ -183,7 +183,7 @@ watch(
 
     // Remove duplicates from end to start
     for (let i = toRemove.length - 1; i >= 0; i--) {
-      details.splice(toRemove[i], 1);
+      order_details.splice(toRemove[i], 1);
     }
   },
   { deep: true }
@@ -208,7 +208,7 @@ const onSubmit = async () => {
   isSubmitting.value = true;
   const submitData = {
     ...state.model.order,
-    details: state.model.order_details
+    order_details: state.model.order_details
   };
 
   useForm(submitData).put(route('admin.order.update', props.data.order.id), {

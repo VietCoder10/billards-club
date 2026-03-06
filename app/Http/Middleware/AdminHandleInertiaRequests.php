@@ -52,7 +52,7 @@ class AdminHandleInertiaRequests extends Middleware
                 'label' => 'Phiên chơi',
                 'icon' => 'pi pi-play-circle',
                 'to' => route('admin.order.indexSession'),
-                'active' => in_array($routeName, ['admin.order.indexSession']),
+                'active' => in_array($routeName, ['admin.order.indexSession', 'admin.order-item.edit']),
             ],
             [
                 'label' => 'Quản lý',
@@ -86,10 +86,10 @@ class AdminHandleInertiaRequests extends Middleware
                         'to' => route('admin.table.index'),
                         'active' => in_array($routeName, ['admin.table.index', 'admin.table.create', 'admin.table.edit', 'admin.table.store', 'admin.table.update'])
                     ],
-                    [
-                        'label' => 'Quản lý voucher',
-                        'icon'  => 'pi pi-fw pi-bookmark',
-                    ],
+                    // [
+                    //     'label' => 'Quản lý voucher',
+                    //     'icon'  => 'pi pi-fw pi-bookmark',
+                    // ],
                     [
                         'label' => 'Quản lí giá bàn',
                         'icon'  => 'pi pi-fw pi-clock',
@@ -118,6 +118,9 @@ class AdminHandleInertiaRequests extends Middleware
         ];
         if (in_array($routeName, ['admin.order.indexSession'])) {
             $breadcrumbs[] = ['label' => 'Phiên chơi', 'icon' => 'pi pi-play-circle', 'url' => session()->get('admin.order.list')[0] ?? route('admin.order.indexSession')];
+            if (in_array($routeName, ['admin.order-item.edit', 'admin.order-item.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa đơn hàng', 'icon' => 'pi pi-user-edit', 'url' => route('admin.order.edit', $request->order)];
+            }
         }
 
         if (in_array($routeName, ['admin.order.create', 'admin.order.edit', 'admin.order.store', 'admin.order.update'])) {

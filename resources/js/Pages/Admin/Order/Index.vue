@@ -54,7 +54,7 @@ import moment from 'moment';
                     <td>{{ order.order_status_label }}</td>
                     <td>
                       <BtnAction
-                        :urlEdit="route('admin.order.edit', order.id)"
+                        :urlEdit="route('admin.order.show', order.id)"
                         :urlDelete="route('admin.order.destroy', order.id)"
                         messageConfirm="Bạn có chắc chắn muốn xóa đơn hàng này không?"
                         :request="$page.props.data.request"
