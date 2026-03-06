@@ -4,7 +4,6 @@ import { useForm } from '@inertiajs/inertia-vue3';
 import { useRequestStore } from '@/store/request';
 import { ref, computed, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/inertia-vue3';
-import moment from 'moment';
 </script>
 
 <template>
@@ -12,10 +11,10 @@ import moment from 'moment';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.order.index'" :createUrl="route('admin.order.create')" :csvRoute="'admin.order.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.table-price-master.index'" :createUrl="route('admin.table-price-master.create')" :csvRoute="'admin.table-price-master.exportCsv'" />
 
         <!-- Bảng dữ liệu products -->
-        <template v-if="$page.props.data.orders.length">
+        <template v-if="$page.props.data.tablePrices.length">
           <div class="flex">
             <div class="group-select-page">
               <LimitPageOption />
@@ -37,28 +36,23 @@ import moment from 'moment';
                 </thead>
                 <tbody class="p-datatable-tbody">
                   <tr
-                    v-for="(order, index) in $page.props.data.orders"
-                    :key="order.id"
+                    v-for="(tablePrice, index) in $page.props.data.tablePrices"
+                    :key="tablePrice.id"
                     :class="{
                       'p-row-odd': index % 2 === 0,
                       'p-row-even': index % 2 !== 0
                     }"
                   >
                     <td>{{ index + 1 }}</td>
-                    <td>{{ order.table_name }}</td>
-                    <td>{{ moment(order.started_at).format('HH:mm - DD/MM/YYYY') }}</td>
-                    <td>{{ moment(order.ended_at).format('HH:mm - DD/MM/YYYY') }}</td>
-                    <td>{{ order.table_total }}</td>
-                    <td>{{ order.service_total }}</td>
-                    <td>{{ order.final_total }}</td>
-                    <td>{{ order.order_status_label }}</td>
+                    <td>{{ tablePrice.price_name }}</td>
+                    <td>{{ tablePrice.price_per_hour }}</td>
                     <td>
                       <BtnAction
-                        :urlEdit="route('admin.order.edit', order.id)"
-                        :urlDelete="route('admin.order.destroy', order.id)"
-                        messageConfirm="Bạn có chắc chắn muốn xóa đơn hàng này không?"
+                        :urlEdit="route('admin.table-price-master.edit', tablePrice.id)"
+                        :urlDelete="route('admin.table-price-master.destroy', tablePrice.id)"
+                        messageConfirm="Bạn có chắc chắn muốn xóa giá bàn này không?"
                         :request="$page.props.data.request"
-                        :routeName="'admin.order.index'"
+                        :routeName="'admin.table-price-master.index'"
                       />
                     </td>
                   </tr>

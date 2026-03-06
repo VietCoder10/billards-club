@@ -22,13 +22,24 @@ class OrderFactory extends Factory
             $table = Table::factory()->create();
         }
 
+        $pricePerHour = $table->tablePrice->price_per_hour ?? 50000;
+        $diff = $startedAt->diff($endedAt);
+        $totalMinutes = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+        $tableTotal = ($totalMinutes / 60) * $pricePerHour;
+
         return [
+            'order_number' => 'ORD-' . $this->faker->unique()->numerify('##########'),
             'table_id' => $table->id,
             'user_id' => User::inRandomOrder()->value('id'),
-            'status' => $this->faker->randomElement([0, 1, 2]),
+            'note' => $this->faker->sentence,
+            'status' => $this->faker->randomElement([1, 2, 3]),
             'started_at' => $startedAt,
             'ended_at' => $this->faker->randomElement([$endedAt, null]),
-            'price_per_hour' => $table->tablePrice->price_per_hour ?? 50000,
+            'price_per_hour' => $pricePerHour,
+            'total_minutes' => $totalMinutes,
+            'table_total' => $tableTotal,
+            'service_total' => 0,
+            'final_total' => $tableTotal,
         ];
     }
 }

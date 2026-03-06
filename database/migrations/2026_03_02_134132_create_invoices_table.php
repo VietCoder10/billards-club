@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')
                 ->unique()
-                ->constrained()
+                ->constrained('orders')
                 ->cascadeOnDelete();
+            $table->decimal('table_total', 12, 2);
+            $table->decimal('service_total', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
             $table->decimal('discount', 12, 2)->default(0);
-            $table->decimal('tax', 12, 2)->default(0);
             $table->decimal('final_amount', 12, 2);
             $table->integer('payment_method')->default(1)->comment('1: Cash, 2: Bank Transfer');
             $table->timestamp('paid_at')->nullable();

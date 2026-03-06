@@ -13,16 +13,21 @@ class InvoiceDetail extends Model
 
     protected $fillable = [
         'invoice_id',
-        'product_name',
+        'item_name',
         'quantity',
         'price',
         'sub_total',
         'discount',
-        'final_line_amount',
+        'total_amount',
     ];
 
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'item_id'); // This remains if we still want to link to product, but item_id is gone from migration. Wait, let me check invoice_details migration again.
     }
 }

@@ -8,9 +8,9 @@ use BenSampo\Enum\Enum;
 
 final class OrderStatus extends Enum
 {
-    public const PENDING = 0;        // Đang chờ
-    public const COMPLETED = 1;      // Hoàn thành
-    public const CANCELLED = 2;      // Đã hủy
+    public const PENDING = 1;        // Đang chờ
+    public const COMPLETED = 2;      // Hoàn thành
+    public const CANCELLED = 3;      // Đã hủy
 
     public static function getLabel($value): string
     {

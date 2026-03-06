@@ -16,8 +16,10 @@ class Order extends Model
     use Sortable;
 
     protected $fillable = [
+        'order_number',
         'table_id',
         'user_id',
+        'note',
         'status',
         'started_at',
         'ended_at',
@@ -46,6 +48,10 @@ class Order extends Model
     public function details(): HasMany
     {
         return $this->hasMany(OrderDetail::class);
+    }
+    public function table()
+    {
+        return $this->belongsTo(Table::class);
     }
 
     public function invoice(): BelongsTo

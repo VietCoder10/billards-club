@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(\App\Providers\OptionProvider::class);
         $this->app->register(\App\Providers\TableProvider::class);
         $this->app->register(\App\Providers\OrderProvider::class);
+        $this->app->register(\App\Providers\TablePriceMasterProvider::class);
     }
 
     /**

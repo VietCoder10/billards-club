@@ -1,69 +1,109 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, reactive, onBeforeUnmount } from 'vue';
 import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
-import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
+import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
+import { useForm, Link } from '@inertiajs/inertia-vue3';
+import moment from 'moment';
+import { useToast } from 'primevue/usetoast';
 
-const categories = ref([
-  { id: 'all', name: 'Tất cả' },
-  { id: 'drink', name: 'Đồ uống' },
-  { id: 'food', name: 'Đồ ăn' }
-]);
+const props = defineProps(['data']);
+const toast = useToast();
 
-const activeCategory = ref('all');
-
-const products = ref([
-  { id: 1, name: 'Bia Tiger', price: 25000, category: 'drink', image: 'https://images.unsplash.com/photo-1618885472179-5e474019f2a9?q=80&w=100&auto=format&fit=crop' },
-  { id: 2, name: 'Nước suối', price: 10000, category: 'drink', image: 'https://images.unsplash.com/photo-1560023907-5f339617ea30?q=80&w=100&auto=format&fit=crop' },
-  { id: 3, name: 'Redbull', price: 20000, category: 'drink', image: 'https://images.unsplash.com/photo-1622484210802-45e050307042?q=80&w=100&auto=format&fit=crop' },
-  { id: 4, name: 'Mì cay', price: 45000, category: 'food', image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?q=80&w=100&auto=format&fit=crop' },
-  { id: 5, name: 'Xúc xích', price: 15000, category: 'food', image: 'https://images.unsplash.com/photo-1585325701956-60dd9c8553bc?q=80&w=100&auto=format&fit=crop' }
-]);
-
-const filteredProducts = computed(() => {
-  if (activeCategory.value === 'all') return products.value;
-  return products.value.filter((p) => p.category === activeCategory.value);
+const state = reactive({
+  model: {
+    order: {},
+    details: []
+  }
 });
 
-const orderItems = ref([]);
+const categories = ref(props.data.categories || []);
+const activeCategory = ref('all');
+
+const filteredProducts = computed(() => {
+  if (activeCategory.value === 'all') return props.data.products.data || props.data.products;
+  return (props.data.products.data || props.data.products).filter((p) => p.category == activeCategory.value);
+});
+
+const initData = () => {
+  state.model.order = { ...props.data.order };
+  state.model.details = (props.data.order.details || []).map((item) => ({
+    ...item,
+    index: 'key_' + Math.random().toString(36).substr(2, 9)
+  }));
+  calculatePlayTime();
+};
+
+const calculatePlayTime = () => {
+  if (!state.model.order.started_at) return;
+  const start = moment(state.model.order.started_at);
+  const end = moment();
+  state.model.order.total_minutes = Math.max(0, end.diff(start, 'minutes'));
+  state.model.order.table_total = (state.model.order.total_minutes / 60) * (state.model.order.price_per_hour || 0);
+};
+
+let timerInterval = null;
+
+onMounted(() => {
+  initData();
+  timerInterval = setInterval(calculatePlayTime, 1000 * 30); // Update every 30s
+});
+
+onBeforeUnmount(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
+
 const addToOrder = (product) => {
-  const found = orderItems.value.find((i) => i.id === product.id);
-  found ? found.qty++ : orderItems.value.push({ ...product, qty: 1 });
-};
-
-// play time (demo data)
-const playMinutes = ref(83);
-const pricePerHour = 60000;
-const playAmount = computed(() => Math.floor((playMinutes.value / 60) * pricePerHour));
-
-const total = computed(() => playAmount.value + orderItems.value.reduce((s, i) => s + i.qty * i.price, 0));
-const props = defineProps(['data']);
-
-// realtime timer (UI demo)
-const timer = ref('01:23:45');
-
-const increaseQty = (item) => {
-  item.qty++;
-};
-
-const decreaseQty = (item) => {
-  if (item.qty > 1) {
-    item.qty--;
+  const found = state.model.details.find((i) => i.product_id === product.id);
+  if (found) {
+    found.quantity++;
+    found.sub_total = found.quantity * found.price;
   } else {
-    orderItems.value = orderItems.value.filter((i) => i.id !== item.id);
+    state.model.details.push({
+      product_id: product.id,
+      product_name: product.product_name,
+      price: product.sale_price,
+      quantity: 1,
+      sub_total: product.sale_price,
+      image: product.avatar_url,
+      index: 'key_' + Math.random().toString(36).substr(2, 9)
+    });
   }
 };
 
-const onSubmit = (values) => {
-  console.log('Form submitted:', values);
-  // Handle saving the order
+const serviceTotal = computed(() => state.model.details.reduce((s, i) => s + (Number(i.sub_total) || 0), 0));
+const finalTotal = computed(() => (Number(state.model.order.table_total) || 0) + serviceTotal.value);
+
+const increaseQty = (item) => {
+  item.quantity++;
+  item.sub_total = item.quantity * item.price;
 };
 
-const onInvalidSubmit = ({ errors }) => {
-  console.log('Validation failed:', errors);
+const decreaseQty = (item) => {
+  if (item.quantity > 1) {
+    item.quantity--;
+    item.sub_total = item.quantity * item.price;
+  } else {
+    state.model.details = state.model.details.filter((i) => i.index !== item.index);
+  }
+};
+
+const onSubmit = () => {
+  const submitData = {
+    ...state.model.order,
+    details: state.model.details,
+    service_total: serviceTotal.value,
+    final_total: finalTotal.value
+  };
+
+  useForm(submitData).put(route('admin.order.update', state.model.order.id), {
+    onSuccess: () => {
+      toast.add({ severity: 'success', summary: 'Cập nhật thành công', life: 3000 });
+    }
+  });
 };
 
 const formatPrice = (value) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
 };
 </script>
 
@@ -82,15 +122,15 @@ const formatPrice = (value) => {
           </Link>
           <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
         </template>
-        <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
-          <form @submit="handleSubmit($event, onSubmit)" id="order-form" class="form-data">
+        <VeeForm as="div">
+          <form @submit.prevent="onSubmit" id="order-form" class="form-data">
             <div class="grid grid-cols-12 gap-6">
               <!-- Left: Order Summary -->
               <div class="col-span-12 lg:col-span-5 flex flex-col gap-4">
                 <div class="card p-4 shadow-sm border rounded-xl bg-white">
                   <div class="flex justify-between items-center mb-4 pb-2 border-bottom">
                     <h3 class="text-lg font-bold text-gray-700">Chi tiết hóa đơn</h3>
-                    <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">Bàn 01</span>
+                    <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">{{ state.model.order.table?.table_name }}</span>
                   </div>
 
                   <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -101,19 +141,19 @@ const formatPrice = (value) => {
                           <i class="pi pi-clock text-blue-600"></i>
                         </div>
                         <div>
-                          <p class="font-semibold text-gray-800">Tiền giờ ({{ playMinutes }} phút)</p>
-                          <p class="text-xs text-gray-500">{{ formatPrice(pricePerHour) }}/giờ</p>
+                          <p class="font-semibold text-gray-800">Tiền giờ ({{ state.model.order.total_minutes }} phút)</p>
+                          <p class="text-xs text-gray-500">{{ formatPrice(state.model.order.price_per_hour) }}/giờ</p>
                         </div>
                       </div>
-                      <span class="font-bold text-blue-600">{{ formatPrice(playAmount) }}</span>
+                      <span class="font-bold text-blue-600">{{ formatPrice(state.model.order.table_total) }}</span>
                     </div>
 
                     <!-- Order Items -->
-                    <div v-for="(item, i) in orderItems" :key="item.id" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
+                    <div v-for="(item, i) in state.model.details" :key="item.index" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
                       <div class="flex items-center gap-3">
-                        <img :src="item.image" class="w-12 h-12 rounded-md object-cover" />
+                        <img :src="item.image || '/images/default-avatar.svg'" class="w-12 h-12 rounded-md object-cover" />
                         <div>
-                          <p class="font-semibold text-gray-800">{{ item.name }}</p>
+                          <p class="font-semibold text-gray-800">{{ item.product_name }}</p>
                           <p class="text-xs text-gray-500">{{ formatPrice(item.price) }}</p>
                         </div>
                       </div>
@@ -124,21 +164,18 @@ const formatPrice = (value) => {
                           </button>
 
                           <div class="flex flex-col">
-                            <Field :name="`orderItems[${i}].qty`" v-model="item.qty" rules="numeric|min_value:1" v-slot="{ field }">
-                              <span class="px-3 py-1 font-bold min-w-[30px] text-center" v-bind="field">{{ item.qty }}</span>
-                            </Field>
-                            <ErrorMessage class="p-error text-[10px]" :name="`orderItems[${i}].qty`" />
+                            <span class="px-3 py-1 font-bold min-w-[30px] text-center">{{ item.quantity }}</span>
                           </div>
 
                           <button type="button" @click="increaseQty(item)" class="px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-500 transition-colors">
                             <i class="pi pi-plus text-xs"></i>
                           </button>
                         </div>
-                        <span class="font-bold text-gray-700 w-24 text-right">{{ formatPrice(item.price * item.qty) }}</span>
+                        <span class="font-bold text-gray-700 w-24 text-right">{{ formatPrice(item.price * item.quantity) }}</span>
                       </div>
                     </div>
 
-                    <div v-if="orderItems.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400 opacity-60">
+                    <div v-if="state.model.details.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400 opacity-60">
                       <i class="pi pi-shopping-bag text-4xl mb-2"></i>
                       <p>Chưa có món nào được thêm</p>
                     </div>
@@ -147,15 +184,15 @@ const formatPrice = (value) => {
                   <div class="mt-6 pt-4 border-t-2 border-dashed border-gray-200">
                     <div class="flex justify-between items-center mb-2">
                       <span class="text-gray-600">Tổng tiền dịch vụ</span>
-                      <span class="font-semibold">{{ formatPrice(total - playAmount) }}</span>
+                      <span class="font-semibold">{{ formatPrice(serviceTotal) }}</span>
                     </div>
                     <div class="flex justify-between items-center mb-4">
                       <span class="text-gray-600">Tổng tiền giờ</span>
-                      <span class="font-semibold">{{ formatPrice(playAmount) }}</span>
+                      <span class="font-semibold">{{ formatPrice(state.model.order.table_total) }}</span>
                     </div>
                     <div class="flex justify-between items-center p-3 bg-blue-600 rounded-xl text-white">
                       <span class="text-lg font-medium">Tổng thanh toán</span>
-                      <span class="text-2xl font-bold">{{ formatPrice(total) }}</span>
+                      <span class="text-2xl font-bold">{{ formatPrice(finalTotal) }}</span>
                     </div>
                   </div>
 
@@ -172,13 +209,21 @@ const formatPrice = (value) => {
                   <div class="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
                     <button
                       type="button"
-                      v-for="cat in categories"
-                      :key="cat.id"
-                      @click="activeCategory = cat.id"
-                      :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === cat.id ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+                      @click="activeCategory = 'all'"
+                      :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === 'all' ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
                     >
-                      <i :class="['pi mr-2', cat.id === 'all' ? 'pi-th-large' : cat.id === 'drink' ? 'pi-palette' : 'pi-apple']"></i>
-                      {{ cat.name }}
+                      <i class="pi pi-th-large mr-2"></i>
+                      Tất cả
+                    </button>
+                    <button
+                      type="button"
+                      v-for="cat in categories"
+                      :key="cat.value"
+                      @click="activeCategory = cat.value"
+                      :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === cat.value ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+                    >
+                      <i :class="['pi mr-2', cat.value == 1 ? 'pi-utensils' : cat.value == 2 ? 'pi-palette' : 'pi-clock']"></i>
+                      {{ cat.label }}
                     </button>
                   </div>
 
@@ -190,18 +235,18 @@ const formatPrice = (value) => {
                       class="flex flex-col grow basis-0 gap-2 min-w-[150px] max-w-[200px] p-3 border rounded-xl hover:shadow-xl hover:border-blue-400 cursor-pointer bg-white transition-all group relative overflow-hidden active:scale-95"
                     >
                       <div class="relative overflow-hidden rounded-lg aspect-square mb-2 bg-gray-50">
-                        <img :src="product.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img :src="product.avatar_url || '/images/default-avatar.svg'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all flex items-center justify-center">
                           <i class="pi pi-plus text-white scale-0 group-hover:scale-150 transition-all opacity-0 group-hover:opacity-100 drop-shadow-md"></i>
                         </div>
                       </div>
                       <div>
-                        <h4 class="font-bold text-gray-800 line-clamp-1 mb-1">{{ product.name }}</h4>
-                        <p class="text-blue-600 font-bold">{{ formatPrice(product.price) }}</p>
+                        <h4 class="font-bold text-gray-800 line-clamp-1 mb-1">{{ product.product_name }}</h4>
+                        <p class="text-blue-600 font-bold">{{ formatPrice(product.sale_price) }}</p>
                       </div>
                       <div class="mt-2">
                         <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-gray-100 text-gray-500">
-                          {{ product.category === 'drink' ? 'Nước uống' : 'Thức ăn' }}
+                          {{ product.category_label }}
                         </span>
                       </div>
                     </div>

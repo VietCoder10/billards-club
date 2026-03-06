@@ -84,14 +84,17 @@ class AdminHandleInertiaRequests extends Middleware
                         'label' => 'Quản lý bàn',
                         'icon'  => 'pi pi-fw pi-bookmark',
                         'to' => route('admin.table.index'),
+                        'active' => in_array($routeName, ['admin.table.index', 'admin.table.create', 'admin.table.edit', 'admin.table.store', 'admin.table.update'])
                     ],
                     [
                         'label' => 'Quản lý voucher',
                         'icon'  => 'pi pi-fw pi-bookmark',
                     ],
                     [
-                        'label' => 'Quản lí giờ chơi',
-                        'icon'  => 'pi pi-fw pi-bookmark',
+                        'label' => 'Quản lí giá bàn',
+                        'icon'  => 'pi pi-fw pi-clock',
+                        'to' => route('admin.table-price-master.index'),
+                        'active' => in_array($routeName, ['admin.table-price-master.index', 'admin.table-price-master.show', 'admin.table-price-master.create', 'admin.table-price-master.edit', 'admin.table-price-master.store', 'admin.table-price-master.update'])
                     ],
                     [
                         'label' => 'Quản lí hóa đơn',
@@ -101,7 +104,7 @@ class AdminHandleInertiaRequests extends Middleware
                         'label' => 'Quản lý đơn hàng',
                         'icon'  => 'pi pi-fw pi-bookmark',
                         'to' => route('admin.order.index'),
-                        'active' => in_array($routeName, ['admin.order.index', 'admin.order.store', 'admin.order.update'])
+                        'active' => in_array($routeName, ['admin.order.index', 'admin.order.show', 'admin.order.edit', 'admin.order.store', 'admin.order.update'])
                     ],
                 ],
             ],
@@ -151,6 +154,15 @@ class AdminHandleInertiaRequests extends Middleware
             }
             if (in_array($routeName, ['admin.product.edit', 'admin.product.update'])) {
                 $breadcrumbs[] = ['label' => 'Chỉnh sửa sản phẩm', 'icon' => 'pi pi-pencil', 'url' => route('admin.product.edit', $request->product)];
+            }
+        }
+        if (in_array($routeName, ['admin.table-price-master.index', 'admin.table-price-master.create', 'admin.table-price-master.store', 'admin.table-price-master.edit', 'admin.table-price-master.update'])) {
+            $breadcrumbs[] = ['label' => 'Quản lí giá bàn', 'icon' => 'pi pi-fw pi-clock', 'url' => route('admin.table-price-master.index')];
+            if (in_array($routeName, ['admin.table-price-master.create', 'admin.table-price-master.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm giá bàn', 'icon' => 'pi pi-pencil', 'url' => route('admin.table-price-master.create')];
+            }
+            if (in_array($routeName, ['admin.table-price-master.edit', 'admin.table-price-master.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa giá bàn', 'icon' => 'pi pi-pencil', 'url' => route('admin.table-price-master.edit', $request->tablePrice)];
             }
         }
 

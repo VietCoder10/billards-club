@@ -8,7 +8,7 @@ interface OrderInterface
 {
     public function get($request);
     public function getById($id);
-    public function create(OrderRequest $request);
+    public function create(\Illuminate\Http\Request $request);
     public function update(OrderRequest $request, $id);
     public function delete($id);
 }

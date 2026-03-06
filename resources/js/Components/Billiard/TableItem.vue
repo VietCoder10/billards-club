@@ -11,11 +11,26 @@ const props = defineProps({
 const emit = defineEmits(['click']);
 
 const statusColor = computed(() => {
-  return props.table.status === 0 ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600';
+  switch (props.table.status) {
+    case 2:
+      return 'bg-green-500 hover:bg-green-600'; // Đang chơi
+    case 3:
+      return 'bg-yellow-500 hover:bg-yellow-600'; // Bảo trì
+    default:
+      return 'bg-red-500 hover:bg-red-600'; // Đang bàn trống
+  }
+  500;
 });
 
 const statusText = computed(() => {
-  return props.table.status === 1 ? 'Đang chơi' : 'Bàn trống';
+  switch (props.table.status) {
+    case 2:
+      return 'Đang chơi';
+    case 3:
+      return 'Bàn bảo trì';
+    default:
+      return 'Bàn trống';
+  }
 });
 </script>
 

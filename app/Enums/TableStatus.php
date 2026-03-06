@@ -8,9 +8,9 @@ use BenSampo\Enum\Enum;
 
 final class TableStatus extends Enum
 {
-    public const AVAILABLE = 0;     // Có sẵn
-    public const IN_USE = 1;        // Đang sử dụng
-    public const MAINTENANCE = 2;   // Bảo trì
+    public const AVAILABLE = 1;     // Có sẵn
+    public const IN_USE = 2;        // Đang sử dụng
+    public const MAINTENANCE = 3;   // Bảo trì
 
     public static function getLabel($value): string
     {
@@ -22,7 +22,7 @@ final class TableStatus extends Enum
             case self::MAINTENANCE:
                 return 'Bảo trì';
             default:
-                return self::getInvalidLabel();
+                return '';
         }
     }
 

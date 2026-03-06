@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kyslik\ColumnSortable\Sortable;
 
 class TablePriceMaster extends Model
 {
     use HasFactory, SoftDeletes;
+    use Sortable;
 
     protected $table = 'table_price_master';
 

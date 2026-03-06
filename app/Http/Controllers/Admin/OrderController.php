@@ -42,7 +42,7 @@ class OrderController extends BaseController
                     ['key' => 'started_at', 'name' => 'Ngày tạo'],
                     ['key' => 'ended_at', 'name' => 'Ngày kết thúc'],
                     ['key' => 'table_total', 'name' => 'Tổng tiền bàn'],
-                    ['key' => 'server_total', 'name' => 'Tổng tiền dịch vụ'],
+                    ['key' => 'service_total', 'name' => 'Tổng tiền dịch vụ'],
                     ['key' => 'final_total', 'name' => 'Tổng tiền đơn hàng'],
                     ['key' => 'status', 'name' => 'Trạng thái'],
                 ], $request),
@@ -81,7 +81,8 @@ class OrderController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $order = $this->order->create($request);
+        return redirect()->route('admin.order-item.edit', $order->id);
     }
 
     /**
@@ -93,7 +94,10 @@ class OrderController extends BaseController
         return Inertia::render('Admin/Order/Form', $this->mergeSession([
             'data' => [
                 'title' => 'Chỉnh sửa đơn hàng',
+                'order' => $this->order->getById($id),
                 'productOptions' => $this->option->getProduct(),
+                'urlBack' => session()->get('admin.order.list')[0] ?? route('admin.order.index'),
+
             ],
         ]));
     }
@@ -109,9 +113,13 @@ class OrderController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(\App\Http\Requests\Admin\Order\OrderRequest $request, string $id)
     {
-        //
+        $result = $this->order->update($request, $id);
+        if ($result) {
+            return redirect()->back()->with('success', 'Cập nhật đơn hàng thành công');
+        }
+        return redirect()->back()->with('error', 'Cập nhật đơn hàng thất bại');
     }
 
     /**

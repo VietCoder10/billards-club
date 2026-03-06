@@ -15,19 +15,19 @@ class InvoiceDetailFactory extends Factory
     {
         $product = Product::inRandomOrder()->first() ?? Product::factory()->create();
         $quantity = $this->faker->numberBetween(1, 5);
-        $price = $product->sale_price; // Sử dụng giá bán làm giá cho invoice detail
-        $sub_total = $price * $quantity;
-        $discount = $this->faker->randomElement([0, 5000, 10000]);
-        $finalLineAmount = $sub_total - $discount;
+        $unitPrice = $product->sale_price;
+        $subTotal = $unitPrice * $quantity;
+        $discountAmount = $this->faker->randomElement([0, 5000, 10000]);
+        $totalAmount = $subTotal - $discountAmount;
 
         return [
             'invoice_id' => Invoice::factory(),
-            'product_name' => $product->product_name,
+            'item_name' => $product->product_name,
             'quantity' => $quantity,
-            'price' => $price,
-            'sub_total' => $sub_total,
-            'discount' => $discount,
-            'final_line_amount' => $finalLineAmount,
+            'price' => $unitPrice,
+            'sub_total' => $subTotal,
+            'discount' => $discountAmount,
+            'total_amount' => $totalAmount,
         ];
     }
 }

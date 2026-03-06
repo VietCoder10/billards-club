@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\TablePriceMaster;
 use App\Enums\TableStatus;
+use App\Models\Table;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TableFactory extends Factory

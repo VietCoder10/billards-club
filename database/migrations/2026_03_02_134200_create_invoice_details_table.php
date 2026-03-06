@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('invoice_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')
-                ->constrained()
+                ->constrained('invoices')
                 ->cascadeOnDelete();
 
-            $table->string('product_name'); // snapshot tại thời điểm thanh toán
+            $table->string('item_name'); // snapshot tại thời điểm thanh toán
             $table->integer('quantity');
 
             $table->decimal('price', 12, 2);
             $table->decimal('sub_total', 12, 2);
 
             $table->decimal('discount', 12, 2)->default(0);
-            $table->decimal('final_line_amount', 12, 2);
+            $table->decimal('total_amount', 12, 2);
             $table->softDeletes();
             $table->timestamps();
         });

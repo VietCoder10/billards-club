@@ -7,6 +7,7 @@ return [
     App\Providers\OrderProvider::class,
     App\Providers\ProductProvider::class,
     App\Providers\SupplierProvider::class,
+    App\Providers\TablePriceMasterProvider::class,
     App\Providers\TableProvider::class,
     Barryvdh\Debugbar\ServiceProvider::class,
     Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,

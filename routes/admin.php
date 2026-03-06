@@ -51,5 +51,6 @@ Route::group([
         Route::resource('product', \App\Http\Controllers\Admin\ProductController::class);
         Route::post('product/{id}/update-avatar', [\App\Http\Controllers\Admin\ProductController::class, 'updateAvatar'])->name('product.updateAvatar');
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
+        Route::resource('table-price-master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
     });
 });
