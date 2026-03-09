@@ -91,13 +91,14 @@ class OrderController extends BaseController
     public function show(string $id)
     {
         //
+        $order = $this->order->getById($id);
+        $urlBack = session()->get('admin.order.list')[0] ?? route('admin.order.index');
         return Inertia::render('Admin/Order/Form', $this->mergeSession([
             'data' => [
                 'title' => 'Chỉnh sửa đơn hàng',
-                'order' => $this->order->getById($id),
+                'order' =>  $order,
                 'productOptions' => $this->option->getProduct(),
-                'urlBack' => session()->get('admin.order.list')[0] ?? route('admin.order.index'),
-
+                'urlBack' => $urlBack,
             ],
         ]));
     }
@@ -113,13 +114,25 @@ class OrderController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(\App\Http\Requests\Admin\Order\OrderRequest $request, string $id)
+    public function update(OrderRequest $request, string $id)
     {
         $result = $this->order->update($request, $id);
-        if ($result) {
-            return redirect()->back()->with('success', 'Cập nhật đơn hàng thành công');
+        if (!$result) {
+            $this->setFlash(__('Cập nhật thất bại'));
+            return redirect()->route('admin.order.edit' . $id);
         }
-        return redirect()->back()->with('error', 'Cập nhật đơn hàng thất bại');
+        $this->setFlash(__('cập nhật thành công'));
+        return redirect()->route('admin.order.index');
+    }
+    public function updateSession(OrderRequest $request, string $id)
+    {
+        $result = $this->order->update($request, $id);
+        if (!$result) {
+            $this->setFlash(__('Cập nhật thất bại'));
+            return redirect()->route('admin.order.edit', $id);
+        }
+        $this->setFlash(__('cập nhật thành công'));
+        return redirect()->route('admin.order.indexSession');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Components\CommonComponent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,11 +17,13 @@ class OrderDetail extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'avatar',
         'product_name',
         'quantity',
         'price',
         'sub_total',
     ];
+    protected $appends = ['avatar_url'];
 
     public function order(): BelongsTo
     {
@@ -30,5 +33,9 @@ class OrderDetail extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar ? CommonComponent::getFullUrl($this->avatar) : url('/images/default-avatar.svg');
     }
 }

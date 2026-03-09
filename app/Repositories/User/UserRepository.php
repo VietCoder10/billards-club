@@ -36,7 +36,7 @@ class UserRepository implements UserInterface
                 $q->orWhere(CommonComponent::escapeLikeSentence('email', $request['free_word']));
             });
         }
-        $users = $userBuilder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
+        $users = $userBuilder->sortable(['sort_number' => 'asc'])->paginate($newSizeLimit);
         if (CommonComponent::checkPaginatorList($users)) {
             Paginator::currentPageResolver(function () {
                 return 1;
@@ -54,7 +54,11 @@ class UserRepository implements UserInterface
 
     public function store(StoreUserRequest $request): bool
     {
-        $newUser = $this->user->fill($request->only(['name', 'email']));
+        $newUser = $this->user->fill($request->fill([
+            'name' => $request->name,
+            'email' => $request->email,
+            'user_role' => $request->user_role,
+        ]));
         $newUser->password = Hash::make($request->password);
 
         return $newUser->save();
@@ -66,9 +70,13 @@ class UserRepository implements UserInterface
         if (! $user) {
             return false;
         }
-        $user->fill($request->only(['name', 'email']));
+        $user->fill($request->fill([
+            'name' => $request->name,
+            'email' => $request->email,
+            'user_role' => $request->user_role,
+        ]));
         if ($request->password) {
-            $newUser->password = Hash::make($request->password);
+            $user->password = Hash::make($request->password);
         }
 
         return $user->save();

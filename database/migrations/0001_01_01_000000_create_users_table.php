@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->datetime('reset_password_token_expire')->nullable();
             $table->datetime('last_login_at')->nullable();
             $table->rememberToken();
+            $table->integer('sort_number')->comment('Thứ tự hiển thị')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

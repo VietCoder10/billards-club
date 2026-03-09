@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Components\SearchQueryComponent;
 use App\Enums\StatusCode;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Admin\Product\UpdateAvatarRequest;
 use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Repositories\User\UserInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class UserController extends BaseController
@@ -30,12 +32,12 @@ class UserController extends BaseController
 
         return Inertia::render('Admin/User/Index', $this->mergeSession([
             'data' => [
-                'title' => 'ユーザー一覧',
+                'title' => 'Quản lí nhân viên',
                 'users' => $users->items(),
                 'sortLinks' => $this->sortLinks('admin.user.index', [
-                    ['key' => 'name', 'name' => 'ユーザー名'],
-                    ['key' => 'email', 'name' => 'メールアドレス'],
-                    ['key' => 'created_at', 'name' => '登録日'],
+                    ['key' => 'name', 'name' => 'Tên người dùng'],
+                    ['key' => 'email', 'name' => 'Email'],
+                    ['key' => 'user_role', 'name' => 'Chức vụ'],
                 ], $request),
                 'request' => $request->all(),
                 'paginator' => $this->paginator($users->appends(SearchQueryComponent::alterQuery($request))),
@@ -74,9 +76,7 @@ class UserController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-    }
+    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -136,5 +136,40 @@ class UserController extends BaseController
         return response()->json([
             'valid' => $this->user->checkEmail($request),
         ], StatusCode::OK);
+    }
+    public function updateAvatar(UpdateAvatarRequest $request, $id)
+    {
+        $user = $this->user->getById($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy người dùng.',
+            ], StatusCode::NOT_FOUND);
+        }
+
+        // $this->authorize('update', $user);
+
+        try {
+            // Delete old avatar if exists
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Store new avatar
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'avatar' => Storage::url($path),
+                'message' => 'Ảnh đại diện đã được cập nhật.',
+            ], StatusCode::OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi.',
+            ], StatusCode::INTERNAL_ERR);
+        }
     }
 }

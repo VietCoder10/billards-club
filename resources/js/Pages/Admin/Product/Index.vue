@@ -97,7 +97,7 @@ const handleAvatarUploaded = (newAvatar) => {
         <!-- Hiển thị khi không có dữ liệu -->
         <DataEmpty v-else />
       </Panel>
-      <AvatarUploadModal v-model:visible="showAvatarModal" :userId="selectedProductId" :currentAvatar="selectedProductAvatar" @uploaded="handleAvatarUploaded" />
+      <AvatarUploadModal v-model:visible="showAvatarModal" :route_url="'admin.product.updateAvatar'" :userId="selectedProductId" :currentAvatar="selectedProductAvatar" @uploaded="handleAvatarUploaded" />
     </template>
   </AdminLayout>
 </template>

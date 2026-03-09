@@ -1,13 +1,18 @@
 <script setup>
-import { ref, computed, onMounted, reactive, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, reactive, onBeforeUnmount, nextTick } from 'vue';
 import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import { useForm, Link } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import { useToast } from 'primevue/usetoast';
+import { watch } from 'vue';
+import { calcPrice, calcSummary } from '@/lib/common';
+import { useDirtyForm } from '@/Composables/useDirtyForm';
 
 const props = defineProps(['data']);
 const toast = useToast();
+const isSubmitting = ref(false);
+const initialState = ref('');
 
 const state = reactive({
   model: {
@@ -24,21 +29,52 @@ const filteredProducts = computed(() => {
   return (props.data.products.data || props.data.products).filter((p) => p.category == activeCategory.value);
 });
 
+const normalizeState = (obj) => {
+  return JSON.stringify(obj, (_, value) => {
+    if (value === null || value === undefined || value === '') return undefined;
+    if (value instanceof Date) return value.toISOString();
+    return value;
+  });
+};
+const hasUnsavedChanges = computed(() => {
+  return normalizeState(state.model) !== initialState.value;
+});
+useDirtyForm(hasUnsavedChanges, isSubmitting);
+
 const initData = () => {
-  state.model.order = { ...props.data.order };
+  state.model.order = {
+    ...props.data.order,
+    price_per_hour: props.data.order.price_per_hour ? Number(props.data.order.price_per_hour) : 0,
+    total_minutes: props.data.order.total_minutes ? Number(props.data.order.total_minutes) : 0,
+    table_total: props.data.order.table_total ? Number(props.data.order.table_total) : 0,
+    service_total: props.data.order.service_total ? Number(props.data.order.service_total) : 0,
+    final_total: props.data.order.final_total ? Number(props.data.order.final_total) : 0
+  };
   state.model.order_details = (props.data.order.details || []).map((item) => ({
     ...item,
+    price: item.price !== null ? Number(item.price) : 0,
+    quantity: item.quantity !== null ? Number(item.quantity) : 0,
+    sub_total: item.sub_total !== null ? Number(item.sub_total) : 0,
     index: 'key_' + (Math.random() * 100000000000000000).toFixed(0)
   }));
   calculatePlayTime();
+  nextTick(() => {
+    initialState.value = normalizeState(state.model);
+  });
 };
 
 const calculatePlayTime = () => {
   if (!state.model.order.started_at) return;
   const start = moment(state.model.order.started_at);
-  const end = moment();
+  const end = state.model.order.status === 1 ? moment() : moment(state.model.order.ended_at || undefined);
   state.model.order.total_minutes = Math.max(0, end.diff(start, 'minutes'));
-  state.model.order.table_total = (state.model.order.total_minutes / 60) * (state.model.order.price_per_hour || 0);
+  updateTableTotal();
+};
+
+const updateTableTotal = () => {
+  const minutes = Number(state.model.order.total_minutes || 0);
+  const pricePerHour = Number(state.model.order.price_per_hour || 0);
+  state.model.order.table_total = (minutes / 60) * pricePerHour;
 };
 
 let timerInterval = null;
@@ -56,48 +92,69 @@ const addToOrder = (product) => {
   const found = state.model.order_details.find((i) => i.product_id === product.id);
   if (found) {
     found.quantity++;
-    found.sub_total = found.quantity * found.price;
+    const priceRes = calcPrice(found.price, found.quantity, found.sub_total);
+    found.sub_total = priceRes.sub_total;
   } else {
     state.model.order_details.push({
       product_id: product.id,
       product_name: product.product_name,
-      price: product.sale_price,
+      price: Number(product.sale_price) || 0,
       quantity: 1,
-      sub_total: product.sale_price,
+      sub_total: Number(product.sale_price) || 0,
       image: product.avatar_url,
       index: 'key_' + Math.random().toString(36).substr(2, 9)
     });
   }
 };
 
-const serviceTotal = computed(() => state.model.order_details.reduce((s, i) => s + (Number(i.sub_total) || 0), 0));
-const finalTotal = computed(() => (Number(state.model.order.table_total) || 0) + serviceTotal.value);
+const summaryTotals = () => {
+  updateTableTotal();
+  const summary = calcSummary(state.model.order_details, state.model.order.table_total);
+  state.model.order.service_total = summary.service_total;
+  state.model.order.final_total = summary.final_total;
+};
+
+watch(
+  () => [state.model.order_details, state.model.order.total_minutes, state.model.order.price_per_hour],
+  () => {
+    summaryTotals();
+  },
+  { deep: true }
+);
 
 const increaseQty = (item) => {
   item.quantity++;
-  item.sub_total = item.quantity * item.price;
+  const priceRes = calcPrice(item.price, item.quantity, item.sub_total);
+  item.sub_total = priceRes.sub_total;
 };
 
 const decreaseQty = (item) => {
   if (item.quantity > 1) {
     item.quantity--;
-    item.sub_total = item.quantity * item.price;
+    const priceRes = calcPrice(item.price, item.quantity, item.sub_total);
+    item.sub_total = priceRes.sub_total;
   } else {
     state.model.order_details = state.model.order_details.filter((i) => i.index !== item.index);
   }
 };
 
 const onSubmit = () => {
+  isSubmitting.value = true;
   const submitData = {
     ...state.model.order,
     order_details: state.model.order_details,
-    service_total: serviceTotal.value,
-    final_total: finalTotal.value
+    service_total: state.model.order.service_total,
+    final_total: state.model.order.final_total
   };
 
-  useForm(submitData).put(route('admin.order.update', state.model.order.id), {
+  useForm(submitData).put(route('admin.order.updateSession', state.model.order.id), {
     onSuccess: () => {
-      toast.add({ severity: 'success', summary: 'Cập nhật thành công', life: 3000 });
+      nextTick(() => {
+        initialState.value = normalizeState(state.model);
+      });
+    },
+    onFinish: () => {
+      isSubmitting.value = false;
     }
   });
 };
@@ -184,15 +241,15 @@ const formatPrice = (value) => {
                   <div class="mt-6 pt-4 border-t-2 border-dashed border-gray-200">
                     <div class="flex justify-between items-center mb-2">
                       <span class="text-gray-600">Tổng tiền dịch vụ</span>
-                      <span class="font-semibold">{{ formatPrice(serviceTotal) }}</span>
+                      <span class="font-semibold">{{ formatPrice(state.model.order.service_total) }}</span>
                     </div>
                     <div class="flex justify-between items-center mb-4">
                       <span class="text-gray-600">Tổng tiền giờ</span>
                       <span class="font-semibold">{{ formatPrice(state.model.order.table_total) }}</span>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-blue-600 rounded-xl text-white">
+                    <div class="flex justify-between items-center p-3 bg-blue-600 rounded-xl text-white shadow-lg">
                       <span class="text-lg font-medium">Tổng thanh toán</span>
-                      <span class="text-2xl font-bold">{{ formatPrice(finalTotal) }}</span>
+                      <span class="text-2xl font-bold">{{ formatPrice(state.model.order.final_total) }}</span>
                     </div>
                   </div>
 

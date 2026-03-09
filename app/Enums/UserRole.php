@@ -17,7 +17,7 @@ final class UserRole extends Enum
             case self::ADMIN:
                 return 'Quản trị viên';
             case self::USER:
-                return 'Người dùng';
+                return 'Nhân viên';
             default:
                 return self::getInvalidLabel();
         }

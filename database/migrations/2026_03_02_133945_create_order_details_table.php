@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('product_id')
                 ->constrained('products')
                 ->cascadeOnDelete();
+            $table->string('avatar')->nullable();
             $table->string('product_name'); // lưu snapshot tên
             $table->integer('quantity')->default(1);
             $table->decimal('price', 12, 2); // giá tại thời điểm order

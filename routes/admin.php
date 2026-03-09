@@ -44,9 +44,11 @@ Route::group([
         Route::resource('dashboard', DashboardController::class)->only(['index']);
         Route::resource('user', UserController::class);
         Route::post('check-email', [UserController::class, 'checkEmail'])->name('user.checkEmail');
+        Route::post('user/{id}/update-avatar', [UserController::class, 'updateAvatar'])->name('user.updateAvatar');
         Route::resource('supplier', \App\Http\Controllers\Admin\SuppliersController::class);
         Route::resource('order-item', \App\Http\Controllers\Admin\OrderItemController::class);
         Route::resource('order', OrderController::class);
+        Route::put('order-session/{id}', [OrderController::class, 'updateSession'])->name('order.updateSession');
         Route::get('session', [OrderController::class, 'indexSession'])->name('order.indexSession');
         Route::resource('product', \App\Http\Controllers\Admin\ProductController::class);
         Route::post('product/{id}/update-avatar', [\App\Http\Controllers\Admin\ProductController::class, 'updateAvatar'])->name('product.updateAvatar');

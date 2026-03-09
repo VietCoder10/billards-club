@@ -34,10 +34,10 @@ class StoreUserRequest extends FormRequest
                     }
                 })
             ],
-            'password' => 'required|min:10|max:16',
+            'password' => 'required|min:10|max:16|confirmed',
         ];
         if ($id) {
-            $validate['password'] = 'min:10|max:16';
+            $validate['password'] = 'nullable|min:10|max:16|confirmed';
         }
         return $validate;
     }

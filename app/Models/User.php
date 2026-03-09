@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Components\CommonComponent;
+use App\Enums\UserRole;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,7 +29,13 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'avatar',
+        'user_role',
         'password',
+        'reset_password_token',
+        'reset_password_token_expire',
+        'last_login_at',
+        'sort_number'
     ];
 
     /**
@@ -38,7 +47,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-
+    protected $appends = ['avatar_url', 'role_label'];
     /**
      * Get the attributes that should be cast.
      *
@@ -48,6 +57,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'email_verified_at' => 'datetime',
+            'reset_password_token_expire' => 'datetime:Y/m/d H:i:s',
+            'last_login_at' => 'datetime:Y/m/d H:i:s',
             'created_at' => 'datetime:Y/m/d H:i:s',
             'password' => 'hashed',
         ];
@@ -66,5 +77,13 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+    public function getRoleLabelAttribute()
+    {
+        return UserRole::getLabel($this->user_role);
+    }
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar ? CommonComponent::getFullUrl($this->avatar) : url('/images/default-avatar.svg');
     }
 }

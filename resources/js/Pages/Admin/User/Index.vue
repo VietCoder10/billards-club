@@ -1,8 +1,29 @@
 <script setup>
 import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
-import { useForm } from '@inertiajs/inertia-vue3';
+import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import { useRequestStore } from '@/store/request';
 import { ref, onMounted } from 'vue';
+import AvatarUploadModal from '../../../Components/Billiard/AvatarUploadModal.vue';
+const page = usePage();
+
+const selectedIds = ref([]);
+const showAvatarModal = ref(false);
+const selectedStaffId = ref(null);
+const selectedStaffAvatar = ref(null);
+
+const openAvatarModal = (user) => {
+  selectedStaffId.value = user.id;
+  selectedStaffAvatar.value = user.avatar_url || '/images/default-avatar.svg';
+  showAvatarModal.value = true;
+};
+
+const handleAvatarUploaded = (newAvatar) => {
+  // Update the user avatar in the list
+  const userIndex = page.props.value.data.users.findIndex((u) => u.id === selectedStaffId.value);
+  if (userIndex !== -1) {
+    page.props.value.data.users[userIndex].avatar_url = newAvatar;
+  }
+};
 </script>
 <template>
   <AdminLayout>
@@ -24,8 +45,9 @@ import { ref, onMounted } from 'vue';
               <table role="table" class="p-datatable-table">
                 <thead class="p-datatable-thead" role="rowgroup" data-pc-section="thead" style="position: sticky">
                   <tr>
+                    <th class="p-datatable-header-cell w-[120px]">Ảnh đại diện</th>
                     <GenerateSort :data="$page.props.data.sortLinks"></GenerateSort>
-                    <th class="p-datatable-header-cell w-140px"></th>
+                    <th class="p-datatable-header-cell w-[140px]"></th>
                   </tr>
                 </thead>
                 <tbody class="p-datatable-tbody">
@@ -37,14 +59,17 @@ import { ref, onMounted } from 'vue';
                       'p-row-even': index % 2 !== 0
                     }"
                   >
+                    <td class="cursor-pointer" @click="openAvatarModal(user)">
+                      <img :src="user.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-300 hover:border-blue-500 transition" />
+                    </td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.created_at }}</td>
+                    <td>{{ user.role_label }}</td>
                     <td>
                       <BtnAction
                         :urlEdit="route('admin.user.edit', user.id)"
                         :urlDelete="route('admin.user.destroy', user.id)"
-                        messageConfirm="このユーザーを削除しますか？"
+                        messageConfirm="Bạn có muốn xóa người dùng này không"
                         :request="$page.props.data.request"
                         :routeName="'admin.user.index'"
                       ></BtnAction>
@@ -60,6 +85,7 @@ import { ref, onMounted } from 'vue';
         </template>
         <DataEmpty v-else></DataEmpty>
       </Panel>
+      <AvatarUploadModal v-model:visible="showAvatarModal" :userId="selectedStaffId" :route_url="'admin.user.updateAvatar'" :currentAvatar="selectedStaffAvatar" @uploaded="handleAvatarUploaded" />
     </template>
   </AdminLayout>
 </template>

@@ -216,21 +216,9 @@ const onSubmit = async () => {
       nextTick(() => {
         initialState.value = normalizeState(state.model);
       });
-      toast.add({
-        severity: 'success',
-        summary: 'Cập nhật thành công',
-        life: 3000
-      });
     },
     onFinish: () => {
       isSubmitting.value = false;
-    },
-    onError: (errors) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Có lỗi xảy ra',
-        life: 3000
-      });
     }
   });
 };

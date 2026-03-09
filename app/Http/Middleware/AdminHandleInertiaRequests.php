@@ -78,7 +78,9 @@ class AdminHandleInertiaRequests extends Middleware
                     ],
                     [
                         'label' => 'Quản lí nhân viên',
-                        'icon'  => 'pi pi-fw pi-bookmark',
+                        'icon' => 'pi pi-fw pi-users',
+                        'to' => route('admin.user.index'),
+                        'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.store', 'admin.user.edit', 'admin.user.update']),
                     ],
                     [
                         'label' => 'Quản lý bàn',

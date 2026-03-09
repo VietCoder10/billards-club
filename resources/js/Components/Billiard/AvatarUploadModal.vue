@@ -8,6 +8,7 @@ import { useToast } from 'primevue/usetoast';
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
+  route_url: { type: String, default: null },
   userId: { type: Number, default: null },
   currentAvatar: { type: String, default: null }
 });
@@ -61,7 +62,8 @@ const uploadAvatar = async () => {
   formData.append('avatar', selectedFile.value);
 
   try {
-    const response = await axios.post(route('admin.product.updateAvatar', props.userId), formData, {
+    const routeUrl = props.route_url || 'admin.product.updateAvatar';
+    const response = await axios.post(route(routeUrl, props.userId), formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
