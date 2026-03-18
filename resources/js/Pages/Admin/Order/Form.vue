@@ -212,6 +212,7 @@ const onSubmit = async () => {
   };
 
   useForm(submitData).put(route('admin.order.update', props.data.order.id), {
+    preserveState: false,
     onSuccess: () => {
       nextTick(() => {
         initialState.value = normalizeState(state.model);

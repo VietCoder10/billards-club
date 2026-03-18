@@ -7,13 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Kyslik\ColumnSortable\Sortable;
 
 class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
+    use Sortable;
 
     protected $fillable = [
-        'order_id',
+        'invoice_number',
+        'table_name',
         'table_total',
         'service_total',
         'total_amount',
@@ -25,12 +28,16 @@ class Invoice extends Model
         'updated_by',
     ];
 
-    public function order(): BelongsTo
+    protected $appends = ['payment_method_label'];
+
+    public function getPaymentMethodLabelAttribute()
     {
-        return $this->belongsTo(Order::class);
+        return \App\Enums\PaymentMethod::getLabel($this->payment_method);
     }
 
-    public function details(): HasMany
+
+
+    public function invoice_details(): HasMany
     {
         return $this->hasMany(InvoiceDetail::class);
     }

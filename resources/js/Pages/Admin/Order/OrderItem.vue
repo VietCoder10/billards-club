@@ -8,7 +8,8 @@ import { useToast } from 'primevue/usetoast';
 import { watch } from 'vue';
 import { calcPrice, calcSummary } from '@/lib/common';
 import { useDirtyForm } from '@/Composables/useDirtyForm';
-
+import InvoicePopup from './Dialog/InvoicePopup.vue';
+const showPopup = ref(false);
 const props = defineProps(['data']);
 const toast = useToast();
 const isSubmitting = ref(false);
@@ -42,6 +43,7 @@ const hasUnsavedChanges = computed(() => {
 useDirtyForm(hasUnsavedChanges, isSubmitting);
 
 const initData = () => {
+  const products = props.data.products.data || props.data.products;
   state.model.order = {
     ...props.data.order,
     price_per_hour: props.data.order.price_per_hour ? Number(props.data.order.price_per_hour) : 0,
@@ -50,13 +52,17 @@ const initData = () => {
     service_total: props.data.order.service_total ? Number(props.data.order.service_total) : 0,
     final_total: props.data.order.final_total ? Number(props.data.order.final_total) : 0
   };
-  state.model.order_details = (props.data.order.details || []).map((item) => ({
-    ...item,
-    price: item.price !== null ? Number(item.price) : 0,
-    quantity: item.quantity !== null ? Number(item.quantity) : 0,
-    sub_total: item.sub_total !== null ? Number(item.sub_total) : 0,
-    index: 'key_' + (Math.random() * 100000000000000000).toFixed(0)
-  }));
+  state.model.order_details = (props.data.order.details || []).map((item) => {
+    const product = products.find((p) => p.id === item.product_id);
+    return {
+      ...item,
+      price: item.price !== null ? Number(item.price) : 0,
+      quantity: item.quantity !== null ? Number(item.quantity) : 0,
+      sub_total: item.sub_total !== null ? Number(item.sub_total) : 0,
+      image: product.avatar_url,
+      index: 'key_' + (Math.random() * 100000000000000000).toFixed(0)
+    };
+  });
   calculatePlayTime();
   nextTick(() => {
     initialState.value = normalizeState(state.model);
@@ -102,7 +108,7 @@ const addToOrder = (product) => {
       quantity: 1,
       sub_total: Number(product.sale_price) || 0,
       image: product.avatar_url,
-      index: 'key_' + Math.random().toString(36).substr(2, 9)
+      index: 'key_' + (Math.random() * 100000000000000000).toFixed(0)
     });
   }
 };
@@ -148,6 +154,7 @@ const onSubmit = () => {
   };
 
   useForm(submitData).put(route('admin.order.updateSession', state.model.order.id), {
+    preserveState: false,
     onSuccess: () => {
       nextTick(() => {
         initialState.value = normalizeState(state.model);
@@ -179,6 +186,7 @@ const formatPrice = (value) => {
           </Link>
           <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
         </template>
+        <InvoicePopup v-model:visible="showPopup" :request="state.model"></InvoicePopup>
         <VeeForm as="div">
           <form @submit.prevent="onSubmit" id="order-form" class="form-data">
             <div class="grid grid-cols-12 gap-6">
@@ -206,7 +214,7 @@ const formatPrice = (value) => {
                     </div>
 
                     <!-- Order Items -->
-                    <div v-for="(item, i) in state.model.order_details" :key="item.index" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
+                    <div v-for="item in state.model.order_details" :key="item.index" class="flex items-center justify-between p-3 bg-white border rounded-lg hover:border-blue-200 transition-colors">
                       <div class="flex items-center gap-3">
                         <img :src="item.image || '/images/default-avatar.svg'" class="w-12 h-12 rounded-md object-cover" />
                         <div>
@@ -253,9 +261,8 @@ const formatPrice = (value) => {
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 mt-4">
-                    <Button label="Tạm tính" icon="pi pi-print" class="p-button-outlined p-button-secondary w-full" />
-                    <Button label="Thanh toán" icon="pi pi-check-circle" class="p-button-success w-full" />
+                  <div class="flex justify-between items-center mt-4">
+                    <Button label="Thanh toán" icon="pi pi-check-circle" class="p-button-success w-full" @click="showPopup = !showPopup" />
                   </div>
                 </div>
               </div>
@@ -322,14 +329,17 @@ const formatPrice = (value) => {
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 10px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
@@ -337,6 +347,7 @@ const formatPrice = (value) => {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -356,6 +367,7 @@ const formatPrice = (value) => {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CountingController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\InternetBankingController;
 use App\Http\Controllers\Admin\BuildingController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
@@ -54,5 +55,6 @@ Route::group([
         Route::post('product/{id}/update-avatar', [\App\Http\Controllers\Admin\ProductController::class, 'updateAvatar'])->name('product.updateAvatar');
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
         Route::resource('table-price-master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
+        Route::resource('invoice', InvoiceController::class);
     });
 });

@@ -101,6 +101,9 @@ class AdminHandleInertiaRequests extends Middleware
                     [
                         'label' => 'Quản lí hóa đơn',
                         'icon'  => 'pi pi-fw pi-bookmark',
+                        'to' => route('admin.invoice.index'),
+                        'active' => in_array($routeName, ['admin.invoice.index', 'admin.invoice.show', 'admin.invoice.create', 'admin.invoice.edit', 'admin.invoice.store', 'admin.invoice.update'])
+
                     ],
                     [
                         'label' => 'Quản lý đơn hàng',
@@ -133,6 +136,15 @@ class AdminHandleInertiaRequests extends Middleware
             if (in_array($routeName, ['admin.order.create', 'admin.order.store'])) {
                 $breadcrumbs[] = ['label' => 'Thêm đơn hàng', 'icon' => 'pi pi-user-plus', 'url' => route('admin.order.create')];
             }
+        }
+        if (in_array($routeName, ['admin.invoice.index', 'admin.invoice.create', 'admin.invoice.edit', 'admin.invoice.store', 'admin.invoice.update'])) {
+            $breadcrumbs[] = ['label' => 'Danh sách hóa đơn', 'icon' => 'pi pi-list', 'url' => session()->get('admin.invoice.list')[0] ?? route('admin.invoice.index')];
+            if (in_array($routeName, ['admin.invoice.edit', 'admin.invoice.update'])) {
+                $breadcrumbs[] = ['label' => 'Chi tiết hóa đơn', 'icon' => 'pi pi-user-edit', 'url' => route('admin.invoice.edit', $request->invoice)];
+            }
+            // if (in_array($routeName, ['admin.invoice.create', 'admin.invoice.store'])) {
+            //     $breadcrumbs[] = ['label' => 'Thêm đơn hàng', 'icon' => 'pi pi-user-plus', 'url' => route('admin.order.create')];
+            // }
         }
         if (in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update'])) {
             $breadcrumbs[] = ['label' => 'Danh sách người dùng', 'icon' => 'pi pi-list', 'url' => session()->get('admin.user.list')[0] ?? route('admin.user.index')];

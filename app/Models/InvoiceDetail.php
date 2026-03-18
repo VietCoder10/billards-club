@@ -17,8 +17,6 @@ class InvoiceDetail extends Model
         'quantity',
         'price',
         'sub_total',
-        'discount',
-        'total_amount',
     ];
 
     public function invoice(): BelongsTo

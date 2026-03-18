@@ -16,15 +16,10 @@ return new class extends Migration
             $table->foreignId('invoice_id')
                 ->constrained('invoices')
                 ->cascadeOnDelete();
-
             $table->string('item_name'); // snapshot tại thời điểm thanh toán
             $table->integer('quantity');
-
             $table->decimal('price', 12, 2);
             $table->decimal('sub_total', 12, 2);
-
-            $table->decimal('discount', 12, 2)->default(0);
-            $table->decimal('total_amount', 12, 2);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
 use App\Repositories\User\UserInterface;
 use App\Repositories\User\UserRepository;
 use App\Repositories\Building\BuildingInterface;
 use App\Repositories\Building\BuildingRepository;
+use App\Repositories\Invoice\InvoiceInterface;
+use App\Repositories\Invoice\InvoiceRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AdminProvider extends ServiceProvider
@@ -19,6 +22,7 @@ class AdminProvider extends ServiceProvider
             $this->app['request']->server->set('HTTPS', true);
         }
         $this->app->bind(UserInterface::class, UserRepository::class);
+        $this->app->bind(InvoiceInterface::class, InvoiceRepository::class);
     }
 
     /**

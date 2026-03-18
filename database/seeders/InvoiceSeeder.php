@@ -15,13 +15,15 @@ class InvoiceSeeder extends Seeder
         $completedOrders = Order::where('status', \App\Enums\OrderStatus::COMPLETED)->get();
 
         foreach ($completedOrders as $order) {
-            $invoice = Invoice::factory()->create([
-                'order_id' => $order->id,
+            $invoice = Invoice::create([
+                'invoice_number' => 'ORD-' . strtoupper(\Illuminate\Support\Str::random(10)),
+                'table_name' => $order->table->table_name ?? 'Bàn ' . rand(1, 10),
                 'table_total' => $order->table_total,
                 'service_total' => $order->service_total,
                 'total_amount' => $order->final_total,
                 'discount' => 0,
                 'final_amount' => $order->final_total,
+                'payment_method' => rand(1, 2),
                 'created_by' => $order->user_id,
                 'updated_by' => $order->user_id,
             ]);
@@ -33,8 +35,6 @@ class InvoiceSeeder extends Seeder
                     'quantity' => $detail->quantity,
                     'price' => $detail->price,
                     'sub_total' => $detail->sub_total,
-                    'discount' => 0,
-                    'total_amount' => $detail->sub_total,
                 ]);
             }
         }

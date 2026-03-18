@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')
-                ->unique()
-                ->constrained('orders')
-                ->cascadeOnDelete();
+            $table->string('invoice_number')->unique();
+            $table->string('table_name')->nullable();
             $table->decimal('table_total', 12, 2);
             $table->decimal('service_total', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2);
