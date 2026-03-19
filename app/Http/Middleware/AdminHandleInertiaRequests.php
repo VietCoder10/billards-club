@@ -4,6 +4,9 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class AdminHandleInertiaRequests extends Middleware
 {
@@ -188,6 +191,8 @@ class AdminHandleInertiaRequests extends Middleware
             'dataSession' => $dataSession,
             'leftMenu' => $leftMenu,
             'breadcrumbs' => $breadcrumbs,
+            'user' => Auth::guard('admin')->user(),
+            
         ]);
     }
 }

@@ -23,7 +23,7 @@ const state = reactive({
   model: {
     ...props.request,
     payment_method: props.request.payment_method || 1,
-    created_by: props.request.created_by || page.props.value.auth?.user?.id,
+    created_by: props.request.created_by || page.props.value.user?.id,
     customer_paid: props.request.customer_paid || 0
   }
 });
@@ -32,11 +32,11 @@ const state = reactive({
 watch(
   () => props.request,
   (newVal) => {
-    state.model = { 
-        ...newVal, 
-        payment_method: newVal.payment_method || 1,
-        created_by: newVal.created_by || page.props.value.auth?.user?.id,
-        customer_paid: newVal.customer_paid || 0
+    state.model = {
+      ...newVal,
+      payment_method: newVal.payment_method || 1,
+      created_by: newVal.created_by || page.props.value.user?.id,
+      customer_paid: newVal.customer_paid || 0
     };
   },
   { deep: true }
@@ -78,7 +78,8 @@ const isSubmitting = ref(false);
 const onSubmit = () => {
   isSubmitting.value = true;
   const payload = {
-    order_id: state.model.order?.id,
+    invoice_number: state.model.order?.order_number,
+    table_name: state.model.order?.table?.table_name,
     table_total: state.model.order?.table_total || 0,
     service_total: state.model.order?.service_total || 0,
     total_amount: state.model.order?.final_total || 0,
@@ -111,18 +112,20 @@ const clearFilter = () => {
     <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
       <form @submit="handleSubmit($event, onSubmit)" id="invoice-form" class="form-data">
         <div class="card flex flex-col gap-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <div class="flex flex-col gap-1">
+          <div class="flex flex-wrap gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div class="flex flex-col gap-1 basis-0 grow">
               <span class="text-sm text-gray-500 font-medium">Mã đơn hàng</span>
               <span class="font-bold text-gray-800">{{ state.model.order?.order_number }}</span>
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 basis-0 grow">
               <span class="text-sm text-gray-500 font-medium">Bàn</span>
               <span class="font-bold text-gray-800">{{ state.model.order?.table?.table_name }}</span>
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 basis-0 grow">
               <span class="text-sm text-gray-500 font-medium">Nhân viên tạo HĐ</span>
-              <Dropdown v-model="state.model.created_by" :options="page.props.value.data.users" optionLabel="name" optionValue="id" class="w-full" :disabled="page.props.value.auth?.user?.user_role !== 1" />
+              <Field name="created_by" v-model="state.model.created_by" v-slot="{ field, meta: metaField, handleChange }">
+                <Select :options="$page.props.data.userOptions" optionLabel="label" optionValue="value" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" class="w-full" />
+              </Field>
             </div>
           </div>
 

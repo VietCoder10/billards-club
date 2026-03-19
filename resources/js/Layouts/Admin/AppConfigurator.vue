@@ -196,7 +196,10 @@ function onPresetChange() {
 function onMenuModeChange() {
   layoutConfig.menuMode = menuMode.value;
 }
-updateColors('primary', primaryColors.value.find(x => x.name == layoutConfig.primary))
+updateColors(
+  'primary',
+  primaryColors.value.find((x) => x.name == layoutConfig.primary)
+);
 </script>
 
 <template>

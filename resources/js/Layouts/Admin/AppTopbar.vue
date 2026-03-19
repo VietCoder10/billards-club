@@ -15,7 +15,7 @@ import logo from '@/assets/imgs/logo.svg';
       <Link :href="route('admin.dashboard.index')" class="layout-topbar-logo">
         <!-- <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">Việt Billards</div> -->
 
-        <!-- <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"
@@ -31,9 +31,9 @@ import logo from '@/assets/imgs/logo.svg';
               fill="var(--primary-color)"
             />
           </g>
-        </svg> -->
+        </svg>
 
-        <!-- <span>LARAVEL</span> -->
+        <span>LARAVEL</span>
       </Link>
     </div>
 
@@ -42,7 +42,7 @@ import logo from '@/assets/imgs/logo.svg';
         <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
           <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
         </button>
-        <!-- <div class="relative">
+        <div class="relative" style="display: none">
           <button
             v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }"
             type="button"
@@ -51,7 +51,7 @@ import logo from '@/assets/imgs/logo.svg';
             <i class="pi pi-palette"></i>
           </button>
           <AppConfigurator />
-        </div> -->
+        </div>
       </div>
 
       <button

@@ -152,9 +152,8 @@ const onSubmit = () => {
     service_total: state.model.order.service_total,
     final_total: state.model.order.final_total
   };
-
-  useForm(submitData).put(route('admin.order.updateSession', state.model.order.id), {
-    preserveState: false,
+  submitData['_method'] = 'PUT';
+  useForm(submitData).post(route('admin.order.updateSession', state.model.order.id), {
     onSuccess: () => {
       nextTick(() => {
         initialState.value = normalizeState(state.model);
@@ -187,8 +186,8 @@ const formatPrice = (value) => {
           <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
         </template>
         <InvoicePopup v-model:visible="showPopup" :request="state.model"></InvoicePopup>
-        <VeeForm as="div">
-          <form @submit.prevent="onSubmit" id="order-form" class="form-data">
+        <VeeForm as="div" v-slot="{ handleSubmit }">
+          <form @submit="handleSubmit($event, onSubmit)" id="order-form" class="form-data">
             <div class="grid grid-cols-12 gap-6">
               <!-- Left: Order Summary -->
               <div class="col-span-12 lg:col-span-5 flex flex-col gap-4">

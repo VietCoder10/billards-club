@@ -6,4 +6,5 @@ interface OptionInterface
 {
     public function getSupplier();
     public function getProduct();
+    public function getUser();
 }
