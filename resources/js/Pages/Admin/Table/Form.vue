@@ -23,7 +23,7 @@ onMounted(() => {
   if (props.data.isEdit) {
     state.model = {
       ...props.data.table,
-      rooms: props.data.building.rooms ? props.data.building.rooms.map((i) => ({ ...i, index: 'key_' + (Math.random() * 100000000000000000).toFixed(0) })) : []
+      rooms: props.data.table.rooms ? props.data.table.rooms.map((i) => ({ ...i, index: 'key_' + (Math.random() * 100000000000000000).toFixed(0) })) : []
     };
   }
   setMessageError();
