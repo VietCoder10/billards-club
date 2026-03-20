@@ -260,7 +260,8 @@ const formatPrice = (value) => {
                     </div>
                   </div>
 
-                  <div class="flex justify-between items-center mt-4">
+                  <div class="flex justify-between items-center gap-2 mt-4">
+                    <Button label="Tạm tính" type="submit" form="order-form" icon="pi pi-print" class="p-button-outlined p-button-secondary w-full" />
                     <Button label="Thanh toán" icon="pi pi-check-circle" class="p-button-success w-full" @click="showPopup = !showPopup" />
                   </div>
                 </div>

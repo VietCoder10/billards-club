@@ -13,8 +13,6 @@ import logo from '@/assets/imgs/logo.svg';
         <i class="pi pi-bars"></i>
       </button>
       <Link :href="route('admin.dashboard.index')" class="layout-topbar-logo">
-        <!-- <div class="text-2xl font-bold text-red-400 drop-shadow-md tracking-wide uppercase select-none">Việt Billards</div> -->
-
         <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             fill-rule="evenodd"
@@ -32,7 +30,6 @@ import logo from '@/assets/imgs/logo.svg';
             />
           </g>
         </svg>
-
         <span>LARAVEL</span>
       </Link>
     </div>
@@ -70,7 +67,10 @@ import logo from '@/assets/imgs/logo.svg';
           <div
             class="config-panel hidden absolute top-[3.25rem] right-10 w-50 p-0 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
           >
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
+              <Link :href="route('admin.user.index')">
+                <Button variant="link" label="Thông tin cá nhân" icon="pi pi-user" />
+              </Link>
               <Link :href="route('admin.logout')">
                 <Button variant="link" label="Đăng xuất" icon="pi pi-sign-out" />
               </Link>
