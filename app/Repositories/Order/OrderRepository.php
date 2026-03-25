@@ -8,17 +8,21 @@ use App\Enums\TableStatus;
 use App\Http\Requests\Admin\Order\OrderRequest;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Product;
 use App\Models\Table;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Nette\Utils\Paginator;
+use Illuminate\Validation\ValidationException;
 
 class OrderRepository implements OrderInterface
 {
     private Order $orders;
-    public function __construct(Order $orders)
+    private Product $product;
+    public function __construct(Order $orders, Product $product)
     {
         $this->orders = $orders;
+        $this->product = $product;
     }
     public function get($request)
     {
@@ -75,16 +79,44 @@ class OrderRepository implements OrderInterface
     public function update(OrderRequest $request, $id)
     {
         return DB::transaction(function () use ($request, $id) {
-            $order = $this->orders->findOrFail($id);
-            if (!$order) {
-                return false;
+            $order = $this->orders->with('details')->findOrFail($id);
+
+            // Return current quantities to stock to recalculate correctly
+            foreach ($order->details as $detail) {
+                if ($detail->product_id) {
+                    $product = $this->product->find($detail->product_id);
+                    if ($product) {
+                        $product->quantity += $detail->quantity;
+                        $product->save();
+                    }
+                }
             }
+
             $order = $this->fillOrderData($request, $order);
             $order->save();
 
             $itemIds = collect($request->order_details)->pluck('id')->filter()->toArray();
             $order->details()->whereNotIn('id', $itemIds)->delete();
+
             foreach ($request->order_details ?? [] as $value) {
+                if ($value['product_id'] != null) {
+                    $product = $this->product->find($value['product_id']);
+                    if (!$product) {
+                        throw ValidationException::withMessages([
+                            'order_details' => ["Sản phẩm không tồn tại."]
+                        ]);
+                    }
+
+                    if ($product->quantity < $value['quantity']) {
+                        throw ValidationException::withMessages([
+                            'order_details' => ["Sản phẩm {$product->product_name} hết hàng hoặc không đủ số lượng. Tồn kho: {$product->quantity}"]
+                        ]);
+                    }
+
+                    $product->quantity -= $value['quantity'];
+                    $product->update();
+                }
+
                 $row = [
                     'order_id' => $order->id,
                     'product_id' => $value['product_id'],
@@ -93,10 +125,12 @@ class OrderRepository implements OrderInterface
                     'price' => $value['price'],
                     'sub_total' => $value['sub_total']
                 ];
+
                 $order_details = OrderDetail::where([
                     ['id', $value['id'] ?? ''],
                     ['order_id', $order->id]
                 ])->first();
+
                 if (!$order_details) {
                     $order_details = new OrderDetail;
                     $order_details->fill($row);

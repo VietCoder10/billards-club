@@ -18,7 +18,7 @@ final class OrderStatus extends Enum
             case self::PENDING:
                 return 'Đang phục vụ';
             case self::COMPLETED:
-                return 'Hoàn thành';
+                return 'Đã thanh toán';
             case self::CANCELLED:
                 return 'Đã hủy';
             default:

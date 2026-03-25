@@ -413,8 +413,8 @@ const formatCurrency = (value) => {
             </div>
 
             <div v-if="[2, 3].includes(state.model.order.status)" class="mt-8 p-6 bg-gray-100 rounded-2xl text-center border-2 border-dashed border-gray-300">
-              <i :class="['pi text-3xl mb-2 block', state.model.order.status == 1 ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500']"></i>
-              <span class="text-xl font-black text-gray-600"> Hóa đơn này {{ state.model.order.status == 1 ? 'ĐÃ THANH TOÁN' : 'ĐÃ HỦY' }} </span>
+              <i :class="['pi text-3xl mb-2 block', state.model.order.status == 2 ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500']"></i>
+              <span class="text-xl font-black text-gray-600"> Hóa đơn này {{ state.model.order.status == 2 ? 'ĐÃ THANH TOÁN' : 'ĐÃ HỦY' }} </span>
               <p class="text-gray-500 mt-1">Nội dung đã được khóa và không thể chỉnh sửa thêm.</p>
             </div>
           </form>

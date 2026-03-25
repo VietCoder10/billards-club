@@ -23,6 +23,22 @@ class TableRequest extends FormRequest
     {
         return [
             //
+            'table_price_id' => 'required',
+            'status' => 'required',
+        ];
+    }
+    public function attributes(): array
+    {
+        return [
+            'table_price_id' => 'Giá bàn',
+            'status' => 'Trạng thái',
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'table_price_id.required' => 'Giá bàn không được để trống',
+            'status.required' => 'Trạng thái không được để trống',
         ];
     }
 }

@@ -104,7 +104,7 @@ const onSubmit = () => {
                   <Field name="supplier_name" rules="required|max:255" v-model="state.model.supplier_name" v-slot="{ field, meta, handleChange }">
                     <FloatLabel variant="on">
                       <InputText v-model="state.model.supplier_name" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
-                      <label for="supplier_name">Supplier Name <span class="required">(required)</span></label>
+                      <label for="supplier_name">Tên nhà cung cấp <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="supplier_name" class="p-error" />
                   </Field>
@@ -136,7 +136,7 @@ const onSubmit = () => {
                   <Field name="phone" rules="required|max:20" v-model="state.model.phone" v-slot="{ field, meta, handleChange }">
                     <FloatLabel variant="on">
                       <InputText v-model="state.model.phone" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
-                      <label for="phone">Phone <span class="required">(required)</span></label>
+                      <label for="phone">Số điện thoại <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="phone" class="p-error" />
                   </Field>
@@ -147,7 +147,7 @@ const onSubmit = () => {
                   <Field name="address" rules="required|max:255" v-model="state.model.address" v-slot="{ field, meta, handleChange }">
                     <FloatLabel variant="on">
                       <InputText v-model="state.model.address" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
-                      <label for="address">Address <span class="required">(required)</span></label>
+                      <label for="address">Địa chỉ <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="address" class="p-error" />
                   </Field>
@@ -160,7 +160,7 @@ const onSubmit = () => {
                   <Field name="contact_person" rules="max:255" v-model="state.model.contact_person" v-slot="{ field, meta, handleChange }">
                     <FloatLabel variant="on">
                       <InputText v-model="state.model.contact_person" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
-                      <label for="contact_person">Contact Person</label>
+                      <label for="contact_person">Người liên hệ</label>
                     </FloatLabel>
                     <ErrorMessage name="contact_person" class="p-error" />
                   </Field>
@@ -171,7 +171,7 @@ const onSubmit = () => {
                   <Field name="status" v-slot="{ field }">
                     <FloatLabel variant="on">
                       <Dropdown v-model="state.model.status" :options="statusOptions" optionLabel="label" optionValue="value" v-bind="field" class="w-full" />
-                      <label for="status">Status</label>
+                      <label for="status">Trạng thái</label>
                     </FloatLabel>
                   </Field>
                 </div>
@@ -181,7 +181,7 @@ const onSubmit = () => {
                   <Field name="note" rules="max:255" v-model="state.model.note" v-slot="{ field, meta, handleChange }">
                     <FloatLabel variant="on">
                       <Textarea v-model="state.model.note" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
-                      <label for="note">Note</label>
+                      <label for="note">Ghi chú</label>
                     </FloatLabel>
                     <ErrorMessage name="note" class="p-error" />
                   </Field>
@@ -191,9 +191,9 @@ const onSubmit = () => {
 
             <div class="form-action mt-4">
               <Link :href="$page.props.data.urlBack">
-                <Button label="Cancel" icon="pi pi-arrow-left" class="btn-action" />
+                <Button label="Hủy" icon="pi pi-arrow-left" class="btn-action" />
               </Link>
-              <Button label="Save" type="submit" icon="pi pi-save" class="btn-action" />
+              <Button label="Lưu" type="submit" icon="pi pi-save" class="btn-action" />
             </div>
           </form>
         </VeeForm>

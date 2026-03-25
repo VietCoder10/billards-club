@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Admin\Invoice\InvoiceRequest;
 use App\Repositories\Invoice\InvoiceInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,9 +55,16 @@ class InvoiceController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(InvoiceRequest $request)
     {
         //
+        $invoice = $this->invoice->create($request);
+        if (!$invoice) {
+            $this->setFlash(__('Tạo hóa đơn thất bại'), 'error');
+            return redirect()->route('admin.order.indexSession');
+        }
+        $this->setFlash(__('Tạo hóa đơn thành công'), 'success');
+        return redirect()->route('admin.order.indexSession');
     }
 
     /**

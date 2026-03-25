@@ -10,11 +10,11 @@ interface TableInterface
     public function get($request);
     public function getTableSession($request);
 
-    public function getById($id);
+    public function getById(string $id);
 
     public function create(TableRequest $request);
 
-    public function update($id, TableRequest $request);
+    public function update(string $id, TableRequest $request);
 
-    public function delete($id);
+    public function delete(string $id);
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SendRequestController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -54,7 +55,8 @@ Route::group([
         Route::resource('product', \App\Http\Controllers\Admin\ProductController::class);
         Route::post('product/{id}/update-avatar', [\App\Http\Controllers\Admin\ProductController::class, 'updateAvatar'])->name('product.updateAvatar');
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
-        Route::resource('table-price-master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
+        Route::resource('table_price_master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
         Route::resource('invoice', InvoiceController::class);
+        Route::resource('report', ReportController::class)->only(['index']);
     });
 });

@@ -22,7 +22,10 @@ class InvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'invoice_number' => 'unique:invoices,invoice_number',
+            'order_id' => 'required|exists:orders,id',
+            'payment_method' => 'nullable',
+            'details' => 'required|array|min:1',
         ];
     }
 }

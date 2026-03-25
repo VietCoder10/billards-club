@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
+use App\Enums\ProductCategory;
 use App\Http\Controllers\BaseController;
 use App\Models\Product;
 use App\Repositories\Products\ProductInterface;
@@ -61,6 +62,7 @@ class ProductController extends BaseController
             'data' => [
                 'title' => 'Thêm sản phẩm',
                 'supplierOptions' => $this->option->getSupplier(),
+                'productCategories' => ProductCategory::getOptions(),
                 'urlBack' => session()->get('admin.product.list')[0] ?? route('admin.product.index'),
             ]
         ]));
@@ -103,6 +105,7 @@ class ProductController extends BaseController
             'data' => [
                 'title' => 'Chi tiết sản phẩm',
                 'isEdit' => true,
+                'productCategories' => ProductCategory::getOptions(),
                 'supplierOptions' => $this->option->getSupplier(),
                 'product' => $product,
                 'urlBack' => $urlBack,

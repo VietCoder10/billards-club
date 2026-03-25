@@ -35,11 +35,37 @@ class TablePriceMasterRepository implements TablePriceMasterInterface
         return $tablePriceMasters;
     }
 
-    public function getById($id) {}
+    public function getById($id)
+    {
+        return $this->tablePriceMaster->find($id);
+    }
 
-    public function create(TablePriceMasterRequest $request) {}
+    public function create(TablePriceMasterRequest $request)
+    {
+        $tablePrice = $this->tablePriceMaster->fill($request->all());
+        if (!$tablePrice->save()) {
+            return false;
+        }
+        return true;
+    }
 
-    public function update($id, TablePriceMasterRequest $request) {}
+    public function update($id, TablePriceMasterRequest $request)
+    {
+        $tablePrice = $this->tablePriceMaster->find($id);
+        $tablePrice->fill($request->all());
+        if (!$tablePrice->save()) {
+            return false;
+        }
+        return true;
+    }
 
-    public function delete($id) {}
+    public function delete($id)
+    {
+        $tablePrice = $this->tablePriceMaster->find($id);
+        if (!$tablePrice) {
+            return false;
+        }
+        $tablePrice->delete();
+        return true;
+    }
 }

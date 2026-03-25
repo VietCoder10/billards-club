@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watch, computed } from 'vue';
+import { reactive, ref, watch, computed, onMounted } from 'vue';
 import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
@@ -20,15 +20,18 @@ watch(
 );
 watch(localVisible, (v) => emit('update:visible', v));
 const state = reactive({
-  model: {
+  model: {}
+});
+
+onMounted(() => {
+  state.model = {
     ...props.request,
     payment_method: props.request.payment_method || 1,
     created_by: props.request.created_by || page.props.value.user?.id,
     customer_paid: props.request.customer_paid || 0
-  }
+  };
 });
 
-// Watch for changes in request prop to update state
 watch(
   () => props.request,
   (newVal) => {
@@ -46,6 +49,7 @@ const invoiceDetails = computed(() => {
   let details = [];
   if (state.model.order_details) {
     details = state.model.order_details.map((item) => ({
+      product_id: item.product_id,
       item_name: item.product_name,
       quantity: item.quantity,
       price: item.price,
@@ -54,10 +58,9 @@ const invoiceDetails = computed(() => {
       total_amount: item.sub_total
     }));
   }
-
-  // Thêm tiền bàn vào chi tiết hóa đơn
   if (state.model.order && state.model.order.table_total > 0) {
     details.push({
+      product_id: null,
       item_name: 'Tiền bàn (' + (state.model.order.total_minutes || 0) + ' phút)',
       quantity: 1,
       price: state.model.order.table_total,
@@ -78,16 +81,10 @@ const isSubmitting = ref(false);
 const onSubmit = () => {
   isSubmitting.value = true;
   const payload = {
-    invoice_number: state.model.order?.order_number,
+    ...state.model.order,
+    order_id: state.model.order?.id,
+    payment_method: state.model.payment_method,
     table_name: state.model.order?.table?.table_name,
-    table_total: state.model.order?.table_total || 0,
-    service_total: state.model.order?.service_total || 0,
-    total_amount: state.model.order?.final_total || 0,
-    discount: state.model.order?.discount || 0,
-    final_amount: state.model.order?.final_total || 0,
-    payment_method: state.model.payment_method || 1, // Mặc định 1: tiền mặt
-    customer_paid: state.model.payment_method === 1 ? state.model.customer_paid : 0,
-    created_by: state.model.created_by,
     details: invoiceDetails.value
   };
 

@@ -11,7 +11,7 @@ import { Link, usePage } from '@inertiajs/inertia-vue3';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.table-price-master.index'" :createUrl="route('admin.table-price-master.create')" :csvRoute="'admin.table-price-master.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.table_price_master.index'" :createUrl="route('admin.table_price_master.create')" :csvRoute="'admin.table_price_master.exportCsv'" />
 
         <!-- Bảng dữ liệu products -->
         <template v-if="$page.props.data.tablePrices.length">
@@ -45,14 +45,14 @@ import { Link, usePage } from '@inertiajs/inertia-vue3';
                   >
                     <td>{{ index + 1 }}</td>
                     <td>{{ tablePrice.price_name }}</td>
-                    <td>{{ tablePrice.price_per_hour }}</td>
+                    <td>{{ Number(tablePrice.price_per_hour).toLocaleString() }}</td>
                     <td>
                       <BtnAction
-                        :urlEdit="route('admin.table-price-master.edit', tablePrice.id)"
-                        :urlDelete="route('admin.table-price-master.destroy', tablePrice.id)"
+                        :urlEdit="route('admin.table_price_master.edit', tablePrice.id)"
+                        :urlDelete="route('admin.table_price_master.destroy', tablePrice.id)"
                         messageConfirm="Bạn có chắc chắn muốn xóa giá bàn này không?"
                         :request="$page.props.data.request"
-                        :routeName="'admin.table-price-master.index'"
+                        :routeName="'admin.table_price_master.index'"
                       />
                     </td>
                   </tr>

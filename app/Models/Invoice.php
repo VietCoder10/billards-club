@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SaveUserIdTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
     use Sortable;
+    use SaveUserIdTrait;
 
     protected $fillable = [
         'invoice_number',
@@ -24,8 +26,6 @@ class Invoice extends Model
         'final_amount',
         'payment_method',
         'paid_at',
-        'created_by',
-        'updated_by',
     ];
 
     protected $appends = ['payment_method_label'];

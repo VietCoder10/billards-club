@@ -19,7 +19,10 @@ class Table extends Model
         'status',
         'table_price_id',
     ];
-
+    protected $casts = [
+        'status' => 'integer',
+        'table_price_id' => 'integer',
+    ];
     protected $appends = ['status_label'];
 
     public function tablePrice(): BelongsTo

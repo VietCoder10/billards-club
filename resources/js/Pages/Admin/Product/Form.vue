@@ -163,7 +163,15 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                     <div class="flex flex-col grow basis-0">
                       <Field name="category" rules="required|max:255" v-model="state.model.category" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
-                          <InputText class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
+                          <Select
+                            :options="$page.props.data.productCategories"
+                            optionLabel="label"
+                            optionValue="value"
+                            class="w-full"
+                            :modelValue="field.value"
+                            @update:model-value="handleChange"
+                            :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
+                          />
                           <label>Danh mục <span class="required">(Bắt buộc)</span></label>
                         </FloatLabel>
                         <ErrorMessage class="p-error" :name="field.name" />

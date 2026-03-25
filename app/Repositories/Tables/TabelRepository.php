@@ -62,11 +62,39 @@ class TabelRepository implements TableInterface
     }
 
 
-    public function getById($id) {}
+    public function getById(string $id)
+    {
+        return $this->tables->find($id);
+    }
 
-    public function create(TableRequest $request) {}
+    public function create(TableRequest $request)
+    {
+        $table = $this->tables->fill($request->all());
+        if (!$table->save()) {
+            return false;
+        }
+        return true;
+    }
 
-    public function update($id, TableRequest $request) {}
+    public function update(string $id, TableRequest $request)
+    {
+        $table = $this->getById($id);
+        if (!$table) {
+            return false;
+        }
+        $table->fill($request->all());
+        if (!$table->save()) {
+            return false;
+        }
+        return true;
+    }
 
-    public function delete($id) {}
+    public function delete(string $id)
+    {
+        $table = $this->tables->find($id);
+        if (!$table->delete()) {
+            return false;
+        }
+        return true;
+    }
 }

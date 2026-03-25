@@ -22,7 +22,7 @@ const props = defineProps(['data']);
 onMounted(() => {
   if (props.data.isEdit) {
     state.model = {
-      ...props.data.table
+      ...props.data.tablePrice
     };
   }
   setMessageError();
@@ -78,7 +78,7 @@ const onSubmit = () => {
 
   if (props.data.isEdit) {
     convertModel['_method'] = 'PUT';
-    useForm(convertModel).post(route('admin.table.update', props.data.table.id), {
+    useForm(convertModel).post(route('admin.table_price_master.update', { table_price_master: state.model.id }), {
       onSuccess: () => {
         nextTick(() => {
           initialState.value = normalizeState(state.model);
@@ -90,7 +90,7 @@ const onSubmit = () => {
     });
     return;
   }
-  useForm(convertModel).post(route('admin.table.store'), {
+  useForm(convertModel).post(route('admin.table_price_master.store'), {
     onSuccess: () => {
       nextTick(() => {
         initialState.value = normalizeState(state.model);
@@ -122,47 +122,22 @@ const onSubmit = () => {
             <div class="card flex flex-col gap-4">
               <div class="flex flex-wrap gap-4">
                 <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="table_name" v-model="state.model.table_name" v-slot="{ field, meta: metaField, handleChange }">
+                  <Field name="price_name" v-model="state.model.price_name" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
                       <InputText class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                      <label :for="field.name">Tên bàn</label>
+                      <label :for="field.name">Tên loại bàn</label>
                     </FloatLabel>
                   </Field>
-                  <ErrorMessage name="table_name" class="text-red-500" />
+                  <ErrorMessage name="price_name" class="text-red-500" />
                 </div>
                 <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="table_price_id" v-model="state.model.table_price_id" v-slot="{ field, meta: metaField, handleChange }">
+                  <Field name="price_per_hour" v-model="state.model.price_per_hour" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <Select
-                        class="w-full"
-                        :options="$page.props.data.tablePrices"
-                        optionLabel="label"
-                        optionValue="value"
-                        :modelValue="field.value"
-                        @update:model-value="handleChange"
-                        :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
-                      />
-                      <label :for="field.name">Giá bàn</label>
+                      <InputNumber class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
+                      <label :for="field.name">Giá/giờ</label>
                     </FloatLabel>
                   </Field>
-                  <ErrorMessage name="table_price_id" class="text-red-500" />
-                </div>
-                <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="status" v-model="state.model.status" v-slot="{ field, meta: metaField, handleChange }">
-                    <FloatLabel variant="on">
-                      <Select
-                        class="w-full"
-                        :options="$page.props.data.tableStatus"
-                        optionLabel="label"
-                        optionValue="value"
-                        :modelValue="field.value"
-                        @update:model-value="handleChange"
-                        :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
-                      />
-                      <label :for="field.name">Trạng thái</label>
-                    </FloatLabel>
-                  </Field>
-                  <ErrorMessage name="status" class="text-red-500" />
+                  <ErrorMessage name="price_per_hour" class="text-red-500" />
                 </div>
               </div>
             </div>
