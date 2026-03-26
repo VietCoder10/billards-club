@@ -31,6 +31,7 @@
     "@vee-validate/rules": "^4.5.10",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
+    "@vuepic/vue-datepicker": "^12.1.0",
     "autoprefixer": "^10.4.21",
     "chart.js": "3.3.2",
     "eslint": "^9.22.0",

@@ -6,6 +6,7 @@ return [
     App\Providers\OptionProvider::class,
     App\Providers\OrderProvider::class,
     App\Providers\ProductProvider::class,
+    App\Providers\RepositoryServiceProvider::class,
     App\Providers\SupplierProvider::class,
     App\Providers\TablePriceMasterProvider::class,
     App\Providers\TableProvider::class,

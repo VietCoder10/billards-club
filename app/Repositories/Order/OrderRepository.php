@@ -11,6 +11,7 @@ use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Table;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Nette\Utils\Paginator;
 use Illuminate\Validation\ValidationException;
@@ -61,7 +62,7 @@ class OrderRepository implements OrderInterface
     {
         $order = new Order();
         $order->table_id = $request->table_id;
-        $order->user_id = auth()->id();
+        $order->user_id = Auth::guard('admin')->id();
         $order->status = OrderStatus::PENDING;
         $order->started_at = now();
         $order->order_number = 'ORD-' . strtoupper(\Illuminate\Support\Str::random(8));
@@ -69,7 +70,7 @@ class OrderRepository implements OrderInterface
         $table = Table::find($request->table_id);
         if ($table) {
             $order->price_per_hour = $table->tablePrice->price_per_hour ?? 0;
-            $table->status = 2;
+            $table->status = TableStatus::IN_USE;
             $table->save();
         }
 

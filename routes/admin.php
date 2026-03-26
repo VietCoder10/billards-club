@@ -43,7 +43,10 @@ Route::group([
     Route::group([
         'middleware' => ['assign.guard:admin', 'admin'],
     ], function () {
-        Route::resource('dashboard', DashboardController::class)->only(['index']);
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::post('dashboard/event', [DashboardController::class, 'event'])->name('dashboard.event');
+        Route::post('dashboard/store', [DashboardController::class, 'store'])->name('dashboard.store');
+        Route::delete('dashboard/{id}', [DashboardController::class, 'destroy'])->name('dashboard.destroy');
         Route::resource('user', UserController::class);
         Route::post('check-email', [UserController::class, 'checkEmail'])->name('user.checkEmail');
         Route::post('user/{id}/update-avatar', [UserController::class, 'updateAvatar'])->name('user.updateAvatar');

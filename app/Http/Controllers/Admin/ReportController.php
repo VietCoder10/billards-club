@@ -5,11 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Invoice;
 use Carbon\Carbon;
+use App\Repositories\Report\ReportInterface;
 
 class ReportController extends BaseController
 {
+    private ReportInterface $report;
+
+    public function __construct(ReportInterface $reportRepository)
+    {
+        $this->report = $reportRepository;
+    }
+
     /**
      * Display the revenue report dashboard.
      */
@@ -30,27 +37,12 @@ class ReportController extends BaseController
         $endOfYear = $selectedDate->copy()->endOfYear();
 
         $today = Carbon::today();
-        
-        $revenueToday = Invoice::whereDate('created_at', $today)->sum('final_amount');
-        $revenueThisMonth = Invoice::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('final_amount');
-        $revenueThisYear = Invoice::whereBetween('created_at', [$startOfYear, $endOfYear])->sum('final_amount');
 
-        // Revenue by day for the selected month
-        $daysInMonth = $selectedDate->daysInMonth;
-        $dailyRevenue = [];
-        for ($i = 1; $i <= $daysInMonth; $i++) {
-            $dailyRevenue[$i] = 0;
-        }
+        $revenueToday = $this->report->getRevenueByDate($today);
+        $revenueThisMonth = $this->report->getRevenueByRange($startOfMonth, $endOfMonth);
+        $revenueThisYear = $this->report->getRevenueByRange($startOfYear, $endOfYear);
 
-        $invoicesThisMonth = Invoice::whereBetween('created_at', [$startOfMonth, $endOfMonth])
-            ->selectRaw('DATE(created_at) as date, SUM(final_amount) as total')
-            ->groupBy('date')
-            ->get();
-
-        foreach ($invoicesThisMonth as $invoice) {
-            $day = Carbon::parse($invoice->date)->day;
-            $dailyRevenue[$day] = (float)$invoice->total;
-        }
+        $dailyRevenue = $this->report->getDailyRevenue($selectedMonth, $selectedYear);
 
         return Inertia::render('Admin/Report/Index', [
             'data' => [
