@@ -3,6 +3,7 @@
 namespace App\Repositories\Products;
 
 use App\Components\CommonComponent;
+use App\Enums\StorageFolder;
 use App\Http\Requests\Admin\Product\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -55,6 +56,17 @@ class ProductRepository implements ProductInterface
     {
         $products = new Product();
         $products->fill($request->all());
+
+        if ($request->hasFile('avatar')) {
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::PRODUCT;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $products->avatar = $path;
+        }
+
         if (!$products->save()) {
             return false;
         }
@@ -67,6 +79,25 @@ class ProductRepository implements ProductInterface
             return false;
         }
         $product->fill($request->all());
+
+        if ($request->hasFile('avatar')) {
+            if ($product->avatar) {
+                CommonComponent::deleteFile('', $product->avatar);
+            }
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::PRODUCT;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $product->avatar = $path;
+        } elseif ($request->has('avatar') && $request->avatar === null) {
+            if ($product->avatar) {
+                CommonComponent::deleteFile('', $product->avatar);
+                $product->avatar = null;
+            }
+        }
+
         if (!$product->save()) {
             return false;
         }

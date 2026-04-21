@@ -12,6 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Enums\StorageFolder;
 use App\Http\Requests\Admin\Login\AdminForgotPasswordRequest;
 use App\Http\Requests\Admin\Login\AdminResetPasswordRequest;
 use Illuminate\Support\Str;
@@ -62,6 +63,16 @@ class UserRepository implements UserInterface
         $newUser->user_role = UserRole::USER;
         $newUser->password = Hash::make($request->password);
 
+        if ($request->hasFile('avatar')) {
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::AVATAR;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $newUser->avatar = $path;
+        }
+
         return $newUser->save();
     }
 
@@ -78,6 +89,24 @@ class UserRepository implements UserInterface
         $user->user_role = UserRole::USER;
         if ($request->password) {
             $user->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                CommonComponent::deleteFile('', $user->avatar);
+            }
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::AVATAR;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $user->avatar = $path;
+        } elseif ($request->has('avatar') && $request->avatar === null) {
+            if ($user->avatar) {
+                CommonComponent::deleteFile('', $user->avatar);
+                $user->avatar = null;
+            }
         }
 
         return $user->save();

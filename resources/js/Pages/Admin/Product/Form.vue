@@ -11,7 +11,6 @@ import { getHiragana } from '@/lib/common';
 import Textarea from 'primevue/textarea';
 import axios from 'axios';
 import { useDirtyForm } from '@/Composables/useDirtyForm';
-import AvatarUploadModal from '../../../Components/Billiard/AvatarUploadModal.vue';
 
 const props = defineProps(['data']);
 
@@ -21,14 +20,19 @@ const isSubmitting = ref(false);
 const state = reactive({
   model: {}
 });
-const showAvatarModal = ref(false);
+const fileInput = ref(null);
+const previewUrl = ref(null);
 
-const openAvatarModal = () => {
-  showAvatarModal.value = true;
+const triggerFileInput = () => {
+  fileInput.value.click();
 };
 
-const handleAvatarUploaded = (newAvatar) => {
-  state.model.avatar_url = newAvatar;
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    state.model.avatar = file;
+    previewUrl.value = URL.createObjectURL(file);
+  }
 };
 
 onMounted(() => {
@@ -58,21 +62,22 @@ const onSubmit = (values, { setErrors }) => {
         onInvalidSubmit({ errors: errors });
       }
     });
+  } else {
+    useForm(state.model).post(route('admin.product.store'), {
+      onSuccess: () => {
+        nextTick(() => {
+          initialState.value = normalizeState(state.model);
+        });
+      },
+      onFinish: () => {
+        isSubmitting.value = false;
+      },
+      onError: (errors) => {
+        setErrors(errors);
+        onInvalidSubmit({ errors: errors });
+      }
+    });
   }
-  useForm(state.model).post(route('admin.product.store'), {
-    onSuccess: () => {
-      nextTick(() => {
-        initialState.value = normalizeState(state.model);
-      });
-    },
-    onFinish: () => {
-      isSubmitting.value = false;
-    },
-    onError: (errors) => {
-      setErrors(errors);
-      onInvalidSubmit({ errors: errors });
-    }
-  });
 };
 
 const onInvalidSubmit = ({ errors }) => {
@@ -125,15 +130,16 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
             <div class="flex flex-wrap gap-6">
               <!-- Left Column: Avatar Section -->
               <div class="flex flex-col items-center gap-4 w-1/4">
-                <div class="relative group cursor-pointer" @click="openAvatarModal">
-                  <img :src="state.model.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300" />
+                <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onFileChange" />
+                <div class="relative group cursor-pointer" @click="triggerFileInput">
+                  <img :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300" />
                   <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black bg-opacity-30 rounded-full">
                     <span class="text-white text-sm font-bold"><i class="pi pi-camera mr-2"></i>Thay đổi</span>
                   </div>
                 </div>
                 <div class="text-center">
                   <p class="text-sm text-gray-500 mb-2">Ảnh sản phẩm</p>
-                  <Button label="Thay đổi ảnh" icon="pi pi-image" class="p-button-outlined p-button-secondary" @click="openAvatarModal" type="button" />
+                  <Button label="Thay đổi ảnh" icon="pi pi-image" class="p-button-outlined p-button-secondary" @click="triggerFileInput" type="button" />
                 </div>
               </div>
               <!-- Right Column: Form Fields Section -->
@@ -251,7 +257,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
         </VeeForm>
       </Panel>
 
-      <AvatarUploadModal v-model:visible="showAvatarModal" :userId="state.model.id" :currentAvatar="state.model.avatar_url || '/images/default-avatar.svg'" @uploaded="handleAvatarUploaded" />
+
     </template>
   </AdminLayout>
 </template>

@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
@@ -35,6 +37,17 @@ class StoreUserRequest extends FormRequest
                 })
             ],
             'password' => 'required|min:10|max:16|confirmed',
+            'avatar' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    if ($value instanceof UploadedFile) {
+                        $validator = Validator::make([$attribute => $value], [$attribute => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240']);
+                        if ($validator->fails()) {
+                            $fail($validator->errors()->first($attribute));
+                        }
+                    }
+                },
+            ],
         ];
         if ($id) {
             $validate['password'] = 'nullable|min:10|max:16|confirmed';

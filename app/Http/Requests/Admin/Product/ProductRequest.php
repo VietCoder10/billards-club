@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
@@ -28,14 +30,19 @@ class ProductRequest extends FormRequest
         return [
             'product_name' => ['required', 'string', 'max:255'],
 
-            'image' => [
+            'avatar' => [
                 'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048' // 2MB
+                function ($attribute, $value, $fail) {
+                    if ($value instanceof UploadedFile) {
+                        $validator = Validator::make([$attribute => $value], [$attribute => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240']);
+                        if ($validator->fails()) {
+                            $fail($validator->errors()->first($attribute));
+                        }
+                    }
+                },
             ],
 
-            'category' => ['nullable', 'string', 'max:255'],
+            'category' => ['nullable', 'max:255'],
 
             'sku' => [
                 'required',

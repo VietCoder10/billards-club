@@ -7,24 +7,30 @@ import $ from 'jquery';
 import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
 import { localize } from '@vee-validate/i18n';
 import axios from 'axios';
-import AvatarUploadModal from '../../../Components/Billiard/AvatarUploadModal.vue';
 
 const page = usePage();
-const showAvatarModal = ref(false);
+const fileInput = ref(null);
+const previewUrl = ref(null);
 const state = reactive({
   model: {
     name: '',
     email: '',
     password: '',
-    password_confirmation: ''
+    password_confirmation: '',
+    avatar: null
   }
 });
-const openAvatarModal = () => {
-  showAvatarModal.value = true;
+
+const triggerFileInput = () => {
+  fileInput.value.click();
 };
 
-const handleAvatarUploaded = (newAvatar) => {
-  state.model.avatar_url = newAvatar;
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    state.model.avatar = file;
+    previewUrl.value = URL.createObjectURL(file);
+  }
 };
 const props = defineProps(['data']);
 onMounted(() => {
@@ -115,16 +121,21 @@ const onSubmit = () => {
           <form @submit="handleSubmit($event, onSubmit)" id="user-form" class="form-data">
             <div class="flex flex-wrap gap-6">
               <!-- Left Column: Avatar Section -->
-              <div v-if="props.data.isEdit" class="w-full md:w-1/4 lg:w-1/5 flex flex-col items-center gap-4">
-                <div class="relative group cursor-pointer" @click="openAvatarModal">
-                  <img :src="state.model.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300" />
+              <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col items-center gap-4">
+                <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onFileChange" />
+                <div class="relative group cursor-pointer" @click="triggerFileInput">
+                  <img
+                    :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'"
+                    alt="Avatar"
+                    class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300"
+                  />
                   <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black bg-opacity-30 rounded-full">
                     <span class="text-white text-sm font-bold"><i class="pi pi-camera mr-2"></i>Thay đổi</span>
                   </div>
                 </div>
                 <div class="text-center">
                   <p class="text-sm text-gray-500 mb-2">Ảnh đại diện</p>
-                  <Button label="Thay đổi ảnh" icon="pi pi-image" class="p-button-outlined p-button-secondary" @click="openAvatarModal" type="button" />
+                  <Button label="Thay đổi ảnh" icon="pi pi-image" class="p-button-outlined p-button-secondary" @click="triggerFileInput" type="button" />
                 </div>
               </div>
 
@@ -165,6 +176,24 @@ const onSubmit = () => {
                         }"
                       />
                       <ErrorMessage class="p-error" name="email" />
+                    </Field>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" require>Chức vụ:</label>
+                  <div class="form-input">
+                    <Field name="user_role" v-model="state.model.user_role" v-slot="{ field, meta: metaField, handleChange }">
+                      <Select
+                        :disabled="$page.props.user.user_role == 2"
+                        class="w-full"
+                        v-model="state.model.user_role"
+                        v-bind="field"
+                        v-on:update:model-value="handleChange"
+                        :class="{
+                          'p-invalid': !metaField.valid && metaField.touched
+                        }"
+                      />
+                      <ErrorMessage class="p-error" name="user_role" />
                     </Field>
                   </div>
                 </div>
@@ -231,8 +260,6 @@ const onSubmit = () => {
           </form>
         </VeeForm>
       </Panel>
-
-      <AvatarUploadModal v-model:visible="showAvatarModal" :userId="state.model.id" :route_url="'admin.user.updateAvatar'" :currentAvatar="state.model.avatar_url || '/images/default-avatar.svg'" @uploaded="handleAvatarUploaded" />
     </template>
   </AdminLayout>
 </template>
