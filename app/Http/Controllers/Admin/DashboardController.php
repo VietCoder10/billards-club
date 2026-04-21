@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends BaseController
 {
     private $event;
+    use AuthorizesRequests;
 
     public function __construct(EventInterface $event)
     {
@@ -21,7 +23,7 @@ class DashboardController extends BaseController
 
     public function index()
     {
-        $users = User::select('id', 'name', 'avatar')->get()->map(function($user) {
+        $users = User::select('id', 'name', 'avatar')->get()->map(function ($user) {
             return [
                 'label' => $user->name,
                 'value' => $user->id,
@@ -61,7 +63,7 @@ class DashboardController extends BaseController
                 foreach ($event->users as $user) {
                     $avatars[$user->id] = $user->avatar ? asset('storage/' . $user->avatar) : null;
                 }
-                
+
                 return [
                     'id' => $event->id,
                     'title' => $event->name,
@@ -96,6 +98,7 @@ class DashboardController extends BaseController
 
     public function store(Request $request)
     {
+        $this->authorize('viewAny', User::class);
         $request->validate([
             'name' => 'required|max:255',
             'start_date' => 'required',
@@ -116,6 +119,7 @@ class DashboardController extends BaseController
 
     public function destroy(string $id)
     {
+        $this->authorize('viewAny', User::class);
         if ($this->event->destroy($id)) {
             return response()->json([
                 'message' => 'Xóa thành công',

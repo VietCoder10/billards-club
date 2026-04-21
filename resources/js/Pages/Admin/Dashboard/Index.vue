@@ -441,8 +441,7 @@ const getTimeObject = (dateValue) => {
                   <Field name="start_date" rules="required" v-model="state.model.start_date" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
                       <VueDatePicker
-                        v-bind="field"
-                        v-model="state.model.start_date"
+                        :modelValue="field.value"
                         :readonly="state.model.id && !state.model.flag_delete"
                         v-on:update:model-value="handleChange"
                         :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
@@ -577,5 +576,15 @@ const getTimeObject = (dateValue) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/* Fix FloatLabel not floating with VueDatePicker */
+:deep(.p-floatlabel:has(.dp__main)) label {
+  top: -0.3rem !important;
+  font-size: 12px !important;
+  background: white;
+  padding: 0 2px;
+}
+:deep(.p-floatlabel:has(.dp__main)) .dp__main {
+  margin-top: 4px;
 }
 </style>

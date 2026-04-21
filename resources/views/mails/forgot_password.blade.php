@@ -1,21 +1,24 @@
 <!-- resources/views/forgot_password.blade.php -->
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>パスワード再設定</title>
+    <title>Quên mật khẩu</title>
 </head>
+
 <body style="font-family: sans-serif; padding: 20px;">
-    <h2>パスワードをお忘れですか？</h2>
-    <p>以下のリンクをクリックして、パスワードを再設定してください。</p>
+    <h2>Quên mật khẩu</h2>
+    <p>Nhấp vào liên kết dưới đây để đặt lại mật khẩu của bạn.</p>
 
     <p>
         <a href="{{ $data['url'] }}" style="color: #1a73e8; text-decoration: underline;">
-            パスワード再設定リンク
+            Liên kết đặt lại mật khẩu
         </a>
     </p>
 
-    <p>もしこのリクエストに心当たりがない場合は、このメールを無視してください。</p>
+    <p>Nếu bạn không có yêu cầu này, vui lòng bỏ qua email này.</p>
 </body>
+
 </html>

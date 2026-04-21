@@ -3,6 +3,7 @@
 namespace App\Repositories\User;
 
 use App\Components\CommonComponent;
+use App\Enums\UserRole;
 use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Models\User;
 use Carbon\Carbon;
@@ -54,11 +55,11 @@ class UserRepository implements UserInterface
 
     public function store(StoreUserRequest $request): bool
     {
-        $newUser = $this->user->fill($request->fill([
-            'name' => $request->name,
-            'email' => $request->email,
-            'user_role' => $request->user_role,
+        $newUser = $this->user->fill($request->only([
+            'name',
+            'email',
         ]));
+        $newUser->user_role = UserRole::USER;
         $newUser->password = Hash::make($request->password);
 
         return $newUser->save();
@@ -70,11 +71,11 @@ class UserRepository implements UserInterface
         if (! $user) {
             return false;
         }
-        $user->fill($request->fill([
-            'name' => $request->name,
-            'email' => $request->email,
-            'user_role' => $request->user_role,
+        $user->fill($request->only([
+            'name',
+            'email',
         ]));
+        $user->user_role = UserRole::USER;
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }

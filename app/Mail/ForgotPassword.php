@@ -28,7 +28,7 @@ class ForgotPassword extends Mailable
      */
     public function build()
     {
-        return $this->subject('[' . env('APP_NAME') . '] パスワードを忘れた')
+        return $this->subject('[' . env('APP_NAME') . '] Quên mật khẩu')
             ->view('mails.forgot_password')
             ->with([
                 'data' => $this->data,

@@ -151,7 +151,7 @@ const onSubmit = () => {
                 <div class="form-group">
                   <label class="form-label" require>Email:</label>
                   <div class="form-input">
-                    <Field name="email" :rules="flagValidateUnique ? 'required|unique_code|email|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
+                    <Field name="email" :rules="flagValidateUnique ? 'required|email|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
                       <InputText
                         class="w-full"
                         @keypress="flagValidateUnique = false"
@@ -199,7 +199,12 @@ const onSubmit = () => {
                   <label class="form-label" v-if="props.data.isEdit"> Xác nhận mật khẩu mới: </label>
                   <label class="form-label" v-else require>Xác nhận mật khẩu: </label>
                   <div class="form-input">
-                    <Field name="password_confirmation" :rules="props.data.isEdit ? (state.model.password ? 'required|confirmed:@password' : '') : 'required|confirmed:@password'" v-model="state.model.password_confirmation" v-slot="{ field, meta: metaField, handleChange }">
+                    <Field
+                      name="password_confirmation"
+                      :rules="props.data.isEdit ? (state.model.password ? 'required|confirmed:@password' : '') : 'required|confirmed:@password'"
+                      v-model="state.model.password_confirmation"
+                      v-slot="{ field, meta: metaField, handleChange }"
+                    >
                       <Password
                         v-bind="field"
                         v-model="state.model.password_confirmation"
