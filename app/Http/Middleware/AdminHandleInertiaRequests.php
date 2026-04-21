@@ -157,7 +157,9 @@ class AdminHandleInertiaRequests extends Middleware
             // }
         }
         if (in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.edit', 'admin.user.store', 'admin.user.update'])) {
-            $breadcrumbs[] = ['label' => 'Danh sách người dùng', 'icon' => 'pi pi-list', 'url' => session()->get('admin.user.list')[0] ?? route('admin.user.index')];
+            if (Auth::guard('admin')->user()->can('viewAny', User::class)) {
+                $breadcrumbs[] = ['label' => 'Danh sách người dùng', 'icon' => 'pi pi-list', 'url' => session()->get('admin.user.list')[0] ?? route('admin.user.index')];
+            }
             if (in_array($routeName, ['admin.user.edit', 'admin.user.update'])) {
                 $breadcrumbs[] = ['label' => 'Chỉnh sửa người dùng', 'icon' => 'pi pi-user-edit', 'url' => route('admin.user.edit', $request->user)];
             }

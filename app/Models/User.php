@@ -60,6 +60,7 @@ class User extends Authenticatable implements JWTSubject
             'reset_password_token_expire' => 'datetime:Y/m/d H:i:s',
             'last_login_at' => 'datetime:Y/m/d H:i:s',
             'created_at' => 'datetime:Y/m/d H:i:s',
+            'user_role' => 'integer',
             'password' => 'hashed',
         ];
     }

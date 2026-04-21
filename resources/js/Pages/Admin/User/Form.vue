@@ -96,10 +96,14 @@ configure({
 });
 const onSubmit = () => {
   if (props.data.isEdit) {
-    useForm(state.model).put(route('admin.user.update', props.data.user.id));
+    useForm({
+      ...state.model,
+      _method: 'put'
+    }).post(route('admin.user.update', props.data.user.id));
     return;
+  } else {
+    useForm(state.model).post(route('admin.user.store'));
   }
-  useForm(state.model).post(route('admin.user.store'));
 };
 </script>
 <template>
@@ -120,7 +124,6 @@ const onSubmit = () => {
         <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
           <form @submit="handleSubmit($event, onSubmit)" id="user-form" class="form-data">
             <div class="flex flex-wrap gap-6">
-              <!-- Left Column: Avatar Section -->
               <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col items-center gap-4">
                 <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onFileChange" />
                 <div class="relative group cursor-pointer" @click="triggerFileInput">
@@ -138,9 +141,7 @@ const onSubmit = () => {
                   <Button label="Thay đổi ảnh" icon="pi pi-image" class="p-button-outlined p-button-secondary" @click="triggerFileInput" type="button" />
                 </div>
               </div>
-
-              <!-- Right Column: Form Fields Section -->
-              <div :class="props.data.isEdit ? 'flex-1 border rounded-lg p-4 bg-gray-50 shadow-sm' : 'w-full'">
+              <div class="flex-1 border rounded-lg p-4 bg-gray-50 shadow-sm">
                 <div class="form-group">
                   <label class="form-label" require>Tên người dùng: </label>
                   <div class="form-input">
@@ -186,8 +187,10 @@ const onSubmit = () => {
                       <Select
                         :disabled="$page.props.user.user_role == 2"
                         class="w-full"
-                        v-model="state.model.user_role"
-                        v-bind="field"
+                        :options="$page.props.data.userRoleOption"
+                        optionLabel="label"
+                        optionValue="value"
+                        :modelValue="field.value"
                         v-on:update:model-value="handleChange"
                         :class="{
                           'p-invalid': !metaField.valid && metaField.touched

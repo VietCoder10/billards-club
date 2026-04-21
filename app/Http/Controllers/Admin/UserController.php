@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
 use App\Enums\StatusCode;
+use App\Enums\UserRole;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\Product\UpdateAvatarRequest;
 use App\Http\Requests\Admin\User\StoreUserRequest;
@@ -52,7 +53,8 @@ class UserController extends BaseController
     {
         return Inertia::render('Admin/User/Form', [
             'data' => [
-                'title' => 'ユーザー追加',
+                'title' => 'Thêm nhân viên',
+                'userRoleOption' => UserRole::getOptions(),
                 'urlBack' => session()->get('admin.user.list')[0] ?? route('admin.user.index'),
             ],
         ]);
@@ -64,11 +66,11 @@ class UserController extends BaseController
     public function store(StoreUserRequest $request)
     {
         if ($this->user->store($request)) {
-            $this->setFlash(__('ユーザー新規登録が完了しました。'));
+            $this->setFlash(__('Thêm nhân viên thành công.'), 'success');
 
             return redirect()->route('admin.user.index');
         }
-        $this->setFlash(__('エラーが発生しました。'), 'error');
+        $this->setFlash(__('Thêm nhân viên thất bại.'), 'error');
 
         return redirect()->route('admin.user.create');
     }
@@ -85,15 +87,16 @@ class UserController extends BaseController
     {
         $user = $this->user->getById($id);
         if (! $user) {
-            $this->setFlash(__('エラーが発生しました。'), 'error');
+            $this->setFlash(__('Không tìm thấy nhân viên.'), 'error');
 
             return redirect()->route('admin.user.index');
         }
 
         return Inertia::render('Admin/User/Form', [
             'data' => [
-                'title' => 'ユーザー追加',
+                'title' => 'Cập nhật nhân viên',
                 'user' => $user,
+                'userRoleOption' => UserRole::getOptions(),
                 'isEdit' => true,
                 'urlBack' => session()->get('admin.user.list')[0] ?? route('admin.user.index'),
             ],
@@ -106,11 +109,11 @@ class UserController extends BaseController
     public function update(StoreUserRequest $request, string $id)
     {
         if ($this->user->update($request, $id)) {
-            $this->setFlash(__('ユーザー編集が完了しました。'));
+            $this->setFlash(__('Cập nhật nhân viên thành công.'));
 
             return redirect()->route('admin.user.index');
         }
-        $this->setFlash(__('エラーが発生しました。'), 'error');
+        $this->setFlash(__('Cập nhật nhân viên thất bại.'), 'error');
 
         return redirect()->route('admin.user.edit', $id);
     }
@@ -122,12 +125,12 @@ class UserController extends BaseController
     {
         if ($this->user->destroy($id)) {
             return response()->json([
-                'message' => 'ユーザーの削除が完了しました。',
+                'message' => 'Xóa nhân viên thành công.',
             ], StatusCode::OK);
         }
 
         return response()->json([
-            'message' => 'エラーが発生しました。',
+            'message' => 'Xóa nhân viên thất bại.',
         ], StatusCode::INTERNAL_ERR);
     }
 

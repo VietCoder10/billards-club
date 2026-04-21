@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Repositories\Event\EventInterface;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Admin\Dashboard\EventRequest;
 
 class DashboardController extends BaseController
 {
@@ -96,15 +97,9 @@ class DashboardController extends BaseController
         ], 200);
     }
 
-    public function store(Request $request)
+    public function store(EventRequest $request)
     {
         $this->authorize('viewAny', User::class);
-        $request->validate([
-            'name' => 'required|max:255',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'color' => 'required'
-        ]);
 
         if ($this->event->store($request)) {
             return response()->json([

@@ -16,13 +16,24 @@ class TablePriceMasterRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'price_name' => 'required|string|max:255',
+            'price_per_hour' => 'required|numeric|min:1|max:999999',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'price_name.required' => 'Tên loại giá là trường bắt buộc',
+            'price_name.max' => 'Tên loại giá không được vượt quá 255 ký tự',
+            'price_per_hour.required' => 'Giá mỗi giờ là trường bắt buộc',
+            'price_per_hour.numeric' => 'Giá mỗi giờ phải là số',
+            'price_per_hour.min' => 'Giá mỗi giờ không được dưới 1',
+            'price_per_hour.max' => 'Giá mỗi giờ không được vượt quá 999999',
         ];
     }
 }

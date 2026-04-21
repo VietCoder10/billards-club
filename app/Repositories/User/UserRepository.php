@@ -59,8 +59,8 @@ class UserRepository implements UserInterface
         $newUser = $this->user->fill($request->only([
             'name',
             'email',
+            'user_role'
         ]));
-        $newUser->user_role = UserRole::USER;
         $newUser->password = Hash::make($request->password);
 
         if ($request->hasFile('avatar')) {
@@ -85,8 +85,8 @@ class UserRepository implements UserInterface
         $user->fill($request->only([
             'name',
             'email',
+            'user_role'
         ]));
-        $user->user_role = UserRole::USER;
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }

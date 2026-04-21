@@ -36,10 +36,10 @@ class AdminForgotPasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => '値を入力してください',
-            'email.email' => 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
-            'email.max' => '255文字以下で入力してください',
-            'email.exists' => '登録されていないメールアドレスです',
+            'email.required' => 'email là trường bắt buộc',
+            'email.email' => 'email không đúng định dạng',
+            'email.max' => 'email không được vượt quá 255 ký tự',
+            'email.exists' => 'email không tồn tại',
         ];
     }
 }

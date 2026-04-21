@@ -35,23 +35,23 @@ class AdminLoginRequest extends FormRequest
             preg_match('/[a-z]/', $data['password'], $outLower);
             preg_match('/[A-Z]/', $data['password'], $outUpper);
             if (! $outLower || ! $outUpper) {
-                $validator->errors()->add('password', '半角英小文字・半角英大文字をパスワードに含めてください');
+                $validator->errors()->add('password', 'password phải có ít nhất 1 chữ cái thường và 1 chữ cái hoa');
             }
             preg_match('/[0-9]/', $data['password'], $outNumber);
             if (! $outNumber) {
-                $validator->errors()->add('password', '半角数字をパスワードに含めてください');
+                $validator->errors()->add('password', 'password phải có ít nhất 1 số');
             }
         });
     }
     public function messages(): array
     {
         return [
-            'email.required' => '値を入力してください',
-            'email.email' => 'メールアドレスの形式（xxx@yyyy.zzz）で入力してください',
-            'email.max' => '255文字以下で入力してください',
-            'password.required' => '値を入力してください',
-            'password.min' => '8文字以上で入力してください',
-            'password.max' => '100文字以下で入力してください',
+            'email.required' => 'email là trường bắt buộc',
+            'email.email' => 'email không đúng định dạng',
+            'email.max' => 'email không được vượt quá 255 ký tự',
+            'password.required' => 'password là trường bắt buộc',
+            'password.min' => 'password không được dưới 8 ký tự',
+            'password.max' => 'password không được vượt quá 100 ký tự',
         ];
     }
 }

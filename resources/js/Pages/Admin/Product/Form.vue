@@ -48,7 +48,10 @@ onMounted(() => {
 const onSubmit = (values, { setErrors }) => {
   isSubmitting.value = true;
   if (props.data.isEdit) {
-    useForm(state.model).put(route('admin.product.update', state.model.id), {
+    useForm({
+      ...state.model,
+      _method: 'put'
+    }).post(route('admin.product.update', state.model.id), {
       onSuccess: () => {
         nextTick(() => {
           initialState.value = normalizeState(state.model);

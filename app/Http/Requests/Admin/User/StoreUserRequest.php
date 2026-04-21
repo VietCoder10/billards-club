@@ -65,9 +65,28 @@ class StoreUserRequest extends FormRequest
                 preg_match('/[0-9]/', $data['password'], $outNumber);
                 preg_match('/[@$!%*?&]/', $data['password'], $outSpecial);
                 if (!$outLower || !$outUpper || !$outNumber || !$outSpecial) {
-                    $validator->errors()->add('password', "error");
+                    $validator->errors()->add('password', "Mật khẩu phải có ít nhất 1 chữ cái thường, 1 chữ cái hoa, 1 số và 1 ký tự đặc biệt");
                 }
             }
         });
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Tên là trường bắt buộc',
+            'name.max' => 'Tên không được vượt quá 255 ký tự',
+            'email.required' => 'Email là trường bắt buộc',
+            'email.email' => 'Email không đúng định dạng',
+            'email.max' => 'Email không được vượt quá 255 ký tự',
+            'email.unique' => 'Email đã tồn tại',
+            'password.required' => 'Password là trường bắt buộc',
+            'password.min' => 'Password không được dưới 10 ký tự',
+            'password.max' => 'Password không được vượt quá 16 ký tự',
+            'password.confirmed' => 'Password và password_confirmation không khớp',
+            'avatar.image' => 'Ảnh đại diện phải là ảnh',
+            'avatar.mimes' => 'Ảnh đại diện phải có định dạng jpeg, png, jpg, gif, svg',
+            'avatar.max' => 'Ảnh đại diện không được vượt quá 10240 ký tự',
+        ];
     }
 }

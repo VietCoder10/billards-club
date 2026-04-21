@@ -35,22 +35,22 @@ class AdminResetPasswordRequest extends FormRequest
             preg_match('/[a-z]/', $data['password'], $outLower);
             preg_match('/[A-Z]/', $data['password'], $outUpper);
             if (! $outLower || ! $outUpper) {
-                $validator->errors()->add('password', '半角英小文字・半角英大文字をパスワードに含めてください');
+                $validator->errors()->add('password', 'password phải có ít nhất 1 chữ cái thường và 1 chữ cái hoa');
             }
             preg_match('/[0-9]/', $data['password'], $outNumber);
             if (! $outNumber) {
-                $validator->errors()->add('password', '半角数字をパスワードに含めてください');
+                $validator->errors()->add('password', 'password phải có ít nhất 1 số');
             }
         });
     }
     public function messages(): array
     {
         return [
-            'password.required' => '値を入力してください',
-            'password.min' => '8文字以上で入力してください',
-            'password.max' => '100文字以下で入力してください',
-            'password_confirmation.required' => '値を入力してください',
-            'password_confirmation.same' => 'パスワードと確認用パスワードが一致しません',
+            'password.required' => 'password là trường bắt buộc',
+            'password.min' => 'password không được dưới 8 ký tự',
+            'password.max' => 'password không được vượt quá 100 ký tự',
+            'password_confirmation.required' => 'password_confirmation là trường bắt buộc',
+            'password_confirmation.same' => 'password_confirmation và password không khớp',
         ];
     }
 }
