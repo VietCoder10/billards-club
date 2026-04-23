@@ -112,11 +112,13 @@ const onSubmit = () => {
       <Panel :header="$page.props.data.title">
         <template #header>
           <div class="flex items-center">
-            <span class="font-bold">{{ $page.props.data.title }}</span>
+            <span class="font-bold">
+              {{ $page.props.user.user_role == 1 ? $page.props.data.title : 'Thông tin cá nhân' }}
+            </span>
           </div>
         </template>
         <template #icons>
-          <Link :href="$page.props.data.urlBack">
+          <Link :href="$page.props.user.user_role == 1 ? $page.props.data.urlBack : route('admin.dashboard.index')">
             <Button label="Hủy " icon="pi pi-arrow-left" class="btn-action"></Button>
           </Link>
           <Button label="Lưu" type="submit" form="user-form" icon="pi pi-save" class="btn-action ml-2" />

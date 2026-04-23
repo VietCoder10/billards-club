@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\Product\UpdateAvatarRequest;
 use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Repositories\User\UserInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -109,11 +110,15 @@ class UserController extends BaseController
     public function update(StoreUserRequest $request, string $id)
     {
         if ($this->user->update($request, $id)) {
-            $this->setFlash(__('Cập nhật nhân viên thành công.'));
+            $this->setFlash(__('Cập nhật thông tin thành công.'));
+
+            if (Auth::guard('admin')->user()->user_role != UserRole::ADMIN) {
+                return redirect()->route('admin.dashboard.index');
+            }
 
             return redirect()->route('admin.user.index');
         }
-        $this->setFlash(__('Cập nhật nhân viên thất bại.'), 'error');
+        $this->setFlash(__('Cập nhật thông tin thất bại.'), 'error');
 
         return redirect()->route('admin.user.edit', $id);
     }

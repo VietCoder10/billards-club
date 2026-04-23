@@ -39,8 +39,7 @@ const handleDateClick = (arg) => {
     start_date: {
       hours: moment(arg.dateStr).format('HH'),
       minutes: moment(arg.dateStr).format('mm')
-    },
-    user_ids: props.data.users.filter((u) => u.value === page.props.value.user.id)
+    }
   };
   dialogVisible.value = true;
 };
@@ -91,25 +90,6 @@ const getUsersByIds = (ids) => {
 
 const removeUser = (user) => {
   state.model.user_ids = state.model.user_ids.filter((u) => u.value !== user.value);
-};
-
-const isOptionDisabled = (option) => {
-  return option.value === page.props.value.user.id;
-};
-
-const onUserChange = (newValue, handleChange) => {
-  const users = newValue || [];
-  const currentUserId = page.props.value.user.id;
-  const isSelected = users.some((u) => u.value === currentUserId);
-
-  if (!isSelected) {
-    const currentUser = props.data.users.find((u) => u.value === currentUserId);
-    if (currentUser) {
-      handleChange([...users, currentUser]);
-      return;
-    }
-  }
-  handleChange(users);
 };
 
 const handleDateSelect = (arg) => {
@@ -398,8 +378,13 @@ const getTimeObject = (dateValue) => {
           <div class="flex flex-col w-full overflow-hidden">
             <div class="flex justify-between items-start">
               <div class="fc-event-time" v-if="arg.timeText">{{ arg.timeText }}</div>
+              <div v-if="(arg.event.extendedProps.user_ids || []).some((id) => id == $page.props.user.id)" class="bg-red-500 text-yellow-400 text-xs font-bold px-1 rounded flex items-center shadow-sm" title="Ca của bạn">
+                <i class="pi pi-star-fill text-[8px] mr-[2px]"></i>
+              </div>
             </div>
-            <div class="fc-event-title font-bold">{{ arg.event.title }}</div>
+            <div class="fc-event-title font-bold" :class="{ 'text-yellow-200': (arg.event.extendedProps.user_ids || []).some((id) => id == $page.props.user.id) }">
+              {{ arg.event.title }}
+            </div>
             <div class="flex items-center -space-x-2 mt-1" v-if="arg.event.extendedProps.avatar_urls && arg.event.extendedProps.avatar_urls.length">
               <template v-for="(avatar, index) in arg.event.extendedProps.avatar_urls" :key="index">
                 <img v-if="avatar" :src="avatar" class="w-6 h-6 rounded-full border border-white bg-gray-200" style="object-fit: cover" />
@@ -520,9 +505,8 @@ const getTimeObject = (dateValue) => {
                       display="chip"
                       :disabled="state.model.id && !state.model.flag_delete"
                       :options="$page.props.data.users"
-                      :optionDisabled="isOptionDisabled"
                       :modelValue="field.value"
-                      v-on:update:model-value="(val) => onUserChange(val, handleChange)"
+                      v-on:update:model-value="handleChange"
                       optionLabel="label"
                       showClear
                       emptyMessage="Không có dữ liệu"
@@ -530,21 +514,45 @@ const getTimeObject = (dateValue) => {
                       class="w-full"
                     >
                       <template #option="slotProps">
-                        <div class="flex items-center">
-                          <img v-if="slotProps.option.avatar_url" :src="slotProps.option.avatar_url" class="w-6 h-6 rounded-full mr-2 border border-gray-200" style="object-fit: cover" />
-                          <div v-else class="w-6 h-6 rounded-full mr-2 bg-gray-200 border border-white flex items-center justify-center text-xs text-white">
-                            <i class="pi pi-user text-gray-500" style="font-size: 0.7rem"></i>
+                        <div class="flex items-center" :class="{ 'text-blue-600 font-bold': slotProps.option.value == $page.props.user.id }">
+                          <img
+                            v-if="slotProps.option.avatar_url"
+                            :src="slotProps.option.avatar_url"
+                            class="w-6 h-6 rounded-full mr-2 border"
+                            :class="slotProps.option.value == $page.props.user.id ? 'border-blue-500' : 'border-gray-200'"
+                            style="object-fit: cover"
+                          />
+                          <div
+                            v-else
+                            class="w-6 h-6 rounded-full mr-2 border flex items-center justify-center text-xs"
+                            :class="slotProps.option.value == $page.props.user.id ? 'border-blue-500 bg-blue-100 text-blue-600' : 'bg-gray-200 border-white text-white'"
+                          >
+                            <i class="pi pi-user" :class="slotProps.option.value == $page.props.user.id ? 'text-blue-500' : 'text-gray-500'" style="font-size: 0.7rem"></i>
                           </div>
-                          <div>{{ slotProps.option.label }}</div>
+                          <div>
+                            {{ slotProps.option.label }}
+                          </div>
                         </div>
                       </template>
                       <template #chip="slotProps">
-                        <div class="flex items-center mr-1">
-                          <img v-if="slotProps.value.avatar_url" :src="slotProps.value.avatar_url" class="w-5 h-5 rounded-full mr-2 border border-gray-200" style="object-fit: cover" />
-                          <div v-else class="w-5 h-5 rounded-full mr-2 bg-gray-200 border border-white flex items-center justify-center text-xs text-white">
-                            <i class="pi pi-user text-gray-500" style="font-size: 0.6rem"></i>
+                        <div class="flex items-center mr-1" :class="{ 'text-blue-700 font-bold': slotProps.value.value == $page.props.user.id }">
+                          <img
+                            v-if="slotProps.value.avatar_url"
+                            :src="slotProps.value.avatar_url"
+                            class="w-5 h-5 rounded-full mr-2 border"
+                            :class="slotProps.value.value == $page.props.user.id ? 'border-blue-500' : 'border-gray-200'"
+                            style="object-fit: cover"
+                          />
+                          <div
+                            v-else
+                            class="w-5 h-5 rounded-full mr-2 border flex items-center justify-center text-xs"
+                            :class="slotProps.value.value == $page.props.user.id ? 'border-blue-500 bg-blue-100 text-blue-600' : 'bg-gray-200 border-white text-white'"
+                          >
+                            <i class="pi pi-user" :class="slotProps.value.value == $page.props.user.id ? 'text-blue-500' : 'text-gray-500'" style="font-size: 0.6rem"></i>
                           </div>
-                          <span class="mr-2">{{ slotProps.value.label }}</span>
+                          <span class="mr-2">
+                            {{ slotProps.value.label }}
+                          </span>
                         </div>
                       </template>
                     </MultiSelect>
@@ -586,5 +594,12 @@ const getTimeObject = (dateValue) => {
 }
 :deep(.p-floatlabel:has(.dp__main)) .dp__main {
   margin-top: 4px;
+}
+:deep(.p-multiselect-label) {
+  flex-wrap: wrap !important;
+  white-space: normal !important;
+}
+:deep(.p-multiselect-chip) {
+  white-space: normal !important;
 }
 </style>
