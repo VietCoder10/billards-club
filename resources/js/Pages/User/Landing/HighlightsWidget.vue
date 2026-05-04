@@ -1,31 +1,38 @@
+<script setup>
+import Button from 'primevue/button';
+</script>
 <template>
-  <div id="highlights" class="py-6 px-6 lg:px-20 mx-0 my-12 lg:mx-20">
-    <div class="text-center">
-      <div class="text-surface-900 dark:text-surface-0 font-normal mb-2 text-4xl">Powerful Everywhere</div>
-      <span class="text-muted-color text-2xl">Amet consectetur adipiscing elit...</span>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4 mt-20 pb-2 md:pb-20">
-      <div class="col-span-12 lg:col-span-6 my-auto flex flex-col lg:items-end text-center lg:text-right gap-4">
-        <div class="flex items-center justify-center bg-purple-200 self-center lg:self-end" style="width: 4.2rem; height: 4.2rem; border-radius: 10px">
-          <i class="pi pi-fw pi-mobile !text-4xl text-purple-700"></i>
+  <div id="highlights" class="py-20 px-6 lg:px-20 mx-0 bg-zinc-900/50 border-y border-zinc-800/50">
+    <div class="flex flex-col lg:flex-row items-center gap-16 max-w-7xl mx-auto">
+      <div class="flex-1">
+        <div class="relative">
+          <div class="absolute -inset-4 bg-gradient-to-r from-amber-500 to-amber-700 blur-lg opacity-30 rounded-3xl"></div>
+          <img src="/images/peri.jpeg" alt="VIP Room" class="relative rounded-3xl w-full object-cover shadow-2xl h-[500px]" />
         </div>
-        <div class="leading-none text-surface-900 dark:text-surface-0 text-3xl font-normal">Congue Quisque Egestas</div>
-        <span class="text-surface-700 dark:text-surface-100 text-2xl leading-normal ml-0 md:ml-2" style="max-width: 650px"
-          >Lectus arcu bibendum at varius vel pharetra vel turpis nunc. Eget aliquet nibh praesent tristique magna sit amet purus gravida. Sit amet mattis vulputate enim nulla aliquet.</span
-        >
       </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4 my-20 pt-2 md:pt-20">
-      <div class="col-span-12 lg:col-span-6 my-auto flex flex-col text-center lg:text-left lg:items-start gap-4">
-        <div class="flex items-center justify-center bg-yellow-200 self-center lg:self-start" style="width: 4.2rem; height: 4.2rem; border-radius: 10px">
-          <i class="pi pi-fw pi-desktop !text-3xl text-yellow-700"></i>
-        </div>
-        <div class="leading-none text-surface-900 dark:text-surface-0 text-3xl font-normal">Celerisque Eu Ultrices</div>
-        <span class="text-surface-700 dark:text-surface-100 text-2xl leading-normal mr-0 md:mr-2" style="max-width: 650px"
-          >Adipiscing commodo elit at imperdiet dui. Viverra nibh cras pulvinar mattis nunc sed blandit libero. Suspendisse in est ante in. Mauris pharetra et ultrices neque ornare aenean euismod elementum nisi.</span
-        >
+      <div class="flex-1 space-y-8">
+        <h2 class="text-amber-500 font-bold tracking-widest uppercase">Trải Nghiệm Thượng Lưu</h2>
+        <h3 class="text-4xl md:text-5xl font-serif font-bold text-white leading-tight">Dịch Vụ Chăm Sóc Khách Hàng Hoàn Hảo</h3>
+        <p class="text-zinc-300 text-lg leading-relaxed">
+          Chúng tôi không chỉ cung cấp không gian chơi bida, chúng tôi mang đến một trải nghiệm giải trí toàn diện. Đội ngũ nhân viên chuyên nghiệp, tận tâm luôn sẵn sàng phục vụ từng yêu cầu nhỏ nhất của bạn.
+        </p>
+        <ul class="space-y-4 text-zinc-300">
+          <li class="flex items-center gap-3">
+            <i class="pi pi-check-circle text-amber-500 text-xl"></i>
+            <span>Nhân viên xếp bi chuyên nghiệp</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <i class="pi pi-check-circle text-amber-500 text-xl"></i>
+            <span>Hệ thống điều hòa không khí lọc bụi</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <i class="pi pi-check-circle text-amber-500 text-xl"></i>
+            <span>Bãi đỗ xe an toàn, rộng rãi</span>
+          </li>
+        </ul>
+        <!-- <div class="pt-4">
+          <Button label="Xem thêm dịch vụ" outlined class="!text-amber-500 !border-amber-500 hover:!bg-amber-500 hover:!text-zinc-950 transition-all font-bold px-6 py-3"></Button>
+        </div> -->
       </div>
     </div>
   </div>

@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Components\CommonComponent;
 use App\Enums\UserRole;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Model
+class Customer extends Authenticatable implements JWTSubject
 {
+    use Notifiable;
     //
     protected $table = 'customers';
     protected $fillable = [

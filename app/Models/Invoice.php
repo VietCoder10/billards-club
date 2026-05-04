@@ -17,6 +17,7 @@ class Invoice extends Model
     use SaveUserIdTrait;
 
     protected $fillable = [
+        'customer_id',
         'invoice_number',
         'table_name',
         'table_total',
@@ -27,6 +28,11 @@ class Invoice extends Model
         'payment_method',
         'paid_at',
     ];
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     protected $appends = ['payment_method_label'];
 
