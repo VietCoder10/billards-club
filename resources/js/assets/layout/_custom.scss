@@ -19,7 +19,12 @@
     margin-left: 5px;
   }
 }
-
+.sel-search {
+  .p-select-dropdown {
+    width: 70px;
+    margin-right: 1px;
+  }
+}
 .pagination {
   .page-item {
     .page-link {

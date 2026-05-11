@@ -23,7 +23,7 @@ class RegisterController extends BaseController
     public function index(Request $request): Response|RedirectResponse
     {
         if (Auth::guard('customer')->check()) {
-            return redirect('/');
+            return redirect(route('user.dashboard.index'));
         }
 
         return Inertia::render('User/Auth/Register', $this->mergeSession([
@@ -43,7 +43,7 @@ class RegisterController extends BaseController
             $this->customer->saveLoginHistory();
 
             $this->setFlash(__('Đăng ký tài khoản thành công.'), 'success');
-            return redirect('/');
+            return redirect(route('user.dashboard.index'));
         }
         $this->setFlash(__('Có lỗi xảy ra, vui lòng thử lại.'), 'error');
         return redirect()->back();

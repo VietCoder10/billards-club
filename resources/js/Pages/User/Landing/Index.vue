@@ -16,7 +16,7 @@ const props = defineProps(['data']);
         <TopbarWidget />
       </div>
       <HeroWidget />
-      <FeaturesWidget />
+      <!-- <FeaturesWidget /> -->
       <HighlightsWidget />
       <PricingWidget :tablePrices="props.data.tablePrices" />
       <FooterWidget />

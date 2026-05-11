@@ -22,11 +22,18 @@ use App\Http\Controllers\User\Auth\ResetPasswordController;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
-Route::group(['as' => 'user.'], function () {
-    Route::resource('login', LoginController::class)->only(['index', 'store']);
-    Route::resource('register', RegisterController::class)->only(['index', 'store']);
-    Route::resource('forgot-password', ForgotPasswordController::class)->only(['index', 'store']);
-    Route::get('reset-password/{token}', [ResetPasswordController::class, 'show'])->name('reset-password.show');
-    Route::post('reset-password/{token}', [ResetPasswordController::class, 'store'])->name('reset-password.store');
+Route::group([
+    'as' => 'user.'
+], function () {
+    Route::resource('login', LoginController::class);
+    Route::resource('forgot-password', ForgotPasswordController::class);
+    Route::resource('reset-password', ResetPasswordController::class);
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::resource('register', RegisterController::class);
+    Route::group([
+        'middleware' => 'assign.guard:customer',
+    ], function () {
+        Route::get('dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('table', [\App\Http\Controllers\User\TableController::class, 'index'])->name('table.index');
+    });
 });

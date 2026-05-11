@@ -3,50 +3,91 @@
 namespace App\Http\Controllers\User\Auth;
 
 use App\Http\Controllers\BaseController;
+use App\Repositories\Customer\CustomerInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use App\Repositories\Customer\CustomerInterface;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\User\Auth\CustomerResetPasswordRequest;
 
 class ResetPasswordController extends BaseController
 {
-    private $customer;
+    private CustomerInterface $customer;
 
     public function __construct(CustomerInterface $customer)
     {
         $this->customer = $customer;
     }
-
-    public function show(string $token): Response|RedirectResponse
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        if (Auth::guard('customer')->check()) {
-            return redirect('/');
-        }
-        $user = $this->customer->checkToken($token);
-        if (!$user) {
-            $this->setFlash(__('Liên kết không tồn tại hoặc đã hết hạn.'), 'error');
-            return redirect()->route('user.forgot-password.index')->with('error', 'Liên kết không tồn tại hoặc đã hết hạn.');
-        }
+        //
+    }
 
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $token)
+    {
+        //
+        if (!$this->customer->checkToken($token)) {
+            $this->setFlash(__('Liên kết không hợp lệ hoặc đã hết hạn.'), 'error');
+            return redirect()->route('user.login.index')->with('error', 'Liên kết không hợp lệ hoặc đã hết hạn.');
+        }
         return Inertia::render('User/Auth/ResetPassword', $this->mergeSession([
             'data' => [
-                'title' => 'Cài đặt lại mật khẩu',
+                'title' => 'Đặt lại mật khẩu',
                 'token' => $token,
             ],
         ]));
     }
 
-    public function store(CustomerResetPasswordRequest $request, string $token)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        if ($this->customer->resetPassword($request, $token)) {
-            $this->setFlash(__('Cài đặt lại mật khẩu thành công.'));
-            return redirect()->route('user.login.index')->with('success', 'Cài đặt lại mật khẩu thành công.');
-        }
+        //
+    }
 
-        $this->setFlash(__('Liên kết không tồn tại hoặc đã hết hạn.'), 'error');
-        return redirect()->route('user.forgot-password.index')->with('error', 'Liên kết không tồn tại hoặc đã hết hạn.');
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $token)
+    {
+        //
+        if (!$this->customer->checkToken($token)) {
+            $this->setFlash(__('Liên kết không hợp lệ hoặc đã hết hạn.'), 'error');
+            return redirect()->route('user.login.index')->with('error', 'Liên kết không hợp lệ hoặc đã hết hạn.');
+        }
+        if (!$this->customer->resetPassword($request, $token)) {
+            $this->setFlash(__('Đặt lại mật khẩu thất bại.'), 'error');
+            return redirect()->back()->with('error', 'パスワードのリセットに失敗しました。');
+        }
+        $this->setFlash(__('パスワードが正常にリセットされました。'));
+        return redirect()->route('admin.login.index')->with('success', 'パスワードが正常にリセットされました。');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }

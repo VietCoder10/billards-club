@@ -40,11 +40,11 @@ function smoothScroll(id) {
           <span>Trang chủ</span>
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a @click="smoothScroll('features')" class="px-0 py-2 text-zinc-300 hover:text-amber-500 transition-colors font-medium text-lg uppercase tracking-wide">
           <span>Không gian</span>
         </a>
-      </li>
+      </li> -->
       <li>
         <a @click="smoothScroll('highlights')" class="px-0 py-2 text-zinc-300 hover:text-amber-500 transition-colors font-medium text-lg uppercase tracking-wide">
           <span>Dịch vụ</span>

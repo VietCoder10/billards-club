@@ -23,7 +23,9 @@ class CustomerRepository implements CustomerInterface
         $this->customer = $customer;
     }
 
-    public function store(CustomerRegisterRequest $request): bool
+    public function get($request) {}
+
+    public function store($request): bool
     {
         $newCustomer = $this->customer->fill($request->only([
             'name',
@@ -35,6 +37,7 @@ class CustomerRepository implements CustomerInterface
         return $newCustomer->save();
     }
 
+
     public function saveLoginHistory(): bool
     {
         $userInfo = $this->customer->where('id', Auth::guard('customer')->user()->id)->first();
@@ -44,10 +47,14 @@ class CustomerRepository implements CustomerInterface
         }
         return false;
     }
-
-    public function checkEmail(string $email): bool
+    public function checkEmail(Request $request)
     {
-        return ! $this->customer->where('email', $email)->exists();
+        return ! $this->customer->where(function ($query) use ($request) {
+            if (isset($request['id'])) {
+                $query->where('id', '!=', $request['id']);
+            }
+            $query->where(['email' => $request['value']]);
+        })->exists();
     }
 
     public function sendResetPasswordLink(CustomerForgotPasswordRequest $request): bool
@@ -63,7 +70,6 @@ class CustomerRepository implements CustomerInterface
         if (! $user->save()) {
             return false;
         }
-        // Using same route name format as admin but for user
         $url = route('user.reset-password.show', $token);
         Mail::to($request->email)->send(new ForgotPassword([
             'url' => $url,

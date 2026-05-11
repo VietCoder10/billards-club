@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Option;
 
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\User;
@@ -20,10 +21,14 @@ class OptionRepository implements OptionInterface
     }
     public function getUser()
     {
-        return User::select('id as value', 'name as label','user_role')->get();
+        return User::select('id as value', 'name as label', 'user_role')->get();
     }
     public function getTablePrice()
     {
         return TablePriceMaster::select('id as value', 'price_per_hour as label')->get();
+    }
+    public function getCustomer()
+    {
+        return Customer::select('id as value', 'name as label')->get();
     }
 }

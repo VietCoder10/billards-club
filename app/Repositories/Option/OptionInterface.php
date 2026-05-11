@@ -8,4 +8,5 @@ interface OptionInterface
     public function getProduct();
     public function getUser();
     public function getTablePrice();
+    public function getCustomer();
 }

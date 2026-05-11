@@ -69,6 +69,7 @@ class OrderItemController extends BaseController
                 'products' => $this->product->get(request()->merge(['limit_page' => 100])),
                 'categories' => \App\Enums\ProductCategory::getOptions(),
                 'userOptions' => $this->option->getUser(),
+                'customerOptions' => $this->option->getCustomer(),
                 'urlBack' => session()->get('admin.order.list')[0] ?? route('admin.order.index'),
             ]
         ]));

@@ -12,6 +12,10 @@ const props = defineProps({
   visible: { type: Boolean, default: false },
   request: { type: Object, default: () => ({}) }
 });
+const showCustomerModal = ref(false);
+const openCustomerModal = () => {
+  showCustomerModal.value = true;
+};
 const emit = defineEmits(['update:visible']);
 const localVisible = ref(props.visible);
 watch(
@@ -124,6 +128,25 @@ const clearFilter = () => {
                 <Select :options="$page.props.data.userOptions" optionLabel="label" optionValue="value" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" class="w-full" />
               </Field>
             </div>
+            <div class="flex flex-col gap-1 basis-0 grow">
+              <span class="text-sm text-gray-500 font-medium">Khách hàng</span>
+              <Field name="customer_id" v-model="state.model.customer_id" v-slot="{ field, meta: metaField, handleChange }">
+                <Select
+                  :options="$page.props.data.customerOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  :modelValue="field.value"
+                  @update:model-value="handleChange"
+                  :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
+                  class="w-full sel-search"
+                  filter
+                >
+                  <template #dropdownicon>
+                    <Button label="Chọn" class="w-[100px] pr-1" severity="secondary" variant="text" size="small" icon="pi pi-search" @click.stop="openCustomerModal" />
+                  </template>
+                </Select>
+              </Field>
+            </div>
           </div>
 
           <div class="flex flex-wrap gap-4">
@@ -201,7 +224,7 @@ const clearFilter = () => {
               </div>
 
               <div v-if="state.model.payment_method === 2" class="mt-4 flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-                <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=ChuyenKhoan_TongTien_' + (state.model.order?.final_total || 0)" alt="QR Code" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2 border" />
+                <img src="/images/Qr.jpg" alt="QR Code" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2 border" />
                 <span class="mt-3 text-sm text-gray-500 font-medium">Quét mã QR để thanh toán</span>
               </div>
             </div>

@@ -32,7 +32,7 @@ class LandingController extends BaseController
         return Inertia::render('User/Landing/Index', [
             'data' => [
                 'title' => 'landing',
-                'tablePrices' => $this->tablePriceMaster->get($request),
+                'tablePrices' => $this->tablePriceMaster->get($request)->items(),
             ],
         ]);
     }

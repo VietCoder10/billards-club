@@ -35,7 +35,36 @@ class UserHandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $routeName = \Route::currentRouteName();
+        $dataSession = '';
+        if (session()->get('Message.flash')) {
+            $dataSession = session()->get('Message.flash')[0];
+        }
+        $leftMenu = [
+            [
+                'label' => 'Trang chủ',
+                'icon' => 'pi pi-fw pi-home',
+                'to' => route('user.dashboard.index'),
+                'active' => in_array($routeName, ['user.dashboard.index']),
+            ],
+            [
+                'label' => 'Tình trạng bàn',
+                'icon' => 'pi pi-fw pi-table',
+                'to' => route('user.table.index'),
+                'active' => in_array($routeName, ['user.table.index']),
+            ],
+        ];
+
+        $breadcrumbs = [
+            ['label' => 'Trang chủ', 'icon' => 'pi pi-home', 'url' => route('user.dashboard.index')],
+        ];
+
         return array_merge(parent::share($request), [
+            'routeName' => $routeName,
+            'leftMenu' => $leftMenu,
+            'breadcrumbs' => $breadcrumbs,
+            'user' => \Auth::guard('customer')->user(),
+            'session' => $dataSession,
         ]);
     }
 }

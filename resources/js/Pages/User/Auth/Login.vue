@@ -62,10 +62,8 @@ configure({
 <template>
   <GuestLayout>
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-bold font-serif text-white">Đăng nhập hệ thống</h1>
-      <p class="text-zinc-400 mt-2">Đăng nhập để nhận đặc quyền và đặt bàn dễ dàng hơn</p>
+      <h1 class="text-2xl font-bold text-white">Đăng nhập hệ thống</h1>
     </div>
-
     <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
       <form @submit="handleSubmit($event, onSubmit)">
         <div class="mb-5">
@@ -109,10 +107,6 @@ configure({
         </div>
 
         <div class="flex items-center justify-between mb-8">
-          <div class="flex items-center">
-            <input type="checkbox" id="remember_me" v-model="state.model.remember_me" class="w-4 h-4 rounded bg-zinc-800 border-zinc-700 text-amber-500 focus:ring-amber-500" />
-            <label for="remember_me" class="ml-2 text-sm text-zinc-400">Ghi nhớ</label>
-          </div>
           <Link :href="route('user.forgot-password.index')" class="text-sm text-amber-500 hover:text-amber-400 transition-colors">Quên mật khẩu?</Link>
         </div>
 

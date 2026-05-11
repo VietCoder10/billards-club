@@ -4,12 +4,19 @@ import moment from 'moment';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 
+import * as rules from '@vee-validate/rules';
 import { configure, defineRule } from 'vee-validate';
 configure({
   validateOnBlur: false,
   validateOnChange: false,
   validateOnInput: true,
   validateOnModelUpdate: false
+});
+
+Object.keys(rules).forEach((rule) => {
+  if (rule != 'default' && rule != 'all') {
+    defineRule(rule, rules[rule]);
+  }
 });
 const app = createApp({});
 

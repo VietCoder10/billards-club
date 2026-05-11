@@ -13,7 +13,7 @@ use Inertia\Response;
 
 class LoginController extends BaseController
 {
-    private $customer;
+    private CustomerInterface $customer;
 
     public function __construct(CustomerInterface $customer)
     {
@@ -23,7 +23,7 @@ class LoginController extends BaseController
     public function index(Request $request): Response|RedirectResponse
     {
         if (Auth::guard('customer')->check()) {
-            return redirect('/');
+            return redirect(route('user.dashboard.index'));
         }
 
         return Inertia::render('User/Auth/Login', $this->mergeSession([
@@ -42,7 +42,7 @@ class LoginController extends BaseController
                 Auth::guard('customer')->logout();
                 return redirect('/');
             }
-            return redirect($request->url_redirect ? $request->url_redirect : '/');
+            return redirect($request->url_redirect ? $request->url_redirect : route('user.dashboard.index'));
         }
         $this->setFlash(__('Tên đăng nhập và mật khẩu không khớp.'), 'error');
 

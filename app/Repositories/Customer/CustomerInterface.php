@@ -10,11 +10,13 @@ use App\Http\Requests\User\Auth\CustomerRegisterRequest;
 
 interface CustomerInterface
 {
-    public function store(CustomerRegisterRequest $request): bool;
+    public function get($request);
+
+    public function store($request): bool;
 
     public function saveLoginHistory(): bool;
 
-    public function checkEmail(string $email): bool;
+    public function checkEmail(Request $request);
 
     public function sendResetPasswordLink(CustomerForgotPasswordRequest $request): bool;
 
