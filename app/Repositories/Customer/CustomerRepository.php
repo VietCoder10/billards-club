@@ -99,4 +99,37 @@ class CustomerRepository implements CustomerInterface
 
         return $user->save();
     }
+
+    public function searchModal(Request $request)
+    {
+        $query = $this->customer->query();
+
+        if ($request->search_name) {
+            $query->where('name', 'like', '%' . $request->search_name . '%');
+        }
+
+        if ($request->tel) {
+            $query->where('phone', 'like', '%' . $request->tel . '%');
+        }
+
+        $sort = $request->sort ?? 'id';
+        $direction = $request->direction ?? 'desc';
+        $limit = $request->limit_page ?? 10;
+
+        return $query->orderBy($sort, $direction)->paginate($limit);
+    }
+
+    public function storeModel(Request $request)
+    {
+        $customer = new $this->customer();
+        $customer->name = $request->name;
+        $customer->email = $request->email ?? (Str::random(10) . '@example.com');
+        $customer->phone = $request->tel; // mapping tel to phone
+        $customer->password = Hash::make($request->password ?? '12345678');
+        
+        if ($customer->save()) {
+            return $customer;
+        }
+        return null;
+    }
 }

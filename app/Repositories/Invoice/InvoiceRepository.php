@@ -60,6 +60,7 @@ class InvoiceRepository implements InvoiceInterface
             $invoice = new Invoice;
             $invoice->fill([
                 'invoice_number' => $request->order_number,
+                'customer_id' => $request->customer_id,
                 'table_name' => $request->table_name,
                 'table_total' => $request->table_total,
                 'service_total' => $request->service_total,

@@ -60,6 +60,12 @@ Route::group([
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
         Route::resource('table_price_master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
         Route::resource('invoice', InvoiceController::class);
+
+        Route::prefix('customer')->as('customer.')->group(function () {
+            Route::get('search-modal', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModal'])->name('searchModal');
+            Route::post('store-modal', [\App\Http\Controllers\Admin\CustomerController::class, 'storeModel'])->name('storeModel');
+        });
+
         Route::resource('report', ReportController::class)->only(['index']);
     });
 });

@@ -5,6 +5,7 @@ import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
 import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
+import CustomerSearchModal from '@/Components/Billiard/CustomerSearchModal.vue';
 
 const page = usePage();
 
@@ -87,6 +88,7 @@ const onSubmit = () => {
   const payload = {
     ...state.model.order,
     order_id: state.model.order?.id,
+    customer_id: state.model.customer_id,
     payment_method: state.model.payment_method,
     table_name: state.model.order?.table?.table_name,
     details: invoiceDetails.value
@@ -106,6 +108,12 @@ const onInvalidSubmit = ({ errors }) => {};
 
 const clearFilter = () => {
   state.model = {};
+};
+
+const handleSelectCustomer = (customer) => {
+  state.model.customer_id = customer.id;
+  // If the customer is not in the list, we might need to refresh options or handle it.
+  // For now, we just set the ID.
 };
 </script>
 <template>
@@ -253,4 +261,5 @@ const clearFilter = () => {
       </form>
     </VeeForm>
   </Dialog>
+  <CustomerSearchModal v-model:visible="showCustomerModal" @select="handleSelectCustomer" />
 </template>

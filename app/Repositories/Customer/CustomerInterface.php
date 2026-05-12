@@ -23,4 +23,8 @@ interface CustomerInterface
     public function checkToken(string $token): ?Customer;
 
     public function resetPassword(CustomerResetPasswordRequest $request, string $token): bool;
+
+    public function searchModal(Request $request);
+
+    public function storeModel(Request $request);
 }
