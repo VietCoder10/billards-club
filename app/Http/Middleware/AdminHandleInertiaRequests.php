@@ -58,6 +58,12 @@ class AdminHandleInertiaRequests extends Middleware
                 'to' => route('admin.order.indexSession'),
                 'active' => in_array($routeName, ['admin.order.indexSession', 'admin.order-item.edit']),
             ],
+            [
+                'label' => 'Giải đấu',
+                'icon' => 'pi pi-trophy',
+                // 'to' => route('admin.tournament.index'),
+                // 'active' => in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.update']),
+            ],
         ];
         if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->can('viewAny', User::class)) {
             $leftMenu = array_merge($leftMenu, [
@@ -88,6 +94,12 @@ class AdminHandleInertiaRequests extends Middleware
                             'icon' => 'pi pi-fw pi-users',
                             'to' => route('admin.user.index'),
                             'active' => in_array($routeName, ['admin.user.index', 'admin.user.create', 'admin.user.store', 'admin.user.edit', 'admin.user.update']),
+                        ],
+                        [
+                            'label' => 'Quản lí khách hàng',
+                            'icon' => 'pi pi-fw pi-users',
+                            'to' => route('admin.customer.index'),
+                            'active' => in_array($routeName, ['admin.customer.index', 'admin.customer.create', 'admin.customer.store', 'admin.customer.edit', 'admin.customer.update']),
                         ],
                         [
                             'label' => 'Quản lý bàn',

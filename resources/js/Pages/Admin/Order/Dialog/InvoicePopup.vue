@@ -112,8 +112,17 @@ const clearFilter = () => {
 
 const handleSelectCustomer = (customer) => {
   state.model.customer_id = customer.id;
-  // If the customer is not in the list, we might need to refresh options or handle it.
-  // For now, we just set the ID.
+
+  // Check if customer exists in options to ensure label is displayed
+  const customerOptions = page.props.value.data.customerOptions || [];
+  const exists = customerOptions.some((opt) => opt.value == customer.id);
+
+  if (!exists) {
+    customerOptions.push({
+      label: customer.name,
+      value: customer.id
+    });
+  }
 };
 </script>
 <template>
@@ -261,5 +270,5 @@ const handleSelectCustomer = (customer) => {
       </form>
     </VeeForm>
   </Dialog>
-  <CustomerSearchModal v-model:visible="showCustomerModal" @select="handleSelectCustomer" />
+  <CustomerSearchModal v-model:visible="showCustomerModal" @select="handleSelectCustomer" :currentId="state.model.customer_id" />
 </template>

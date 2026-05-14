@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use App\Components\CommonComponent;
-use App\Enums\UserRole;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Kyslik\ColumnSortable\Sortable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Customer extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    use Sortable;
+    use SoftDeletes;
     //
     protected $table = 'customers';
     protected $fillable = [

@@ -24,7 +24,13 @@ interface CustomerInterface
 
     public function resetPassword(CustomerResetPasswordRequest $request, string $token): bool;
 
-    public function searchModal(Request $request);
+    public function getById(string $id);
 
-    public function storeModel(Request $request);
+    public function update($request, string $id);
+
+    public function destroy(string $id);
+
+    public function getModalCustomer(Request $request);
+
+    public function storeModalCustomer(Request $request);
 }

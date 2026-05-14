@@ -53,6 +53,18 @@ class UserHandleInertiaRequests extends Middleware
                 'to' => route('user.table.index'),
                 'active' => in_array($routeName, ['user.table.index']),
             ],
+            [
+                'label' => 'Hóa đơn',
+                'icon' => 'pi pi-fw pi-file',
+                // 'to' => route('user.invoice.index'),
+                // 'active' => in_array($routeName, ['user.invoice.index']),
+            ],
+            [
+                'label' => 'Đăng kí giải đấu',
+                'icon' => 'pi pi-fw pi-trophy',
+                // 'to' => route('user.table.index'),
+                // 'active' => in_array($routeName, ['user.table.index']),
+            ],
         ];
 
         $breadcrumbs = [

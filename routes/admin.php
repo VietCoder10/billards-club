@@ -60,11 +60,12 @@ Route::group([
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
         Route::resource('table_price_master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
         Route::resource('invoice', InvoiceController::class);
+        Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class);
+        Route::post('customer/check-email', [\App\Http\Controllers\Admin\CustomerController::class, 'checkEmail'])->name('customer.checkEmail');
+        Route::post('customer/{id}/update-avatar', [\App\Http\Controllers\Admin\CustomerController::class, 'updateAvatar'])->name('customer.updateAvatar');
+        Route::get('customer/search-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModalCustomer'])->name('customer.searchModalCustomer');
+        Route::post('customer/store-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'storeModalCustomer'])->name('customer.storeModalCustomer');
 
-        Route::prefix('customer')->as('customer.')->group(function () {
-            Route::get('search-modal', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModal'])->name('searchModal');
-            Route::post('store-modal', [\App\Http\Controllers\Admin\CustomerController::class, 'storeModel'])->name('storeModel');
-        });
 
         Route::resource('report', ReportController::class)->only(['index']);
     });

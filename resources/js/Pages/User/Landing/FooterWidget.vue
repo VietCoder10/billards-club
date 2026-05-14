@@ -34,15 +34,15 @@
         <ul class="space-y-4 text-zinc-400">
           <li class="flex items-start gap-3">
             <i class="pi pi-map-marker mt-1 text-amber-500"></i>
-            <span>123 Đường Bida, Quận 1, TP. Hồ Chí Minh</span>
+            <span>Ở trong tim em</span>
           </li>
           <li class="flex items-center gap-3">
             <i class="pi pi-phone text-amber-500"></i>
-            <span>0123 456 789</span>
+            <span>0999999999</span>
           </li>
           <li class="flex items-center gap-3">
             <i class="pi pi-envelope text-amber-500"></i>
-            <span>contact@elitebilliards.com</span>
+            <span>vietden6886@gmail.com</span>
           </li>
         </ul>
       </div>

@@ -62,7 +62,7 @@ const loadData = async () => {
       ...state.model
     };
 
-    const response = await axios.get(route('admin.customer.searchModal'), { params });
+    const response = await axios.get(route('admin.customer.searchModalCustomer'), { params });
     state.customers = response.data.data;
     state.totalRecords = response.data.total;
   } catch (error) {
@@ -83,7 +83,7 @@ const onSort = (event) => {
 };
 
 const handleSearch = () => {
-  state.lazyParams.page = 0; // Reset to first page on search
+  state.lazyParams.page = 0;
   state.lazyParams.first = 0;
   loadData();
 };
@@ -114,7 +114,7 @@ watch(
 );
 
 const highlightRow = (row) => {
-  if (row.id === props.currentId) {
+  if (row.id == props.currentId) {
     return '!bg-[#F5E1E1]';
   }
   return '';
@@ -131,7 +131,7 @@ const highlightRow = (row) => {
               <Field name="search_name" v-model="state.model.search_name" v-slot="{ field, meta: metaField, handleChange }">
                 <FloatLabel variant="on">
                   <InputText class="w-full" :modelValue="field.value" @update:modelValue="handleChange" v-bind="field" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                  <label :class="field.name">名前</label>
+                  <label :class="field.name">Tên khách hàng</label>
                 </FloatLabel>
                 <ErrorMessage class="p-error" :name="field.name" />
               </Field>
@@ -140,7 +140,7 @@ const highlightRow = (row) => {
               <Field name="tel" v-model="state.model.tel" v-slot="{ field, meta: metaField, handleChange }">
                 <FloatLabel variant="on">
                   <InputText class="w-full" :modelValue="field.value" @update:modelValue="handleChange" v-bind="field" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                  <label>電話番号</label>
+                  <label>Số điện thoại</label>
                 </FloatLabel>
                 <ErrorMessage class="p-error" :name="field.name" />
               </Field>
@@ -148,9 +148,9 @@ const highlightRow = (row) => {
           </div>
         </div>
         <div class="flex justify-center items-center m-4">
-          <Button class="ml-2" @click="clearForm" severity="secondary"> <i class="pi pi-filter-slash"></i> &nbsp; 条件クリア </Button>
-          <Button class="ml-2" type="submit"> <i class="pi pi-search"></i> &nbsp; 検索 </Button>
-          <Button class="ml-2" label="新規登録" @click="handleOpenAddModal" icon="pi pi-plus" />
+          <Button class="ml-2" @click="clearForm" severity="secondary"> <i class="pi pi-filter-slash"></i> &nbsp; Xóa điều kiện </Button>
+          <Button class="ml-2" type="submit"> <i class="pi pi-search"></i> &nbsp; Tìm kiếm </Button>
+          <Button class="ml-2" label="Tạo mới" @click="handleOpenAddModal" icon="pi pi-plus" />
         </div>
       </form>
     </VeeForm>
@@ -175,24 +175,34 @@ const highlightRow = (row) => {
       >
         <ColumnGroup type="header">
           <Row>
-            <Column field="id" header="ID" sortable />
-            <Column field="name" header="氏名" sortable />
-            <Column field="email" header="メールアドレス" sortable />
-            <Column field="phone" header="電話番号" sortable />
+            <Column field="name" header="Tên" sortable />
+            <Column field="email" header="Email" sortable />
+            <Column field="phone" header="Số điện thoại" sortable />
             <Column class="w-[120px]" header="" />
           </Row>
         </ColumnGroup>
-        <Column field="id" />
-        <Column field="name" />
-        <Column field="email" />
-        <Column field="phone" />
         <Column>
           <template #body="{ data }">
-            <Button @click="selectCustomer(data)"> <i class="pi pi-save"></i> &nbsp; 選択 </Button>
+            {{ data.name }}
+          </template>
+        </Column>
+        <Column>
+          <template #body="{ data }">
+            {{ data.email }}
+          </template>
+        </Column>
+        <Column>
+          <template #body="{ data }">
+            {{ data.phone }}
+          </template>
+        </Column>
+        <Column>
+          <template #body="{ data }">
+            <Button @click="selectCustomer(data)"> <i class="pi pi-save"></i> &nbsp; Chọn </Button>
           </template>
         </Column>
       </DataTable>
-      <div v-else class="text-center p-4">データが見つかりません。</div>
+      <div v-else class="text-center p-4">Không tìm thấy khách hàng.</div>
     </div>
   </Dialog>
   <CustomerAddModal v-model:visible="showAddModal" @saved="clearForm" />

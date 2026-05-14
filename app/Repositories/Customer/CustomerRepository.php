@@ -2,9 +2,11 @@
 
 namespace App\Repositories\Customer;
 
+use App\Components\CommonComponent;
 use App\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\Auth\CustomerForgotPasswordRequest;
@@ -13,6 +15,7 @@ use App\Http\Requests\User\Auth\CustomerRegisterRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPassword;
+use App\Enums\StorageFolder;
 
 class CustomerRepository implements CustomerInterface
 {
@@ -23,7 +26,26 @@ class CustomerRepository implements CustomerInterface
         $this->customer = $customer;
     }
 
-    public function get($request) {}
+    public function get($request)
+    {
+        $newSizeLimit = CommonComponent::newListLimit($request);
+        $builder = $this->customer->query();
+        if (isset($request['free_word']) && $request['free_word'] != '') {
+            $builder->where(function ($query) use ($request) {
+                $query->where('name', 'like', "%{$request['free_word']}%");
+                $query->orWhere('email', 'like', "%{$request['free_word']}%");
+                $query->orWhere('phone', 'like', "%{$request['free_word']}%");
+            });
+        }
+        $customers = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
+        if (CommonComponent::checkPaginatorList($customers)) {
+            Paginator::currentPageResolver(function () {
+                return 1;
+            });
+            $customers = $builder->paginate($newSizeLimit);
+        }
+        return $customers;
+    }
 
     public function store($request): bool
     {
@@ -34,7 +56,68 @@ class CustomerRepository implements CustomerInterface
         ]));
         $newCustomer->password = Hash::make($request->password);
 
+        if ($request->hasFile('avatar')) {
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::AVATAR;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $newCustomer->avatar = $path;
+        }
+
         return $newCustomer->save();
+    }
+
+    public function getById(string $id): ?Customer
+    {
+        return $this->customer->where('id', $id)->first();
+    }
+
+    public function update($request, string $id): bool
+    {
+        $customer = $this->getById($id);
+        if (!$customer) {
+            return false;
+        }
+        $customer->fill($request->only([
+            'name',
+            'email',
+            'phone'
+        ]));
+        if ($request->password) {
+            $customer->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($customer->avatar) {
+                CommonComponent::deleteFile('', $customer->avatar);
+            }
+            $filename = CommonComponent::uploadFileName($request->avatar->getClientOriginalExtension());
+            $folder = StorageFolder::AVATAR;
+            $path = CommonComponent::uploadFile($folder, $request->avatar, $filename);
+            if (!$path) {
+                return false;
+            }
+            $customer->avatar = $path;
+        } elseif ($request->has('avatar') && $request->avatar === null) {
+            if ($customer->avatar) {
+                CommonComponent::deleteFile('', $customer->avatar);
+                $customer->avatar = null;
+            }
+        }
+
+        return $customer->save();
+    }
+
+    public function destroy(string $id): bool
+    {
+        $customer = $this->customer->where('id', $id)->first();
+        if (!$customer) {
+            return false;
+        }
+
+        return $customer->delete();
     }
 
 
@@ -100,36 +183,40 @@ class CustomerRepository implements CustomerInterface
         return $user->save();
     }
 
-    public function searchModal(Request $request)
+    public function getModalCustomer(Request $request)
     {
-        $query = $this->customer->query();
 
-        if ($request->search_name) {
-            $query->where('name', 'like', '%' . $request->search_name . '%');
+
+        $newSizeLimit = $request->input('limit_page', 10);
+        $builder = $this->customer->query();
+        if (isset($request['free_word']) && $request['free_word'] != '') {
+            $builder->where(function ($query) use ($request) {
+                $query->where('name', 'like', "%{$request['free_word']}");
+                $query->orWhere('email', 'like', "%{$request['free_word']}");
+                $query->orWhere('phone', 'like', "%{$request['free_word']}");
+            });
         }
-
-        if ($request->tel) {
-            $query->where('phone', 'like', '%' . $request->tel . '%');
+        $customer = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
+        if (CommonComponent::checkPaginatorList($customer)) {
+            Paginator::currentPageResolver(function () {
+                return 1;
+            });
+            $customer = $builder->paginate($newSizeLimit);
         }
-
-        $sort = $request->sort ?? 'id';
-        $direction = $request->direction ?? 'desc';
-        $limit = $request->limit_page ?? 10;
-
-        return $query->orderBy($sort, $direction)->paginate($limit);
+        return $customer;
     }
 
-    public function storeModel(Request $request)
+    public function storeModalCustomer(Request $request)
     {
-        $customer = new $this->customer();
+        $customer = new Customer;
         $customer->name = $request->name;
-        $customer->email = $request->email ?? (Str::random(10) . '@example.com');
-        $customer->phone = $request->tel; // mapping tel to phone
-        $customer->password = Hash::make($request->password ?? '12345678');
-        
-        if ($customer->save()) {
-            return $customer;
+        $customer->email = $request->email;
+        $customer->phone = $request->tel;
+        $customer->password = Hash::make($request->password);
+
+        if (!$customer->save()) {
+            return false;
         }
-        return null;
+        return $customer;
     }
 }
