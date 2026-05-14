@@ -61,8 +61,8 @@ class AdminHandleInertiaRequests extends Middleware
             [
                 'label' => 'Giải đấu',
                 'icon' => 'pi pi-trophy',
-                // 'to' => route('admin.tournament.index'),
-                // 'active' => in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.update']),
+                'to' => route('admin.tournament.index'),
+                'active' => in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.update']),
             ],
         ];
         if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->can('viewAny', User::class)) {

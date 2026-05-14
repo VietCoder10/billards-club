@@ -19,6 +19,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Customer\CustomerInterface::class,
             \App\Repositories\Customer\CustomerRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Tournament\TournamentInterface::class,
+            \App\Repositories\Tournament\TournamentRepository::class
+        );
     }
 
     /**

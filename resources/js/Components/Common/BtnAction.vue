@@ -28,25 +28,37 @@ import axios from 'axios';
 import { useForm, Link } from '@inertiajs/inertia-vue3';
 
 const toast = useToast();
-const props = defineProps(['urlEdit', 'urlDelete', 'messageConfirm', 'routeName', 'request']);
+const props = defineProps(['urlShow', 'urlEdit', 'urlDelete', 'messageConfirm', 'routeName', 'request']);
 const menu = ref();
-const items = ref([
-  {
-    items: [
-      {
-        label: 'Chỉnh sửa',
-        url: props.urlEdit,
-        icon: 'pi pi-file-edit'
-      },
-      {
-        label: 'Xóa',
-        deleteFlag: true,
-        url: props.urlDelete,
-        icon: 'pi pi-trash'
-      }
-    ]
+
+const getItems = () => {
+  let menuItems = [];
+  if (props.urlShow) {
+    menuItems.push({
+      label: 'Chi tiết',
+      url: props.urlShow,
+      icon: 'pi pi-eye'
+    });
   }
-]);
+  if (props.urlEdit) {
+    menuItems.push({
+      label: 'Chỉnh sửa',
+      url: props.urlEdit,
+      icon: 'pi pi-file-edit'
+    });
+  }
+  if (props.urlDelete) {
+    menuItems.push({
+      label: 'Xóa',
+      deleteFlag: true,
+      url: props.urlDelete,
+      icon: 'pi pi-trash'
+    });
+  }
+  return [{ items: menuItems }];
+};
+
+const items = ref(getItems());
 const confirmDelete = () => {
   Swal.fire({
     title: props.messageConfirm,
