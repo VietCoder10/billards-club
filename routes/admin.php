@@ -62,11 +62,13 @@ Route::group([
         Route::resource('invoice', InvoiceController::class);
         Route::resource('tournament', \App\Http\Controllers\Admin\TournamentController::class);
         Route::post('tournament/{tournament}/participant/{participant}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateParticipantStatus'])->name('tournament.participant.update');
-        Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class);
         Route::post('customer/check-email', [\App\Http\Controllers\Admin\CustomerController::class, 'checkEmail'])->name('customer.checkEmail');
         Route::post('customer/{id}/update-avatar', [\App\Http\Controllers\Admin\CustomerController::class, 'updateAvatar'])->name('customer.updateAvatar');
         Route::get('customer/search-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModalCustomer'])->name('customer.searchModalCustomer');
         Route::post('customer/store-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'storeModalCustomer'])->name('customer.storeModalCustomer');
+        Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class);
+
+
 
 
         Route::resource('report', ReportController::class)->only(['index']);
