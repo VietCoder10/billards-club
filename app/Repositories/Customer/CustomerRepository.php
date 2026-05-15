@@ -189,12 +189,21 @@ class CustomerRepository implements CustomerInterface
 
         $newSizeLimit = $request->input('limit_page', 10);
         $builder = $this->customer->query();
+
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder->where(function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request['free_word']}");
-                $query->orWhere('email', 'like', "%{$request['free_word']}");
-                $query->orWhere('phone', 'like', "%{$request['free_word']}");
+                $query->where(CommonComponent::escapeLikeSentence('name', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('email', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('phone', $request['free_word']));
             });
+        }
+
+        if (isset($request['search_name']) && $request['search_name'] != '') {
+            $builder->where(CommonComponent::escapeLikeSentence('name', $request['search_name']));
+        }
+
+        if (isset($request['tel']) && $request['tel'] != '') {
+            $builder->where(CommonComponent::escapeLikeSentence('phone', $request['tel']));
         }
         $customer = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
         if (CommonComponent::checkPaginatorList($customer)) {

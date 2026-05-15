@@ -63,10 +63,11 @@ const loadData = async () => {
     };
 
     const response = await axios.get(route('admin.customer.searchModalCustomer'), { params });
-    state.customers = response.data.data;
-    state.totalRecords = response.data.total;
+    state.customers = response.data?.data || [];
+    state.totalRecords = response.data?.total || 0;
   } catch (error) {
     console.error('Error fetching customers:', error);
+    state.customers = [];
   } finally {
     useRequestStore().hideLoading();
   }
@@ -158,7 +159,7 @@ const highlightRow = (row) => {
     <div class="card">
       <DataTable
         :value="state.customers"
-        v-if="state.customers.length"
+        v-if="state.customers?.length"
         :lazy="true"
         :paginator="true"
         :rows="10"
