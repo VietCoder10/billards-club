@@ -185,8 +185,6 @@ class CustomerRepository implements CustomerInterface
 
     public function getModalCustomer(Request $request)
     {
-
-
         $newSizeLimit = $request->input('limit_page', 10);
         $builder = $this->customer->query();
 
