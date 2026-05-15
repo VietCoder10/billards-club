@@ -67,16 +67,8 @@ class TournamentController extends BaseController
             $this->setFlash(__('Không tìm thấy giải đấu.'), 'error');
             return redirect()->route('admin.tournament.index');
         }
-
-        // Fetch participants with customers
         $participants = \App\Models\TournamentParticipant::with('customer')
             ->where('tournament_id', $id)
-            ->get();
-
-        // Fetch matches
-        $matches = \App\Models\TournamentMatch::with(['player1', 'player2', 'winner'])
-            ->where('tournament_id', $id)
-            ->orderBy('created_at', 'asc')
             ->get();
 
         return Inertia::render('Admin/Tournament/Show', [
@@ -84,7 +76,6 @@ class TournamentController extends BaseController
                 'title' => 'Chi tiết giải đấu: ' . $tournament->name,
                 'tournament' => $tournament,
                 'participants' => $participants,
-                'matches' => $matches,
                 'urlBack' => session()->get('admin.tournament.list')[0] ?? route('admin.tournament.index'),
             ]
         ]);
@@ -138,51 +129,6 @@ class TournamentController extends BaseController
             $this->setFlash(__('Cập nhật trạng thái thành công.'), 'success');
         } else {
             $this->setFlash(__('Cập nhật thất bại.'), 'error');
-        }
-        return back();
-    }
-
-    // Matches management
-    public function storeMatch(Request $request, $id)
-    {
-        $request->validate([
-            'round_name' => 'required|string',
-            'player1_id' => 'required|exists:customers,id',
-            'player2_id' => 'required|exists:customers,id|different:player1_id',
-        ], [
-            'player2_id.different' => 'Hai tuyển thủ phải khác nhau.'
-        ]);
-
-        $data = $request->all();
-        $data['tournament_id'] = $id;
-        $data['status'] = 0; // Scheduled
-
-        if ($this->interface->storeMatch(new Request($data))) {
-            $this->setFlash(__('Tạo trận đấu thành công.'), 'success');
-        } else {
-            $this->setFlash(__('Tạo trận đấu thất bại.'), 'error');
-        }
-        return back();
-    }
-
-    public function updateMatch(Request $request, $id, $matchId)
-    {
-        $data = $request->only(['player1_score', 'player2_score', 'winner_id', 'status']);
-        
-        if ($this->interface->updateMatchScore($matchId, $data)) {
-            $this->setFlash(__('Cập nhật trận đấu thành công.'), 'success');
-        } else {
-            $this->setFlash(__('Cập nhật thất bại.'), 'error');
-        }
-        return back();
-    }
-
-    public function generateBracket($id)
-    {
-        if ($this->interface->generateBracket($id)) {
-            $this->setFlash(__('Tạo sơ đồ thi đấu thành công.'), 'success');
-        } else {
-            $this->setFlash(__('Không thể tạo sơ đồ (Cần ít nhất 2 khách hàng đã duyệt).'), 'error');
         }
         return back();
     }

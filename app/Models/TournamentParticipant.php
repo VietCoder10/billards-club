@@ -16,6 +16,8 @@ class TournamentParticipant extends Model
     protected $fillable = [
         'tournament_id',
         'customer_id',
+        'special_name',
+        'rank',
         'status',
         'payment_status',
     ];

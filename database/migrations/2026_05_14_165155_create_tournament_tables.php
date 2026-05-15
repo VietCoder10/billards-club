@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Tournaments table
         Schema::create('tournaments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -26,6 +27,19 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // 2. Tournament Participants table
+        Schema::create('tournament_participants', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tournament_id')->constrained('tournaments')->onDelete('cascade');
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->string('special_name')->nullable();
+            $table->string('rank')->nullable();
+            $table->tinyInteger('status')->default(0)->comment('0: Pending, 1: Approved, 2: Rejected');
+            $table->tinyInteger('payment_status')->default(0)->comment('0: Unpaid, 1: Paid');
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -33,6 +47,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('tournament_participants');
         Schema::dropIfExists('tournaments');
     }
 };

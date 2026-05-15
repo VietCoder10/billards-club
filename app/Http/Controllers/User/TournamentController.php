@@ -59,11 +59,6 @@ class TournamentController extends BaseController
             return redirect()->route('user.tournament.index');
         }
 
-        $matches = $this->interface->getMatches($id);
-        
-        // Group matches by round for bracket rendering
-        $rounds = $matches->groupBy('round_number')->sortKeys();
-
         $customerId = auth('customer')->id();
         $isRegistered = $tournament->participants()
             ->where('customer_id', $customerId)
@@ -73,7 +68,6 @@ class TournamentController extends BaseController
             'data' => [
                 'title' => 'Chi tiết giải đấu: ' . $tournament->name,
                 'tournament' => $tournament,
-                'rounds' => $rounds,
                 'isRegistered' => $isRegistered
             ]
         ]);

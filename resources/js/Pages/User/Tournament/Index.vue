@@ -23,7 +23,7 @@ const register = (tournamentId) => {
     <template #content>
       <div class="p-6">
         <h1 class="text-2xl font-bold mb-6 text-gray-800">{{ $page.props.data.title }}</h1>
-        
+
         <div v-if="$page.props.data.tournaments.length === 0" class="text-center py-10 bg-white rounded-lg shadow">
           <i class="pi pi-inbox text-4xl text-gray-400 mb-4 block"></i>
           <p class="text-gray-500">Hiện tại chưa có giải đấu nào đang mở.</p>
@@ -41,42 +41,34 @@ const register = (tournamentId) => {
               <p class="text-gray-600 text-sm line-clamp-2" :title="tournament.description">
                 {{ tournament.description || 'Không có mô tả' }}
               </p>
-              
+
               <div class="flex items-center text-sm text-gray-700">
                 <i class="pi pi-calendar mr-2 text-blue-500"></i>
                 <span><strong>Bắt đầu:</strong> {{ formatDate(tournament.start_date) }}</span>
               </div>
-              
+
               <div class="flex items-center text-sm text-gray-700">
                 <i class="pi pi-clock mr-2 text-red-500"></i>
                 <span><strong>Hạn chót ĐK:</strong> {{ formatDate(tournament.registration_deadline) }}</span>
               </div>
-              
+
               <div class="flex items-center text-sm text-gray-700">
                 <i class="pi pi-money-bill mr-2 text-green-500"></i>
                 <span><strong>Phí:</strong> {{ new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tournament.entry_fee) }}</span>
               </div>
-              
+
               <div class="flex items-center text-sm text-gray-700">
                 <i class="pi pi-gift mr-2 text-yellow-500"></i>
                 <span class="truncate" :title="tournament.prize_pool"><strong>Giải thưởng:</strong> {{ tournament.prize_pool || 'Đang cập nhật' }}</span>
               </div>
             </div>
-            
+
             <div class="p-4 bg-gray-50 border-t flex gap-2">
-              <Link :href="route('user.tournament.show', tournament.id)" class="flex-1">
-                <Button class="w-full p-button-outlined" label="Xem sơ đồ / Chi tiết" icon="pi pi-sitemap" />
-              </Link>
-              
               <template v-if="tournament.status === 1">
-                <div v-if="tournament.is_registered" class="flex-1 text-center text-green-600 font-semibold py-2">
-                  <i class="pi pi-check-circle mr-1"></i> Đã đăng ký
-                </div>
+                <div v-if="tournament.is_registered" class="flex-1 text-center text-green-600 font-semibold py-2"><i class="pi pi-check-circle mr-1"></i> Đã đăng ký</div>
                 <Button v-else @click="register(tournament.id)" :loading="registerForm.processing" class="flex-1 p-button-primary" label="Đăng ký" icon="pi pi-pencil" />
               </template>
-              <div v-else-if="tournament.status === 2" class="flex-1 text-center text-orange-600 font-semibold py-2">
-                Đang diễn ra
-              </div>
+              <div v-else-if="tournament.status === 2" class="flex-1 text-center text-orange-600 font-semibold py-2">Đang diễn ra</div>
             </div>
           </div>
         </div>

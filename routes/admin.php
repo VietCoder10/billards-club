@@ -61,10 +61,7 @@ Route::group([
         Route::resource('table_price_master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
         Route::resource('invoice', InvoiceController::class);
         Route::resource('tournament', \App\Http\Controllers\Admin\TournamentController::class);
-        Route::post('tournament/{tournament}/generate-bracket', [\App\Http\Controllers\Admin\TournamentController::class, 'generateBracket'])->name('tournament.generateBracket');
         Route::post('tournament/{tournament}/participant/{participant}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateParticipantStatus'])->name('tournament.participant.update');
-        Route::post('tournament/{tournament}/match', [\App\Http\Controllers\Admin\TournamentController::class, 'storeMatch'])->name('tournament.match.store');
-        Route::put('tournament/{tournament}/match/{match}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateMatch'])->name('tournament.match.update');
         Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class);
         Route::post('customer/check-email', [\App\Http\Controllers\Admin\CustomerController::class, 'checkEmail'])->name('customer.checkEmail');
         Route::post('customer/{id}/update-avatar', [\App\Http\Controllers\Admin\CustomerController::class, 'updateAvatar'])->name('customer.updateAvatar');

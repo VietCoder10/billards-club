@@ -17,10 +17,4 @@ interface TournamentInterface
     public function getParticipants($tournamentId, $request);
     public function registerParticipant($tournamentId, $customerId);
     public function updateParticipantStatus($participantId, $status);
-    
-    // Match methods
-    public function getMatches($tournamentId);
-    public function storeMatch($request);
-    public function updateMatchScore($matchId, $data);
-    public function generateBracket($tournamentId);
 }
