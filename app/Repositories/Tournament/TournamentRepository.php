@@ -39,7 +39,7 @@ class TournamentRepository implements TournamentInterface
     public function getActiveTournaments()
     {
         // Get Open and Ongoing tournaments for users to see
-        return $this->tournament->whereIn('status', [1, 2])->orderBy('start_date', 'asc')->get();
+        return $this->tournament->withCount('participants')->whereIn('status', [1, 2])->orderBy('start_date', 'asc')->get();
     }
 
     public function store($request)
@@ -102,7 +102,7 @@ class TournamentRepository implements TournamentInterface
             ->get();
     }
 
-    public function registerParticipant($tournamentId, $customerId)
+    public function registerParticipant($tournamentId, $customerId, $data = [])
     {
         $exists = TournamentParticipant::where('tournament_id', $tournamentId)
             ->where('customer_id', $customerId)
@@ -112,12 +112,12 @@ class TournamentRepository implements TournamentInterface
             return false;
         }
 
-        return TournamentParticipant::create([
+        return TournamentParticipant::create(array_merge([
             'tournament_id' => $tournamentId,
             'customer_id' => $customerId,
             'status' => 0, // Pending
             'payment_status' => 0 // Unpaid
-        ]);
+        ], $data));
     }
 
     public function updateParticipantStatus($participantId, $status)
@@ -127,5 +127,18 @@ class TournamentRepository implements TournamentInterface
         
         $participant->status = $status;
         return $participant->save();
+    }
+
+    public function cancelRegistration($tournamentId, $customerId)
+    {
+        $participant = TournamentParticipant::where('tournament_id', $tournamentId)
+            ->where('customer_id', $customerId)
+            ->first();
+            
+        if ($participant) {
+            return $participant->delete();
+        }
+        
+        return false;
     }
 }

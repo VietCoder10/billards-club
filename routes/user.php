@@ -38,5 +38,10 @@ Route::group([
         Route::get('tournament', [\App\Http\Controllers\User\TournamentController::class, 'index'])->name('tournament.index');
         Route::get('tournament/{id}', [\App\Http\Controllers\User\TournamentController::class, 'show'])->name('tournament.show');
         Route::post('tournament/{id}/register', [\App\Http\Controllers\User\TournamentController::class, 'register'])->name('tournament.register');
+        Route::post('tournament/{id}/cancel', [\App\Http\Controllers\User\TournamentController::class, 'cancel'])->name('tournament.cancel');
+        Route::resource('invoice', \App\Http\Controllers\User\InvoiceController::class);
+        Route::get('profile', [\App\Http\Controllers\User\ProfileController::class, 'index'])->name('profile.index');
+        Route::post('profile', [\App\Http\Controllers\User\ProfileController::class, 'update'])->name('profile.update');
+        Route::post('profile/check-email', [\App\Http\Controllers\User\ProfileController::class, 'checkEmail'])->name('profile.checkEmail');
     });
 });

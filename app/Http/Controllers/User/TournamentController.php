@@ -40,8 +40,9 @@ class TournamentController extends BaseController
     public function register(Request $request, $id)
     {
         $customerId = auth('customer')->id();
+        $data = $request->only(['special_name', 'rank']);
         
-        $result = $this->interface->registerParticipant($id, $customerId);
+        $result = $this->interface->registerParticipant($id, $customerId, $data);
         
         if ($result) {
             $this->setFlash(__('Đăng ký tham gia giải đấu thành công! Chúng tôi sẽ liên hệ để xác nhận.'), 'success');
@@ -71,5 +72,19 @@ class TournamentController extends BaseController
                 'isRegistered' => $isRegistered
             ]
         ]);
+    }
+
+    public function cancel(Request $request, $id)
+    {
+        $customerId = auth('customer')->id();
+        $result = $this->interface->cancelRegistration($id, $customerId);
+        
+        if ($result) {
+            $this->setFlash(__('Hủy đăng ký tham gia giải đấu thành công!'), 'success');
+        } else {
+            $this->setFlash(__('Không tìm thấy thông tin đăng ký hoặc có lỗi xảy ra.'), 'error');
+        }
+        
+        return back();
     }
 }

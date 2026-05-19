@@ -15,6 +15,7 @@ interface TournamentInterface
     
     // Participant methods
     public function getParticipants($tournamentId, $request);
-    public function registerParticipant($tournamentId, $customerId);
+    public function registerParticipant($tournamentId, $customerId, $data = []);
     public function updateParticipantStatus($participantId, $status);
+    public function cancelRegistration($tournamentId, $customerId);
 }

@@ -56,8 +56,8 @@ class UserHandleInertiaRequests extends Middleware
             [
                 'label' => 'Hóa đơn',
                 'icon' => 'pi pi-fw pi-file',
-                // 'to' => route('user.invoice.index'),
-                // 'active' => in_array($routeName, ['user.invoice.index']),
+                'to' => route('user.invoice.index'),
+                'active' => in_array($routeName, ['user.invoice.index', 'user.invoice.show']),
             ],
             [
                 'label' => 'Đăng kí giải đấu',
@@ -70,6 +70,24 @@ class UserHandleInertiaRequests extends Middleware
         $breadcrumbs = [
             ['label' => 'Trang chủ', 'icon' => 'pi pi-home', 'url' => route('user.dashboard.index')],
         ];
+        if (in_array($routeName, ['user.invoice.index', 'user.invoice.show'])) {
+            $breadcrumbs[] = ['label' => 'Hóa đơn', 'icon' => 'pi pi-fw pi-file', 'url' => route('user.invoice.index')];
+            if (in_array($routeName, ['user.invoice.show'])) {
+                $breadcrumbs[] = ['label' => 'Chi tiết hóa đơn', 'icon' => 'pi pi-fw pi-eye', 'url' => route('user.invoice.show', $request->invoice)];
+            }
+        }
+        if (in_array($routeName, ['user.tournament.index', 'user.tournament.show'])) {
+            $breadcrumbs[] = ['label' => 'Giải đấu', 'icon' => 'pi pi-fw pi-trophy', 'url' => route('user.tournament.index')];
+            if (in_array($routeName, ['user.tournament.show'])) {
+                $breadcrumbs[] = ['label' => 'Chi tiết giải đấu', 'icon' => 'pi pi-fw pi-eye', 'url' => route('user.tournament.show', $request->route('id') ?? $request->id)];
+            }
+        }
+        if (in_array($routeName, ['user.table.index'])) {
+            $breadcrumbs[] = ['label' => 'Tình trạng bàn', 'icon' => 'pi pi-fw pi-table', 'url' => route('user.table.index')];
+        }
+        if (in_array($routeName, ['user.profile.index'])) {
+            $breadcrumbs[] = ['label' => 'Thông tin cá nhân', 'icon' => 'pi pi-fw pi-user', 'url' => route('user.profile.index')];
+        }
 
         return array_merge(parent::share($request), [
             'routeName' => $routeName,

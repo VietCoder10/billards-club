@@ -39,14 +39,18 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
 
       <div class="layout-topbar-menu hidden lg:block">
         <div class="layout-topbar-menu-content">
-          <button v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }" type="button" class="layout-topbar-action">
-            <i class="pi pi-user"></i>
-            <span>{{ $page.props.user?.name }}</span>
+          <button v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }" type="button" class="layout-topbar-action overflow-hidden !p-0">
+            <img v-if="$page.props.user?.avatar" :src="$page.props.user?.avatar_url" alt="Avatar" class="w-full h-full rounded-full object-cover" />
+            <i v-else class="pi pi-user"></i>
+            <span>Hồ sơ</span>
           </button>
           <div
             class="config-panel hidden absolute top-[3.25rem] right-10 w-50 p-0 bg-surface-0 dark:bg-surface-900 border border-surface rounded-border origin-top shadow-[0px_3px_5px_rgba(0,0,0,0.02),0px_0px_2px_rgba(0,0,0,0.05),0px_1px_4px_rgba(0,0,0,0.08)]"
           >
             <div class="flex flex-col">
+              <Link :href="route('user.profile.index')">
+                <Button variant="link" label="Thông tin cá nhân" icon="pi pi-user" />
+              </Link>
               <Link :href="route('user.logout')">
                 <Button variant="link" label="Đăng xuất" icon="pi pi-sign-out" />
               </Link>

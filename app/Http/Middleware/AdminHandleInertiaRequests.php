@@ -62,7 +62,7 @@ class AdminHandleInertiaRequests extends Middleware
                 'label' => 'Giải đấu',
                 'icon' => 'pi pi-trophy',
                 'to' => route('admin.tournament.index'),
-                'active' => in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.update']),
+                'active' => in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.update', 'admin.tournament.show']),
             ],
         ];
         if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->can('viewAny', User::class)) {
@@ -204,6 +204,27 @@ class AdminHandleInertiaRequests extends Middleware
             }
             if (in_array($routeName, ['admin.table_price_master.edit', 'admin.table_price_master.update'])) {
                 $breadcrumbs[] = ['label' => 'Chỉnh sửa giá bàn', 'icon' => 'pi pi-pencil', 'url' => route('admin.table_price_master.edit', $request->table_price_master)];
+            }
+        }
+        if (in_array($routeName, ['admin.customer.index', 'admin.customer.create', 'admin.customer.store', 'admin.customer.edit', 'admin.customer.update'])) {
+            $breadcrumbs[] = ['label' => 'Quản lí khách hàng', 'icon' => 'pi pi-fw pi-user', 'url' => route('admin.customer.index')];
+            if (in_array($routeName, ['admin.customer.create', 'admin.customer.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm khách hàng', 'icon' => 'pi pi-pencil', 'url' => route('admin.customer.create')];
+            }
+            if (in_array($routeName, ['admin.customer.edit', 'admin.customer.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa khách hàng', 'icon' => 'pi pi-pencil', 'url' => route('admin.customer.edit', $request->customer)];
+            }
+        }
+        if (in_array($routeName, ['admin.tournament.index', 'admin.tournament.create', 'admin.tournament.store', 'admin.tournament.edit', 'admin.tournament.show', 'admin.tournament.update'])) {
+            $breadcrumbs[] = ['label' => 'Quản lí giải đấu', 'icon' => 'pi pi-fw pi-trophy', 'url' => route('admin.tournament.index')];
+            if (in_array($routeName, ['admin.tournament.create', 'admin.tournament.store'])) {
+                $breadcrumbs[] = ['label' => 'Thêm giải đấu', 'icon' => 'pi pi-pencil', 'url' => route('admin.tournament.create')];
+            }
+            if (in_array($routeName, ['admin.tournament.edit', 'admin.tournament.update'])) {
+                $breadcrumbs[] = ['label' => 'Chỉnh sửa giải đấu', 'icon' => 'pi pi-pencil', 'url' => route('admin.tournament.edit', $request->tournament)];
+            }
+            if (in_array($routeName, ['admin.tournament.show'])) {
+                $breadcrumbs[] = ['label' => 'Chi tiết giải đấu', 'icon' => 'pi pi-eye', 'url' => route('admin.tournament.show', $request->tournament)];
             }
         }
 
