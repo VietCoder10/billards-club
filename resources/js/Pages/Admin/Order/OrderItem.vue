@@ -24,10 +24,21 @@ const state = reactive({
 
 const categories = ref(props.data.categories || []);
 const activeCategory = ref('all');
+const searchQuery = ref('');
 
 const filteredProducts = computed(() => {
-  if (activeCategory.value === 'all') return props.data.products.data || props.data.products;
-  return (props.data.products.data || props.data.products).filter((p) => p.category == activeCategory.value);
+  let list = props.data.products.data || props.data.products || [];
+
+  if (activeCategory.value !== 'all') {
+    list = list.filter((p) => p.category == activeCategory.value);
+  }
+
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase().trim();
+    list = list.filter((p) => (p.product_name || '').toLowerCase().includes(q) || (p.category_label || '').toLowerCase().includes(q));
+  }
+
+  return list;
 });
 
 const normalizeState = (obj) => {
@@ -270,29 +281,67 @@ const formatPrice = (value) => {
               <!-- Right: Product Catalog -->
               <div class="col-span-12 lg:col-span-7 flex flex-col gap-4">
                 <div class="card p-4 shadow-sm border rounded-xl bg-white shadow-lg overflow-hidden">
-                  <div class="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-                    <button
-                      type="button"
-                      @click="activeCategory = 'all'"
-                      :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === 'all' ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-                    >
-                      <i class="pi pi-th-large mr-2"></i>
-                      Tất cả
-                    </button>
-                    <button
-                      type="button"
-                      v-for="cat in categories"
-                      :key="cat.value"
-                      @click="activeCategory = cat.value"
-                      :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === cat.value ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-                    >
-                      <i :class="['pi mr-2', cat.value == 1 ? 'pi-shopping-bag text-orange-500' : cat.value == 2 ? 'pi-coffee text-cyan-500' : 'pi-tag text-purple-500']"></i>
-                      {{ cat.label }}
-                    </button>
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <!-- Categories Dock -->
+                    <div class="flex items-center gap-2.5 p-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-150/80 dark:border-zinc-800 rounded-2xl overflow-x-auto scrollbar-hide select-none max-w-max">
+                      <button
+                        type="button"
+                        @click="activeCategory = 'all'"
+                        :class="[
+                          'px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2.5 transition-all duration-300 whitespace-nowrap',
+                          activeCategory === 'all'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 scale-[1.03] transform'
+                            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-350 hover:bg-zinc-100 dark:hover:bg-zinc-750 border border-zinc-150/60 dark:border-zinc-700/60 hover:border-zinc-300'
+                        ]"
+                      >
+                        <i :class="['pi pi-th-large', activeCategory === 'all' ? 'text-white' : 'text-zinc-400']"></i>
+                        Tất cả
+                      </button>
+                      <button
+                        type="button"
+                        v-for="cat in categories"
+                        :key="cat.value"
+                        @click="activeCategory = cat.value"
+                        :class="[
+                          'px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2.5 transition-all duration-300 whitespace-nowrap',
+                          activeCategory === cat.value
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 scale-[1.03] transform'
+                            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-350 hover:bg-zinc-100 dark:hover:bg-zinc-750 border border-zinc-150/60 dark:border-zinc-700/60 hover:border-zinc-300'
+                        ]"
+                      >
+                        <i :class="['pi', cat.value == 1 ? 'pi-shopping-bag text-orange-500' : cat.value == 2 ? 'pi-shopping-cart text-cyan-500' : 'pi-tag text-purple-500', activeCategory === cat.value ? '!text-white' : '']"></i>
+                        {{ cat.label }}
+                      </button>
+                    </div>
+
+                    <!-- Search Input Box -->
+                    <div class="relative w-full sm:w-64 md:w-80">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-400">
+                        <i class="pi pi-search text-xs"></i>
+                      </span>
+                      <input
+                        type="text"
+                        v-model="searchQuery"
+                        placeholder="Tìm món ăn, nước uống..."
+                        class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-zinc-150/80 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-200 placeholder-zinc-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all duration-300 shadow-sm"
+                      />
+                    </div>
                   </div>
 
                   <div class="flex flex-wrap gap-4 overflow-y-auto max-h-[700px] p-1 custom-scrollbar">
                     <div
+                      v-if="filteredProducts.length === 0"
+                      class="flex flex-col items-center justify-center py-16 w-full text-zinc-400 dark:text-zinc-500 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800"
+                    >
+                      <div class="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3">
+                        <i class="pi pi-search text-lg text-zinc-400"></i>
+                      </div>
+                      <p class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Không tìm thấy sản phẩm phù hợp</p>
+                      <p class="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1">Vui lòng thử tìm bằng từ khóa khác</p>
+                    </div>
+
+                    <div
+                      v-else
                       v-for="product in filteredProducts"
                       :key="product.id"
                       @click="addToOrder(product)"
