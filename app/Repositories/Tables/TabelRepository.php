@@ -24,7 +24,7 @@ class TabelRepository implements TableInterface
                 $join->on('tables.id', '=', 'orders.table_id')
                     ->where('orders.status', '=', OrderStatus::PENDING);
             })
-            ->select('tables.*', 'table_price_master.price_per_hour', 'orders.id as order_id');
+            ->select('tables.*', 'table_price_master.price_per_hour', 'orders.id as order_id', 'orders.started_at as started_at');
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder = $builder->where(function ($q) use ($request) {
                 $q->orWhere(CommonComponent::escapeLikeSentence('table_name', $request['free_word']));
@@ -49,7 +49,7 @@ class TabelRepository implements TableInterface
                 $join->on('tables.id', '=', 'orders.table_id')
                     ->where('orders.status', '=', \App\Enums\OrderStatus::PENDING);
             })
-            ->select('tables.*', 'table_price_master.price_per_hour', 'orders.id as order_id');
+            ->select('tables.*', 'table_price_master.price_per_hour', 'orders.id as order_id', 'orders.started_at as started_at');
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder = $builder->where(function ($q) use ($request) {
                 $q->orWhere(CommonComponent::escapeLikeSentence('table_name', $request['free_word']));

@@ -286,7 +286,7 @@ const formatPrice = (value) => {
                       @click="activeCategory = cat.value"
                       :class="['px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap', activeCategory === cat.value ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
                     >
-                      <i :class="['pi mr-2', cat.value == 1 ? 'pi-utensils' : cat.value == 2 ? 'pi-palette' : 'pi-clock']"></i>
+                      <i :class="['pi mr-2', cat.value == 1 ? 'pi-shopping-bag text-orange-500' : cat.value == 2 ? 'pi-coffee text-cyan-500' : 'pi-tag text-purple-500']"></i>
                       {{ cat.label }}
                     </button>
                   </div>

@@ -78,25 +78,25 @@ const filteredTables = computed(() => {
         </template>
         <div class="mb-6">
           <Tabs v-model:value="activeTab">
-            <TabList>
+            <TabList class="border-b border-zinc-150 dark:border-zinc-800">
               <Tab class="custom-tab" v-for="tab in tabs" :key="tab.value" :value="tab.value">
-                <div class="flex items-center gap-2 px-4 py-2">
-                  <span v-if="tab.value === 'all'"><i class="pi pi-th-large"></i></span>
-                  <span v-if="tab.value === 'table_no'"><i class="pi pi-circle-fill text-red-500"></i></span>
-                  <span v-if="tab.value === 'table_playing'"><i class="pi pi-circle text-green-500"></i></span>
-                  <span v-if="tab.value === 'table_cleaning'"><i class="pi pi-wrench text-yellow-500"></i></span>
+                <div class="flex items-center gap-2 px-4 py-2.5 font-bold text-xs transition-colors">
+                  <span v-if="tab.value === 'all'"><i class="pi pi-th-large text-zinc-550"></i></span>
+                  <span v-if="tab.value === 'table_no'"><i class="pi pi-circle-fill text-rose-500"></i></span>
+                  <span v-if="tab.value === 'table_playing'"><i class="pi pi-circle-fill text-emerald-500"></i></span>
+                  <span v-if="tab.value === 'table_cleaning'"><i class="pi pi-wrench text-amber-500"></i></span>
                   {{ tab.title }}
                 </div>
               </Tab>
             </TabList>
           </Tabs>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 p-4 bg-gray-50 rounded-xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-5 bg-zinc-50/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-850 rounded-2xl">
           <TableItem v-for="table in filteredTables" :key="table.id" :table="table" @click="handleTableClick" />
         </div>
-        <div v-if="filteredTables.length === 0" class="flex flex-col items-center justify-center py-20 text-gray-400">
-          <i class="pi pi-inbox text-6xl mb-4"></i>
-          <p class="text-xl">Không có bàn nào trong danh mục này</p>
+        <div v-if="filteredTables.length === 0" class="flex flex-col items-center justify-center py-20 text-zinc-400">
+          <i class="pi pi-inbox text-5xl mb-3 text-zinc-300"></i>
+          <p class="text-sm font-semibold">Không có bàn nào trong danh mục này</p>
         </div>
       </Panel>
     </template>
