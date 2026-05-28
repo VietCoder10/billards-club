@@ -20,7 +20,6 @@ const state = reactive({
     avatar: null
   }
 });
-
 const triggerFileInput = () => {
   fileInput.value.click();
 };

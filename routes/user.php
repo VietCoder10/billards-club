@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\User\LandingController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::group([
     ], function () {
         Route::get('dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard.index');
         Route::get('table', [\App\Http\Controllers\User\TableController::class, 'index'])->name('table.index');
+        Route::post('check-email', [CustomerController::class, 'checkEmail'])->name('customer.checkEmail');
         Route::get('tournament', [\App\Http\Controllers\User\TournamentController::class, 'index'])->name('tournament.index');
         Route::get('tournament/{id}', [\App\Http\Controllers\User\TournamentController::class, 'show'])->name('tournament.show');
         Route::post('tournament/{id}/register', [\App\Http\Controllers\User\TournamentController::class, 'register'])->name('tournament.register');

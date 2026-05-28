@@ -67,10 +67,6 @@ Route::group([
         Route::get('customer/search-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModalCustomer'])->name('customer.searchModalCustomer');
         Route::post('customer/store-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'storeModalCustomer'])->name('customer.storeModalCustomer');
         Route::resource('customer', \App\Http\Controllers\Admin\CustomerController::class);
-
-
-
-
         Route::resource('report', ReportController::class)->only(['index']);
     });
 });

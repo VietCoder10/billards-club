@@ -25,7 +25,8 @@ class LoginController extends BaseController
         if (Auth::guard('customer')->check()) {
             return redirect(route('user.dashboard.index'));
         }
-
+        session()->forget('user.login.list');
+        session()->push('user.login.list', url()->full());
         return Inertia::render('User/Auth/Login', $this->mergeSession([
             'data' => [
                 'title' => 'Đăng nhập',

@@ -19,7 +19,7 @@ class TournamentController extends BaseController
     public function index()
     {
         $tournaments = $this->interface->getActiveTournaments();
-        
+
         // Add flag to check if current customer is already registered
         $customerId = auth('customer')->id();
         $tournaments->map(function ($tournament) use ($customerId) {
@@ -29,28 +29,28 @@ class TournamentController extends BaseController
             return $tournament;
         });
 
-        return Inertia::render('User/Tournament/Index', [
+        return Inertia::render('User/Tournament/Index', $this->mergeSession([
             'data' => [
                 'title' => 'Giải đấu',
                 'tournaments' => $tournaments,
             ]
-        ]);
+        ]));
     }
 
     public function register(Request $request, $id)
     {
         $customerId = auth('customer')->id();
         $data = $request->only(['special_name', 'rank']);
-        
+
         $result = $this->interface->registerParticipant($id, $customerId, $data);
-        
+
         if ($result) {
             $this->setFlash(__('Đăng ký tham gia giải đấu thành công! Chúng tôi sẽ liên hệ để xác nhận.'), 'success');
         } else {
             $this->setFlash(__('Bạn đã đăng ký giải đấu này rồi hoặc có lỗi xảy ra.'), 'error');
         }
-        
-        return back();
+
+        return redirect()->route('user.tournament.show', $id);
     }
 
     public function show($id)
@@ -65,26 +65,26 @@ class TournamentController extends BaseController
             ->where('customer_id', $customerId)
             ->exists();
 
-        return Inertia::render('User/Tournament/Show', [
+        return Inertia::render('User/Tournament/Show', $this->mergeSession([
             'data' => [
                 'title' => 'Chi tiết giải đấu: ' . $tournament->name,
                 'tournament' => $tournament,
                 'isRegistered' => $isRegistered
             ]
-        ]);
+        ]));
     }
 
     public function cancel(Request $request, $id)
     {
         $customerId = auth('customer')->id();
         $result = $this->interface->cancelRegistration($id, $customerId);
-        
+
         if ($result) {
             $this->setFlash(__('Hủy đăng ký tham gia giải đấu thành công!'), 'success');
         } else {
             $this->setFlash(__('Không tìm thấy thông tin đăng ký hoặc có lỗi xảy ra.'), 'error');
         }
-        
+
         return back();
     }
 }

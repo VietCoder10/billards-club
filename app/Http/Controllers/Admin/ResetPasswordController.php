@@ -47,12 +47,12 @@ class ResetPasswordController extends BaseController
     public function show(string $token)
     {
         if (!$this->user->checkToken($token)) {
-            $this->setFlash(__('無効なまたは期限切れのトークンです。'), 'error');
-            return redirect()->route('admin.login.index')->with('error', '無効なまたは期限切れのトークンです。');
+            $this->setFlash(__('Đây là mã thông báo không hợp lệ hoặc đã hết hạn.'), 'error');
+            return redirect()->route('admin.login.index')->with('error', 'Đây là mã thông báo không hợp lệ hoặc đã hết hạn.');
         }
         return Inertia::render('Admin/Auth/ResetPassword', $this->mergeSession([
             'data' => [
-                'title' => 'パスワードをリセットする',
+                'title' => 'Đặt lại mật khẩu',
                 'token' => $token,
             ],
         ]));
@@ -72,15 +72,15 @@ class ResetPasswordController extends BaseController
     public function update(AdminResetPasswordRequest $request, string $token)
     {
         if (!$this->user->checkToken($token)) {
-            $this->setFlash(__('無効なまたは期限切れのトークンです。'), 'error');
-            return redirect()->route('admin.login.index')->with('error', '無効なまたは期限切れのトークンです。');
+            $this->setFlash(__('Đây là mã thông báo không hợp lệ hoặc đã hết hạn.'), 'error');
+            return redirect()->route('admin.login.index')->with('error', 'Đây là mã thông báo không hợp lệ hoặc đã hết hạn.');
         }
         if (!$this->user->resetPassword($request, $token)) {
-            $this->setFlash(__('パスワードのリセットに失敗しました。'), 'error');
-            return redirect()->back()->with('error', 'パスワードのリセットに失敗しました。');
+            $this->setFlash(__('Đặt lại mật khẩu không thành công.'), 'error');
+            return redirect()->back()->with('error', 'Đặt lại mật khẩu không thành công.');
         }
-        $this->setFlash(__('パスワードが正常にリセットされました。'));
-        return redirect()->route('admin.login.index')->with('success', 'パスワードが正常にリセットされました。');
+        $this->setFlash(__('Mật khẩu đã được đặt lại thành công.'));
+        return redirect()->route('admin.login.index')->with('success', 'Mật khẩu đã được đặt lại thành công.');
     }
 
     /**

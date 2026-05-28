@@ -196,7 +196,7 @@ const formatPrice = (value) => {
           </Link>
           <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
         </template>
-        <InvoicePopup v-model:visible="showPopup" :request="state.model"></InvoicePopup>
+        <InvoicePopup v-model:visible="showPopup" :request="state.model" v-model:isSubmitting="isSubmitting"></InvoicePopup>
         <VeeForm as="div" v-slot="{ handleSubmit }">
           <form @submit="handleSubmit($event, onSubmit)" id="order-form" class="form-data">
             <div class="grid grid-cols-12 gap-6">

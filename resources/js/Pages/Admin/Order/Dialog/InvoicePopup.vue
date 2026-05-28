@@ -17,7 +17,7 @@ const showCustomerModal = ref(false);
 const openCustomerModal = () => {
   showCustomerModal.value = true;
 };
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'update:isSubmitting']);
 const localVisible = ref(props.visible);
 watch(
   () => props.visible,
@@ -85,6 +85,7 @@ const isSubmitting = ref(false);
 
 const onSubmit = () => {
   isSubmitting.value = true;
+  emit('update:isSubmitting', true);
   const payload = {
     ...state.model.order,
     order_id: state.model.order?.id,
@@ -101,6 +102,7 @@ const onSubmit = () => {
     },
     onFinish: () => {
       isSubmitting.value = false;
+      emit('update:isSubmitting', false);
     }
   });
 };

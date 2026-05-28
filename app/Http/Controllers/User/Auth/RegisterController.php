@@ -22,6 +22,8 @@ class RegisterController extends BaseController
 
     public function index(Request $request): Response|RedirectResponse
     {
+        $customers = $this->customer->get($request);
+
         if (Auth::guard('customer')->check()) {
             return redirect(route('user.dashboard.index'));
         }
@@ -30,6 +32,7 @@ class RegisterController extends BaseController
             'data' => [
                 'title' => 'Đăng ký tài khoản',
                 'request' => $request->all(),
+                'customers' => $customers->items(),
             ],
         ]));
     }
@@ -39,11 +42,11 @@ class RegisterController extends BaseController
         if ($this->customer->store($request)) {
             // Auto login after register
             $credentials = $request->only('email', 'password');
-            Auth::guard('customer')->attempt($credentials);
-            $this->customer->saveLoginHistory();
+            // Auth::guard('customer')->attempt($credentials);
+            // $this->customer->saveLoginHistory();
 
             $this->setFlash(__('Đăng ký tài khoản thành công.'), 'success');
-            return redirect(route('user.dashboard.index'));
+            return redirect()->route('user.login.index')->with('success', __('Đăng ký tài khoản thành công.'));
         }
         $this->setFlash(__('Có lỗi xảy ra, vui lòng thử lại.'), 'error');
         return redirect()->back();

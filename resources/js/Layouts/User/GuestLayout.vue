@@ -4,7 +4,11 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { watch, onMounted } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
-
+import SpinBeforeLoaded from '@/Components/Common/SpinBeforeLoaded.vue';
+import Notyf from '@/Components/Common/Notyf.vue';
+import { Head } from '@inertiajs/vue3';
+import FloatingConfigurator from '@/Components/Common/FloatingConfigurator.vue';
+import NotyfValidate from '@/Components/Common/NotyfValidate.vue';
 const toast = useToast();
 
 const displayFlash = () => {
@@ -31,6 +35,14 @@ watch(
 </script>
 
 <template>
+  <Head :title="$page.props.data.title" />
+  <div>
+    <FloatingConfigurator />
+    <Notyf :data="$page.props.sessionAlert" />
+    <NotyfValidate :data="$page.props.errors" />
+    <SpinBeforeLoaded />
+    <slot name="content" />
+  </div>
   <div class="bg-zinc-950 text-white min-h-screen font-sans selection:bg-amber-500 selection:text-zinc-950 flex items-center justify-center relative overflow-hidden">
     <Toast />
     <!-- Background Image -->
@@ -42,10 +54,9 @@ watch(
     <div class="relative z-10 w-full max-w-md px-6 py-12 md:p-10 bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-3xl shadow-2xl m-4">
       <div class="text-center mb-10">
         <Link href="/" class="inline-block">
-          <span class="text-white font-bold text-3xl tracking-widest uppercase"> Việt Vũ <span class="text-amber-500">Billiards</span> </span>
+          <span class="text-white font-bold text-3xl tracking-widest uppercase"> TQ <span class="text-amber-500">Billiards</span> </span>
         </Link>
       </div>
-
       <slot />
     </div>
   </div>

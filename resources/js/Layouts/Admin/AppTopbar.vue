@@ -30,7 +30,7 @@ import logo from '@/assets/imgs/logo.svg';
             />
           </g>
         </svg>
-        <span>LARAVEL</span>
+        <span>TQ Billiards</span>
       </Link>
     </div>
 

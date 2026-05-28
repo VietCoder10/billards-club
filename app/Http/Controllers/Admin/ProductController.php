@@ -130,6 +130,19 @@ class ProductController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
+    public function destroy(string $id)
+    {
+        //
+        $product = $this->product->delete($id);
+        if (! $product) {
+            return response()->json([
+                'message' => 'Xóa sản phẩm không thành công'
+            ], StatusCode::INTERNAL_ERR);
+        }
+        return response()->json([
+            'message' => 'Xóa sản phẩm thành công'
+        ], StatusCode::OK);
+    }
     /**
      * Update the specified resource's avatar in storage.
      */

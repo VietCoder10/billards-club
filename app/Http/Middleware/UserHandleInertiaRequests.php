@@ -63,7 +63,7 @@ class UserHandleInertiaRequests extends Middleware
                 'label' => 'Đăng kí giải đấu',
                 'icon' => 'pi pi-fw pi-trophy',
                 'to' => route('user.tournament.index'),
-                'active' => in_array($routeName, ['user.tournament.index']),
+                'active' => in_array($routeName, ['user.tournament.index', 'user.tournament.show']),
             ],
         ];
 

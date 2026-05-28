@@ -26,7 +26,7 @@ function smoothScroll(id) {
         </linearGradient>
       </defs>
     </svg>
-    <span class="text-white font-serif font-bold text-2xl tracking-widest uppercase mr-20"> Việt Vũ <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">Billiards</span> </span>
+    <span class="text-white font-serif font-bold text-2xl tracking-widest uppercase mr-20"> TQ <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">Billiards</span> </span>
   </a>
   <Button class="lg:!hidden" text severity="secondary" rounded v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }">
     <i class="pi pi-bars !text-2xl text-amber-500"></i>

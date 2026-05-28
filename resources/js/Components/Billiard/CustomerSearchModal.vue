@@ -123,7 +123,7 @@ const highlightRow = (row) => {
 </script>
 
 <template>
-  <Dialog :visible="visible" @update:visible="$emit('update:visible', $event)" modal header="顧客検索" :dismissableMask="true" :style="{ width: '70vw' }" :breakpoints="{ '960px': '90vw', '640px': '95vw' }">
+  <Dialog :visible="visible" @update:visible="$emit('update:visible', $event)" modal header="Tìm kiếm khách hàng" :dismissableMask="true" :style="{ width: '70vw' }" :breakpoints="{ '960px': '90vw', '640px': '95vw' }">
     <VeeForm as="div" v-slot="{ handleSubmit }">
       <form @submit="handleSubmit($event, loadData)" id="customer-search-form" class="form-data">
         <div class="flex flex-col gap-3 mt-4">
