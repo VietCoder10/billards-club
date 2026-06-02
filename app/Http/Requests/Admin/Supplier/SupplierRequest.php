@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Supplier;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SupplierRequest extends FormRequest
 {
@@ -19,14 +20,24 @@ class SupplierRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->supplier;
         return [
             'supplier_name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('suppliers')->whereNull('deleted_at')->where(function ($q) use ($id) {
+                    if ($id) {
+                        $q->where('id', '<>', $id);
+                    }
+                })
+            ],
+            'phone' => 'required|string|max:10|min:10|regex:/^[0-9]+$/',
             'address' => 'required|string|max:255',
             'note' => 'nullable|string|max:255',
-            'status' => 'required|in:0,1',
+            'status' => 'required|integer',
         ];
     }
 
@@ -39,13 +50,16 @@ class SupplierRequest extends FormRequest
             'email.required' => 'Email là trường bắt buộc',
             'email.email' => 'Email không đúng định dạng',
             'email.max' => 'Email không được vượt quá 255 ký tự',
+            'email.unique' => 'Email đã tồn tại',
             'phone.required' => 'Số điện thoại là trường bắt buộc',
-            'phone.max' => 'Số điện thoại không được vượt quá 255 ký tự',
+            'phone.max' => 'Số điện thoại không được vượt quá 10 ký tự',
+            'phone.min' => 'Số điện thoại không được dưới 10 ký tự',
+            'phone.regex' => 'Số điện thoại phải là số',
             'address.required' => 'Địa chỉ là trường bắt buộc',
             'address.max' => 'Địa chỉ không được vượt quá 255 ký tự',
             'note.max' => 'Ghi chú không được vượt quá 255 ký tự',
             'status.required' => 'Trạng thái là trường bắt buộc',
-            'status.in' => 'Trạng thái không hợp lệ',
+            'status.integer' => 'Trạng thái không hợp lệ',
         ];
     }
 }

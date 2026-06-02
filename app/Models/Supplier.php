@@ -23,6 +23,9 @@ class Supplier extends Model
         'note',
         'status',
     ];
+    protected $casts = [
+        'status' => 'int',
+    ];
     protected $hidden = [
         'deleted_at',
         'created_at',

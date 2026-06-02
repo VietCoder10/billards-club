@@ -41,10 +41,45 @@ onMounted(() => {
       ...props.data.product
     };
   }
+  setMessageError();
   nextTick(() => {
     initialState.value = normalizeState(state.model);
   });
 });
+const setMessageError = () => {
+  let messError = {
+    en: {
+      fields: {
+        product_name: {
+          required: 'Vui lòng nhập tên sản phẩm',
+          max: 'Tên sản phẩm không được vượt quá 255 ký tự'
+        },
+        sku: {
+          required: 'Vui lòng nhập mã sản phẩm',
+          max: 'Mã sản phẩm không được vượt quá 255 ký tự'
+        },
+        supplier_id: {
+          required: 'Vui lòng chọn nhà cung cấp'
+        },
+        price_purchase: {
+          required: 'Vui lòng nhập giá nhập',
+          max: 'Giá nhập không được vượt quá 255 ký tự'
+        },
+        price_sale: {
+          required: 'Vui lòng nhập giá bán',
+          max: 'Giá bán không được vượt quá 255 ký tự'
+        },
+        quantity: {
+          required: 'Vui lòng nhập số lượng',
+          max: 'Số lượng không được vượt quá 255 ký tự'
+        }
+      }
+    }
+  };
+  configure({
+    generateMessage: localize(messError)
+  });
+};
 const onSubmit = (values, { setErrors }) => {
   isSubmitting.value = true;
   if (props.data.isEdit) {
@@ -135,7 +170,11 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
               <div class="flex flex-col items-center gap-4 w-1/4">
                 <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onFileChange" />
                 <div class="relative group cursor-pointer" @click="triggerFileInput">
-                  <img :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300" />
+                  <img
+                    :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'"
+                    alt="Avatar"
+                    class="w-32 h-32 md:w-60 md:h-60 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-75 transition duration-300"
+                  />
                   <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black bg-opacity-30 rounded-full">
                     <span class="text-white text-sm font-bold"><i class="pi pi-camera mr-2"></i>Thay đổi</span>
                   </div>
@@ -206,34 +245,34 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                   </div>
                   <div class="inline-flex flex-wrap gap-4 border rounded p-4 bg-gray-50 w-full">
                     <div class="flex flex-col grow basis-0">
-                      <Field name="cost_price" rules="max:255" v-model="state.model.cost_price" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="cost_price" rules="required|max_value:999999999" v-model="state.model.cost_price" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                          <label>Giá Nhập (1 Thùng)</label>
+                          <label>Giá nhập (1 Thùng)</label>
                         </FloatLabel>
                         <ErrorMessage class="p-error" :name="field.name" />
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="quantity" rules="required" v-model="state.model.quantity" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="quantity" rules="required|max_value:999999" v-model="state.model.quantity" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                          <label :for="field.name">Số lượng<span class="required"> (Bắt buộc)</span></label>
+                          <label :for="field.name">Số lượng sản phẩm<span class="required"> (Bắt buộc)</span></label>
                         </FloatLabel>
                         <ErrorMessage class="p-error" :name="field.name" />
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="sale_price" rules="required" v-model="state.model.sale_price" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="sale_price" rules="required|max_value:999999" v-model="state.model.sale_price" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                          <label :for="field.name">Giá bán <span class="required">(Bắt buộc)</span></label>
+                          <label :for="field.name">Giá bán / 1 sản phẩm <span class="required">(Bắt buộc)</span></label>
                         </FloatLabel>
                         <ErrorMessage class="p-error" :name="field.name" />
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="total_amount" rules="required" v-model="state.model.total_amount" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="total_amount" rules="required|max_value:999999999" v-model="state.model.total_amount" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label :for="field.name">Tổng tiền hàng nhập <span class="required">(Bắt buộc)</span></label>
@@ -259,8 +298,6 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
           </form>
         </VeeForm>
       </Panel>
-
-
     </template>
   </AdminLayout>
 </template>

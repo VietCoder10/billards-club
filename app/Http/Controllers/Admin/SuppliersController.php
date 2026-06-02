@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
+use App\Enums\Status;
 use App\Enums\StatusCode;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\Supplier\SupplierRequest;
@@ -55,6 +56,7 @@ class SuppliersController extends BaseController
         return Inertia::render('Admin/Supplier/Form', [
             'data' => [
                 'title' => 'Thêm nhà cung cấp',
+                'supplierStatus' => Status::getOptions(),
                 'urlBack' => session()->get('admin.supplier.list')[0] ?? route('admin.supplier.index')
             ]
         ]);
@@ -99,6 +101,7 @@ class SuppliersController extends BaseController
         return Inertia::render('Admin/Supplier/Form', [
             'data' => [
                 'title' => 'Chỉnh sửa nhà cung cấp',
+                'supplierStatus' => Status::getOptions(),
                 'supplier' => $supplier,
                 'isEdit' => true,
                 'urlBack' => session()->get('admin.supplier.list')[0] ?? route('admin.supplier.index'),

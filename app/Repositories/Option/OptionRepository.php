@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Option;
 
+use App\Enums\Status;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Supplier;
@@ -13,7 +14,8 @@ class OptionRepository implements OptionInterface
 {
     public function getSupplier()
     {
-        return Supplier::select('id as value', 'supplier_name as label')->get();
+        return Supplier::select('id as value', 'supplier_name as label')
+            ->where('status', Status::ACTIVE)->get();
     }
     public function getProduct()
     {

@@ -20,9 +20,10 @@ const state = reactive({
 const props = defineProps(['data']);
 
 onMounted(() => {
-  if (props.data.isEdit && props.data.supplier) {
+  if (props.data.isEdit) {
     state.model = props.data.supplier;
   }
+  setMessageError();
 });
 
 // Flag to handle unique email validation dynamically
@@ -41,39 +42,44 @@ const flagValidateUnique = ref(true);
 //     .catch(() => true);
 // });
 
-// Validation messages
-const messError = {
-  en: {
-    fields: {
-      supplier_name: {
-        required: 'Supplier Name is required.',
-        max: 'Supplier Name cannot exceed 255 characters.'
-      },
-      email: {
-        required: 'Email is required.',
-        email: 'Please enter a valid email.',
-        unique_email: 'This email is already registered.'
-      },
-      phone: {
-        required: 'Phone is required.',
-        max: 'Phone number cannot exceed 20 characters.'
-      },
-      address: {
-        required: 'Address is required.',
-        max: 'Address cannot exceed 255 characters.'
-      },
-      contact_person: {
-        max: 'Contact Person cannot exceed 255 characters.'
+const setMessageError = () => {
+  let messError = {
+    en: {
+      fields: {
+        supplier_name: {
+          required: 'Tên nhà cung cấp là bắt buộc.',
+          max: 'Tên nhà cung cấp không được vượt quá 255 ký tự.'
+        },
+        email: {
+          required: 'Email là bắt buộc.',
+          email: 'Email không hợp lệ.',
+          unique_email: 'Email đã tồn tại.'
+        },
+        phone: {
+          required: 'Số điện thoại là bắt buộc.',
+          numeric: 'Số điện thoại chỉ được chứa số.',
+          max: 'Số điện thoại không được vượt quá 10 ký tự.'
+        },
+        address: {
+          required: 'Địa chỉ là bắt buộc.',
+          max: 'Địa chỉ không được vượt quá 255 ký tự.'
+        },
+        contact_person: {
+          max: 'Người liên hệ không được vượt quá 255 ký tự.'
+        },
+        status: {
+          required: 'Trạng thái là bắt buộc.'
+        },
+        note: {
+          max: 'Ghi chú không được vượt quá 255 ký tự.'
+        }
       }
     }
-  }
+  };
+  configure({
+    generateMessage: localize(messError)
+  });
 };
-configure({ generateMessage: localize(messError) });
-
-const statusOptions = [
-  { label: 'Active', value: '1' },
-  { label: 'Inactive', value: '0' }
-];
 const onInvalidSubmit = ({ errors }) => {
   const firstInput = Object.keys(errors)[0];
   const ele = document.querySelector(`[name="${firstInput}"]`);
@@ -101,9 +107,9 @@ const onSubmit = () => {
               <div class="flex flex-wrap gap-4">
                 <!-- Supplier Name -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="supplier_name" rules="required|max:255" v-model="state.model.supplier_name" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.supplier_name" name="supplier_name" rules="required|max:255" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <InputText v-model="state.model.supplier_name" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
+                      <InputText :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                       <label for="supplier_name">Tên nhà cung cấp <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="supplier_name" class="p-error" />
@@ -112,17 +118,9 @@ const onSubmit = () => {
 
                 <!-- Email -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="email" :rules="flagValidateUnique ? 'required|email|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.email" name="email" :rules="flagValidateUnique ? 'required|email|max:255' : 'required|email|max:255'" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <InputText
-                        v-model="state.model.email"
-                        v-bind="field"
-                        class="w-full"
-                        :class="{ 'p-invalid': !meta.valid && meta.touched }"
-                        @keypress="flagValidateUnique = false"
-                        @blur="flagValidateUnique = true"
-                        v-on:update:model-value="handleChange"
-                      />
+                      <InputText :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" @keypress="flagValidateUnique = false" @blur="flagValidateUnique = true" />
                       <label for="email">Email</label>
                     </FloatLabel>
                     <ErrorMessage name="email" class="p-error" />
@@ -133,9 +131,9 @@ const onSubmit = () => {
               <div class="flex flex-wrap gap-4 mt-4">
                 <!-- Phone -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="phone" rules="required|max:20" v-model="state.model.phone" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.phone" name="phone" rules="required|max:10|numeric" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <InputText v-model="state.model.phone" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
+                      <InputText :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                       <label for="phone">Số điện thoại <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="phone" class="p-error" />
@@ -144,9 +142,9 @@ const onSubmit = () => {
 
                 <!-- Address -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="address" rules="required|max:255" v-model="state.model.address" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.address" name="address" rules="required|max:255" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <InputText v-model="state.model.address" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
+                      <InputText :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                       <label for="address">Địa chỉ <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                     <ErrorMessage name="address" class="p-error" />
@@ -157,9 +155,9 @@ const onSubmit = () => {
               <div class="flex flex-wrap gap-4 mt-4">
                 <!-- Contact Person -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="contact_person" rules="max:255" v-model="state.model.contact_person" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.contact_person" name="contact_person" rules="max:255" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <InputText v-model="state.model.contact_person" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
+                      <InputText :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                       <label for="contact_person">Người liên hệ</label>
                     </FloatLabel>
                     <ErrorMessage name="contact_person" class="p-error" />
@@ -168,19 +166,29 @@ const onSubmit = () => {
 
                 <!-- Status -->
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="status" v-slot="{ field }">
+                  <Field v-model="state.model.status" name="status" rules="required" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <Dropdown v-model="state.model.status" :options="statusOptions" optionLabel="label" optionValue="value" v-bind="field" class="w-full" />
-                      <label for="status">Trạng thái</label>
+                      <Select
+                        :options="$page.props.data.supplierStatus"
+                        optionLabel="label"
+                        optionValue="value"
+                        :modelValue="field.value"
+                        @update:modelValue="handleChange"
+                        class="w-full"
+                        :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
+                        showClear
+                      />
+                      <label for="status">Trạng thái <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
+                    <ErrorMessage name="status" class="p-error" />
                   </Field>
                 </div>
               </div>
               <div class="flex flex-wrap gap-4 mt-4">
                 <div class="flex flex-col grow basis-0 gap-2">
-                  <Field name="note" rules="max:255" v-model="state.model.note" v-slot="{ field, meta, handleChange }">
+                  <Field v-model="state.model.note" name="note" rules="max:255" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
-                      <Textarea v-model="state.model.note" v-bind="field" class="w-full" :class="{ 'p-invalid': !meta.valid && meta.touched }" v-on:update:model-value="handleChange" />
+                      <Textarea :modelValue="field.value" @update:modelValue="handleChange" class="w-full" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                       <label for="note">Ghi chú</label>
                     </FloatLabel>
                     <ErrorMessage name="note" class="p-error" />

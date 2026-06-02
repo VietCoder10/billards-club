@@ -1,4 +1,5 @@
-<?php   
+<?php
+
 namespace App\Repositories\Suppliers;
 
 use App\Components\CommonComponent;
@@ -7,23 +8,36 @@ use App\Http\Requests\Admin\Supplier\SupplierRequest;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
-class SupplierRepository implements SupplierInterface {
+class SupplierRepository implements SupplierInterface
+{
     private Supplier $supplier;
     public function __construct(Supplier $supplier)
     {
         $this->supplier = $supplier;
     }
-    public function get(Request $request): LengthAwarePaginator{
+    public function get(Request $request): LengthAwarePaginator
+    {
         $newSizeLimit = CommonComponent::newListLimit($request);
-        $builder = $this->supplier;
-        if(isset($request['free_word']) && $request['free_word'] != ''){
-            $builder = $builder->where(function($query) use ($request){
-                $query->orWhere('supplier_name','LIKE',"%{$request['free_word']}%");
+        $builder = $this->supplier->query();
+        if (isset($request['free_word']) && $request['free_word'] != '') {
+            $builder = $builder->where(function ($query) use ($request) {
+                $query->orWhere(CommonComponent::escapeLikeSentence('supplier_name', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('contact_person', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('email', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('phone', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('address', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('note', $request['free_word']));
             });
-
         }
-        $suppliers = $builder->sortable(['updated_at'=>'desc'])->paginate($newSizeLimit);
+        $suppliers = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
+        if (CommonComponent::checkPaginatorList($suppliers)) {
+            Paginator::currentPageResolver(function () {
+                return 1;
+            });
+            $suppliers = $builder->paginate($newSizeLimit);
+        }
         return $suppliers;
     }
     public function getById(int $id): ?Supplier
@@ -41,12 +55,11 @@ class SupplierRepository implements SupplierInterface {
         $supplier->note = $request->note;
         $supplier->status = $request->status;
         return $supplier->save();
-
     }
     public function update(SupplierRequest $request, string $id): bool
     {
         $supplier = $this->getById($id);
-        if(! $supplier){
+        if (! $supplier) {
             return false;
         }
         $supplier->supplier_name = $request->supplier_name;
@@ -57,12 +70,11 @@ class SupplierRepository implements SupplierInterface {
         $supplier->note = $request->note;
         $supplier->status = $request->status;
         return $supplier->save();
-
     }
     public function destroy(int $id)
     {
         $supplier = $this->getById($id);
-        if(! $supplier){
+        if (! $supplier) {
             return false;
         }
         return $supplier->delete();

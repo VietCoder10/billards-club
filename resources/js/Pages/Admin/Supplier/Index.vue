@@ -9,7 +9,7 @@ import { useRequestStore } from '@/store/request';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.supplier.index'" :createUrl="route('admin.supplier.create')" :csvRoute="'admin.supplier.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.supplier.index'" :createUrl="route('admin.supplier.create')" />
 
         <!-- Bảng dữ liệu suppliers -->
         <template v-if="$page.props.data.suppliers.length">
@@ -48,7 +48,7 @@ import { useRequestStore } from '@/store/request';
                     <td>{{ supplier.phone }}</td>
                     <td>{{ supplier.address }}</td>
                     <td>{{ supplier.note }}</td>
-                    <td>{{ supplier.status == 1 ? 'Active' : 'Inactive' }}</td>
+                    <td>{{ supplier.status == 1 ? 'Hoạt động' : 'Không hoạt động' }}</td>
                     <td>
                       <BtnAction
                         :urlEdit="route('admin.supplier.edit', supplier.id)"
