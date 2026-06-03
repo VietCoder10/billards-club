@@ -1,10 +1,11 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
-import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
+import { Form as VeeForm, Field, ErrorMessage, configure } from 'vee-validate';
+import { localize } from '@vee-validate/i18n';
 import { useForm } from '@inertiajs/inertia-vue3';
 
 const props = defineProps({
@@ -29,7 +30,33 @@ const state = reactive({
 
 const form = useForm(state.model);
 
-const onSubmit = () => {
+onMounted(() => {
+  setMessageError();
+});
+
+const setMessageError = () => {
+  let messError = {
+    en: {
+      fields: {
+        round_name: {
+          required: 'Vui lòng nhập tên vòng đấu',
+          max: 'Tên vòng đấu không được vượt quá 255 ký tự'
+        },
+        player1_id: {
+          required: 'Vui lòng chọn tuyển thủ 1'
+        },
+        player2_id: {
+          required: 'Vui lòng chọn tuyển thủ 2'
+        }
+      }
+    }
+  };
+  configure({
+    generateMessage: localize(messError)
+  });
+};
+
+const onSubmit = (values, { setErrors }) => {
   form.round_name = state.model.round_name;
   form.player1_id = state.model.player1_id;
   form.player2_id = state.model.player2_id;
@@ -41,6 +68,10 @@ const onSubmit = () => {
       state.model.player1_id = null;
       state.model.player2_id = null;
       emit('success');
+    },
+    onError: (errors) => {
+      setErrors(errors);
+      onInvalidSubmit({ errors });
     }
   });
 };
@@ -56,7 +87,7 @@ const onInvalidSubmit = ({ errors }) => {
       <form @submit="handleSubmit($event, onSubmit)" id="match-create-form" class="flex flex-col gap-4 mt-2">
         <div class="field">
           <label class="block mb-1 font-semibold">Tên vòng đấu</label>
-          <Field name="round_name" rules="required" v-model="state.model.round_name">
+          <Field name="round_name" rules="required|max:255" v-model="state.model.round_name">
             <InputText v-model="state.model.round_name" class="w-full" placeholder="Vòng 1/16, Tứ kết..." />
           </Field>
           <ErrorMessage name="round_name" class="text-red-500 text-xs mt-1" />

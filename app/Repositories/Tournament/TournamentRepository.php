@@ -332,9 +332,9 @@ class TournamentRepository implements TournamentInterface
         return $match->update($data);
     }
 
-    public function destroyMatch($matchId)
+    public function destroyMatch($tournamentId, $matchId)
     {
-        $match = TournamentMatch::find($matchId);
+        $match = TournamentMatch::where('tournament_id', $tournamentId)->find($matchId);
         if (!$match) {
             return false;
         }

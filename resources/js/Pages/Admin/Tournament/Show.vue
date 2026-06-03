@@ -14,7 +14,7 @@ const participants = computed(() => props.data.participants);
 const rounds = computed(() => props.data.rounds || []);
 
 // Participant logic
-const updateParticipantForm = useForm({ status: 0 });
+const updateParticipantForm = useForm({ status: 1 });
 const updateParticipant = (participantId, newStatus) => {
   updateParticipantForm.status = newStatus;
   updateParticipantForm.post(route('admin.tournament.participant.update', { tournament: tournament.value.id, participant: participantId }), {
@@ -23,11 +23,11 @@ const updateParticipant = (participantId, newStatus) => {
 };
 
 const getParticipantStatusLabel = (status) => {
-  return status === 0 ? 'Chờ duyệt' : status === 1 ? 'Đã duyệt' : 'Từ chối';
+  return status === 1 ? 'Chờ duyệt' : status === 2 ? 'Đã duyệt' : 'Từ chối';
 };
 
 const getParticipantStatusClass = (status) => {
-  return status === 0 ? 'bg-yellow-100 text-yellow-800' : status === 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+  return status === 1 ? 'bg-yellow-100 text-yellow-800' : status === 2 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
 };
 
 // Bracket & Match modal / selection logic
@@ -40,10 +40,29 @@ const editMatch = (match) => {
   showEditModal.value = true;
 };
 
+const deleteMatch = (match) => {
+  Swal.fire({
+    title: 'Xác nhận xóa trận đấu',
+    text: `Trận #${match.id} sẽ bị xóa vĩnh viễn.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Inertia.delete(route('admin.tournament.match.destroy', { tournament: tournament.value.id, match: match.id }), {
+        preserveScroll: true
+      });
+    }
+  });
+};
+
 // Format participants for Select dropdown in modals
 const participantOptions = computed(() => {
   return participants.value
-    .filter((p) => p.status === 1)
+    .filter((p) => p.status === 2)
     .map((p) => ({
       label: p.special_name || p.customer?.name || 'Cơ thủ',
       value: p.id
@@ -103,7 +122,7 @@ const resetBracket = () => {
         <TabView>
           <TabPanel header="Danh sách đăng ký">
             <div class="mb-4 text-gray-600">
-              Tổng số đăng ký: <strong>{{ participants.length }}</strong> (Đã duyệt: {{ participants.filter((p) => p.status === 1).length }})
+              Tổng số đăng ký: <strong>{{ participants.length }}</strong> (Đã duyệt: {{ participants.filter((p) => p.status === 2).length }})
             </div>
 
             <div class="p-datatable p-component">
@@ -148,8 +167,8 @@ const resetBracket = () => {
                 <Column>
                   <template #body="{ data }">
                     <div>
-                      <Button v-if="data.status !== 1" @click="updateParticipant(data.id, 1)" icon="pi pi-check" class="p-button-success p-button-sm p-button-rounded mr-1" title="Duyệt" />
-                      <Button v-if="data.status !== 2" @click="updateParticipant(data.id, 2)" icon="pi pi-times" class="p-button-danger p-button-sm p-button-rounded" title="Từ chối" />
+                      <Button v-if="data.status !== 2" @click="updateParticipant(data.id, 2)" icon="pi pi-check" class="p-button-success p-button-sm p-button-rounded mr-1" title="Duyệt" />
+                      <Button v-if="data.status !== 3" @click="updateParticipant(data.id, 3)" icon="pi pi-times" class="p-button-danger p-button-sm p-button-rounded" title="Từ chối" />
                     </div>
                   </template>
                 </Column>
@@ -217,16 +236,25 @@ const resetBracket = () => {
                       @click="editMatch(match)"
                     >
                       <!-- Match Info Header -->
-                      <div class="bg-slate-50 px-3 py-2 flex justify-between items-center text-xs text-gray-500 border-b border-gray-100">
+                      <div class="bg-slate-50 px-3 py-2 flex justify-between items-center gap-2 text-xs text-gray-500 border-b border-gray-100">
                         <span class="font-semibold">Mã trận: #{{ match.id }}</span>
-                        <span :class="[
-                          'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
-                          match.status === 0 ? 'bg-gray-100 text-gray-600' :
-                          match.status === 1 ? 'bg-blue-50 text-blue-700 border border-blue-200' :
-                          'bg-emerald-50 text-emerald-700 border border-emerald-250'
-                        ]">
-                          {{ match.status === 0 ? 'Chưa đấu' : match.status === 1 ? 'Đang đấu' : 'Đã xong' }}
-                        </span>
+                        <div class="flex items-center gap-2">
+                          <span :class="[
+                            'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
+                            match.status === 1 ? 'bg-gray-100 text-gray-600' :
+                            match.status === 2 ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                            'bg-emerald-50 text-emerald-700 border border-emerald-250'
+                          ]">
+                            {{ match.status === 1 ? 'Chưa đấu' : match.status === 2 ? 'Đang đấu' : 'Đã xong' }}
+                          </span>
+                          <Button
+                            type="button"
+                            icon="pi pi-trash"
+                            class="p-button-danger p-button-rounded p-button-text p-button-sm !w-7 !h-7"
+                            title="Xóa trận đấu"
+                            @click.stop="deleteMatch(match)"
+                          />
+                        </div>
                       </div>
 
                       <!-- Match Players and Scores -->
@@ -284,6 +312,7 @@ const resetBracket = () => {
         :tournamentId="tournament.id" 
         :match="selectedMatch" 
         :participants="participantOptions" 
+        :matchStatusOptions="$page.props.data.matchStatusOptions || []"
         @success="showEditModal = false"
       />
     </template>

@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/Admin/AppLayout.vue';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import $ from 'jquery';
 import { Form as VeeForm, Field, ErrorMessage, configure } from 'vee-validate';
 import { localize } from '@vee-validate/i18n';
@@ -17,20 +17,16 @@ const state = reactive({
     max_participants: 0,
     entry_fee: 0,
     prize_pool: '',
-    status: 0
+    status: 1
   }
 });
 
-const statusOptions = [
-  { label: 'Bản nháp', value: 0 },
-  { label: 'Mở đăng ký', value: 1 },
-  { label: 'Đang diễn ra', value: 2 },
-  { label: 'Đã kết thúc', value: 3 },
-  { label: 'Đã hủy', value: 4 }
-];
-
 const props = defineProps(['data']);
+
+const statusOptions = computed(() => props.data.statusOptions || []);
+
 onMounted(() => {
+  setMessageError();
   if (props.data.isEdit) {
     state.model = { ...props.data.tournament };
     // Convert date strings to Date objects for PrimeVue Calendar
@@ -55,28 +51,30 @@ const onInvalidSubmit = ({ errors }) => {
   );
 };
 
-let messError = {
-  en: {
-    fields: {
-      name: {
-        required: 'Vui lòng nhập tên giải đấu.',
-        max: 'Tên giải đấu không được vượt quá 255 ký tự.'
-      },
-      start_date: {
-        required: 'Vui lòng chọn ngày bắt đầu.'
-      },
-      end_date: {
-        required: 'Vui lòng chọn ngày kết thúc.'
-      },
-      registration_deadline: {
-        required: 'Vui lòng chọn hạn đăng ký.'
+const setMessageError = () => {
+  let messError = {
+    en: {
+      fields: {
+        name: {
+          required: 'Vui lòng nhập tên giải đấu.',
+          max: 'Tên giải đấu không được vượt quá 255 ký tự.'
+        },
+        start_date: {
+          required: 'Vui lòng chọn ngày bắt đầu.'
+        },
+        end_date: {
+          required: 'Vui lòng chọn ngày kết thúc.'
+        },
+        registration_deadline: {
+          required: 'Vui lòng chọn hạn đăng ký.'
+        }
       }
     }
-  }
+  };
+  configure({
+    generateMessage: localize(messError)
+  });
 };
-configure({
-  generateMessage: localize(messError)
-});
 
 const onSubmit = () => {
   // Format dates back to string before sending

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin\Tournament;
 
+use App\Enums\TournamentStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTournamentRequest extends FormRequest
 {
@@ -22,7 +24,7 @@ class StoreTournamentRequest extends FormRequest
             'max_participants' => 'nullable|integer|min:0',
             'entry_fee' => 'nullable|numeric|min:0',
             'prize_pool' => 'nullable|string|max:255',
-            'status' => 'required|integer|in:0,1,2,3,4',
+            'status' => ['required', 'integer', Rule::in(TournamentStatus::getValues())],
         ];
     }
 

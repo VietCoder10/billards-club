@@ -25,5 +25,5 @@ interface TournamentInterface
     public function resetBracket($tournamentId);
     public function storeMatch($tournamentId, array $data);
     public function updateMatch($matchId, array $data);
-    public function destroyMatch($matchId);
+    public function destroyMatch($tournamentId, $matchId);
 }

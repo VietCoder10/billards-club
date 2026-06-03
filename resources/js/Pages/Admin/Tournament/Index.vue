@@ -8,22 +8,22 @@ const page = usePage();
 
 const getStatusLabel = (status) => {
   const map = {
-    0: 'Bản nháp',
-    1: 'Mở đăng ký',
-    2: 'Đang diễn ra',
-    3: 'Đã kết thúc',
-    4: 'Đã hủy'
+    1: 'Bản nháp',
+    2: 'Mở đăng ký',
+    3: 'Đang diễn ra',
+    4: 'Đã kết thúc',
+    5: 'Đã hủy'
   };
   return map[status] || 'Unknown';
 };
 
 const getStatusClass = (status) => {
   const map = {
-    0: 'bg-gray-200 text-gray-800',
-    1: 'bg-green-100 text-green-800',
-    2: 'bg-blue-100 text-blue-800',
-    3: 'bg-purple-100 text-purple-800',
-    4: 'bg-red-100 text-red-800'
+    1: 'bg-gray-200 text-gray-800',
+    2: 'bg-green-100 text-green-800',
+    3: 'bg-blue-100 text-blue-800',
+    4: 'bg-purple-100 text-purple-800',
+    5: 'bg-red-100 text-red-800'
   };
   return map[status] || '';
 };

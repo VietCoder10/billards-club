@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Components\SearchQueryComponent;
 use App\Enums\StatusCode;
+use App\Enums\TournamentMatchStatus;
+use App\Enums\TournamentParticipantStatus;
+use App\Enums\TournamentStatus;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Admin\Tournament\StoreTournamentMatchRequest;
 use App\Http\Requests\Admin\Tournament\StoreTournamentRequest;
+use App\Http\Requests\Admin\Tournament\UpdateTournamentMatchRequest;
 use App\Repositories\Tournament\TournamentInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -46,6 +51,7 @@ class TournamentController extends BaseController
             'data' => [
                 'title' => 'Tạo giải đấu',
                 'urlBack' => session()->get('admin.tournament.list')[0] ?? route('admin.tournament.index'),
+                'statusOptions' => TournamentStatus::getOptions(),
             ],
         ]));
     }
@@ -87,6 +93,9 @@ class TournamentController extends BaseController
                 'participants' => $participants,
                 'rounds' => $rounds,
                 'urlBack' => session()->get('admin.tournament.list')[0] ?? route('admin.tournament.index'),
+                'tournamentStatusOptions' => TournamentStatus::getOptions(),
+                'matchStatusOptions' => TournamentMatchStatus::getOptions(),
+                'participantStatusOptions' => TournamentParticipantStatus::getOptions(),
             ]
         ]));
     }
@@ -105,6 +114,7 @@ class TournamentController extends BaseController
                 'tournament' => $tournament,
                 'isEdit' => true,
                 'urlBack' => session()->get('admin.tournament.list')[0] ?? route('admin.tournament.index'),
+                'statusOptions' => TournamentStatus::getOptions(),
             ],
         ]));
     }
@@ -219,37 +229,16 @@ class TournamentController extends BaseController
         return redirect()->route('admin.tournament.show', $id);
     }
 
-    public function storeMatch(Request $request, $tournamentId)
+    public function storeMatch(StoreTournamentMatchRequest $request, $tournamentId)
     {
-        $request->validate([
-            'round_name' => 'required|string|max:255',
-            'player1_id' => 'required|exists:tournament_participants,id',
-            'player2_id' => 'required|exists:tournament_participants,id|different:player1_id',
-        ], [
-            'player1_id.required' => 'Vui lòng chọn tuyển thủ 1.',
-            'player2_id.required' => 'Vui lòng chọn tuyển thủ 2.',
-            'player2_id.different' => 'Tuyển thủ 2 phải khác tuyển thủ 1.',
-        ]);
-
-        $this->interface->storeMatch($tournamentId, $request->only([
-            'round_name',
-            'player1_id',
-            'player2_id',
-        ]));
+        $this->interface->storeMatch($tournamentId, $request->validated());
 
         $this->setFlash(__('Tạo trận đấu thủ công thành công.'), 'success');
         return redirect()->route('admin.tournament.show', $tournamentId);
     }
 
-    public function updateMatch(Request $request, $tournamentId, $matchId)
+    public function updateMatch(UpdateTournamentMatchRequest $request, $tournamentId, $matchId)
     {
-        $request->validate([
-            'player1_score' => 'required|integer|min:0',
-            'player2_score' => 'required|integer|min:0',
-            'status' => 'required|integer|in:0,1,2',
-            'winner_id' => 'nullable|exists:tournament_participants,id',
-        ]);
-
         $data = $request->only(['player1_score', 'player2_score', 'status', 'winner_id']);
 
         if (!$this->interface->updateMatch($matchId, $data)) {
@@ -263,7 +252,7 @@ class TournamentController extends BaseController
 
     public function destroyMatch(Request $request, $tournamentId, $matchId)
     {
-        if (!$this->interface->destroyMatch($matchId)) {
+        if (!$this->interface->destroyMatch($tournamentId, $matchId)) {
             $this->setFlash(__('Không tìm thấy trận đấu.'), 'error');
             return redirect()->route('admin.tournament.show', $tournamentId);
         }
