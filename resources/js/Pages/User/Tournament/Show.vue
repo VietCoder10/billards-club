@@ -20,6 +20,9 @@ const formatShortDate = (date) => {
   return moment(date).format('DD/MM/YYYY');
 };
 
+// Active Tab for Right Column
+const activeTab = ref('players');
+
 // Selection and Dialog state
 const showRegisterDialog = ref(false);
 const showCancelConfirmDialog = ref(false);
@@ -264,9 +267,40 @@ const getAvatarGradient = (name) => {
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: Searchable Registered Players List (2/3 width) -->
+          <!-- RIGHT COLUMN: Searchable Registered Players List & Bracket (2/3 width) -->
           <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full">
+            <!-- Modern Tab Switcher -->
+            <div class="flex bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl p-1 shadow-sm gap-1">
+              <button
+                @click="activeTab = 'players'"
+                type="button"
+                :class="[
+                  'flex-1 py-3 text-center font-extrabold text-sm rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98',
+                  activeTab === 'players'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm'
+                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                ]"
+              >
+                <i class="pi pi-users text-xs"></i>
+                Danh Sách Cơ Thủ
+              </button>
+              <button
+                @click="activeTab = 'bracket'"
+                type="button"
+                :class="[
+                  'flex-1 py-3 text-center font-extrabold text-sm rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98',
+                  activeTab === 'bracket'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm'
+                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                ]"
+              >
+                <i class="pi pi-sitemap text-xs"></i>
+                Sơ Đồ Thi Đấu
+              </button>
+            </div>
+
+            <!-- List Body: Registered Players -->
+            <div v-if="activeTab === 'players'" class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full">
               <!-- Card Header -->
               <div class="p-5 border-b border-zinc-100 dark:border-zinc-850 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-zinc-50/50 dark:bg-zinc-900/50">
                 <div class="space-y-0.5">
@@ -400,6 +434,103 @@ const getAvatarGradient = (name) => {
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bracket Body -->
+            <div v-else-if="activeTab === 'bracket'" class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full p-5 space-y-4">
+              <div class="border-b border-zinc-100 dark:border-zinc-850 pb-4">
+                <h3 class="font-bold text-zinc-900 dark:text-white text-lg tracking-tight flex items-center gap-2">
+                  <i class="pi pi-sitemap text-indigo-500"></i>
+                  Sơ Đồ Thi Đấu Giải Đấu
+                </h3>
+                <p class="text-xs text-zinc-505 dark:text-zinc-500">
+                  Theo dõi hành trình tranh tài của các cơ thủ trong giải đấu này.
+                </p>
+              </div>
+
+              <!-- Bracket Empty State -->
+              <div v-if="($page.props.data.rounds || []).length === 0" class="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                <div class="w-16 h-16 rounded-full bg-zinc-50 dark:bg-zinc-850 text-zinc-400 dark:text-zinc-550 flex items-center justify-center shadow-inner">
+                  <i class="pi pi-sitemap text-2xl"></i>
+                </div>
+                <div class="space-y-1">
+                  <h4 class="font-bold text-zinc-900 dark:text-zinc-150">Chưa có sơ đồ thi đấu</h4>
+                  <p class="text-xs text-zinc-500 dark:text-zinc-500 max-w-xs mx-auto">Ban tổ chức đang chuẩn bị sơ đồ ghép cặp. Hãy kiểm tra lại sau khi danh sách đăng ký được chốt!</p>
+                </div>
+              </div>
+
+              <!-- Bracket Graphic Tree -->
+              <div v-else class="overflow-x-auto py-6 bg-zinc-50/20 dark:bg-zinc-950/20 rounded-2xl border border-zinc-100 dark:border-zinc-800" style="min-height: 480px;">
+                <div class="flex gap-10 px-6" style="width: max-content; min-width: 100%;">
+                  <div 
+                    v-for="round in $page.props.data.rounds" 
+                    :key="round.id" 
+                    class="flex flex-col gap-6 w-[260px]"
+                  >
+                    <!-- Round Title -->
+                    <div class="font-bold text-center border-b border-zinc-150 dark:border-zinc-800 pb-2 text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-900 rounded-xl py-2 px-3 shadow-sm text-xs tracking-wider uppercase">
+                      {{ round.name }}
+                    </div>
+
+                    <!-- Round Matches list -->
+                    <div class="flex-1 flex flex-col justify-around gap-6 py-4">
+                      <div 
+                        v-for="match in round.matches" 
+                        :key="match.id" 
+                        class="border border-zinc-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden transition-all duration-300 hover:border-indigo-500/50 hover:shadow-md"
+                      >
+                        <!-- Match Header info -->
+                        <div class="bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-2 flex justify-between items-center text-[10px] text-zinc-400 dark:text-zinc-550 border-b border-zinc-100 dark:border-zinc-850">
+                          <span class="font-semibold">Trận #{{ match.id }}</span>
+                          <span :class="[
+                            'px-2 py-0.5 rounded-full font-bold uppercase tracking-wider',
+                            match.status === 0 ? 'bg-zinc-100 dark:bg-zinc-850 text-zinc-500' :
+                            match.status === 1 ? 'bg-blue-50/50 dark:bg-blue-950/20 text-blue-550 border border-blue-200/50 dark:border-blue-900/30' :
+                            'bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 border border-emerald-200/50 dark:border-emerald-900/30'
+                          ]">
+                            {{ match.status === 0 ? 'Chờ đấu' : match.status === 1 ? 'Đang đấu' : 'Đã xong' }}
+                          </span>
+                        </div>
+
+                        <!-- Match Players and scores -->
+                        <div class="p-3 space-y-2.5">
+                          <!-- Player 1 -->
+                          <div 
+                            class="flex justify-between items-center text-xs"
+                            :class="[
+                              match.winner_id && match.winner_id === match.player1_id ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-300',
+                              match.winner_id && match.winner_id !== match.player1_id ? 'text-zinc-400 dark:text-zinc-600 line-through' : ''
+                            ]"
+                          >
+                            <span class="truncate pr-2 flex items-center gap-1.5">
+                              <i v-if="match.winner_id && match.winner_id === match.player1_id" class="pi pi-check-circle text-[11px] text-emerald-500"></i>
+                              {{ match.player1?.special_name || match.player1?.customer?.name || 'Chờ xác định' }}
+                            </span>
+                            <span class="font-mono font-bold text-sm">{{ match.player1_score }}</span>
+                          </div>
+
+                          <div class="h-px bg-zinc-100 dark:bg-zinc-800"></div>
+
+                          <!-- Player 2 -->
+                          <div 
+                            class="flex justify-between items-center text-xs"
+                            :class="[
+                              match.winner_id && match.winner_id === match.player2_id ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-300',
+                              match.winner_id && match.winner_id !== match.player2_id ? 'text-zinc-450 dark:text-zinc-600 line-through' : ''
+                            ]"
+                          >
+                            <span class="truncate pr-2 flex items-center gap-1.5">
+                              <i v-if="match.winner_id && match.winner_id === match.player2_id" class="pi pi-check-circle text-[11px] text-emerald-500"></i>
+                              {{ match.player2?.special_name || match.player2?.customer?.name || 'Chờ xác định' }}
+                            </span>
+                            <span class="font-mono font-bold text-sm">{{ match.player2_score }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

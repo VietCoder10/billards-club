@@ -62,6 +62,12 @@ Route::group([
         Route::resource('invoice', InvoiceController::class);
         Route::resource('tournament', \App\Http\Controllers\Admin\TournamentController::class);
         Route::post('tournament/{tournament}/participant/{participant}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateParticipantStatus'])->name('tournament.participant.update');
+        Route::post('tournament/{id}/bracket/generate', [\App\Http\Controllers\Admin\TournamentController::class, 'generateBracket'])->name('tournament.bracket.generate');
+        Route::post('tournament/{id}/bracket/next-round', [\App\Http\Controllers\Admin\TournamentController::class, 'generateNextRound'])->name('tournament.bracket.nextRound');
+        Route::post('tournament/{id}/bracket/reset', [\App\Http\Controllers\Admin\TournamentController::class, 'resetBracket'])->name('tournament.bracket.reset');
+        Route::post('tournament/{tournament}/match', [\App\Http\Controllers\Admin\TournamentController::class, 'storeMatch'])->name('tournament.match.store');
+        Route::put('tournament/{tournament}/match/{match}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateMatch'])->name('tournament.match.update');
+        Route::delete('tournament/{tournament}/match/{match}', [\App\Http\Controllers\Admin\TournamentController::class, 'destroyMatch'])->name('tournament.match.destroy');
         Route::post('customer/check-email', [\App\Http\Controllers\Admin\CustomerController::class, 'checkEmail'])->name('customer.checkEmail');
         Route::post('customer/{id}/update-avatar', [\App\Http\Controllers\Admin\CustomerController::class, 'updateAvatar'])->name('customer.updateAvatar');
         Route::get('customer/search-modal-customer', [\App\Http\Controllers\Admin\CustomerController::class, 'searchModalCustomer'])->name('customer.searchModalCustomer');

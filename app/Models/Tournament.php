@@ -40,4 +40,14 @@ class Tournament extends Model
     {
         return $this->hasMany(TournamentParticipant::class);
     }
+
+    public function rounds()
+    {
+        return $this->hasMany(TournamentRound::class)->orderBy('round_number', 'asc');
+    }
+
+    public function matches()
+    {
+        return $this->hasMany(TournamentMatch::class);
+    }
 }

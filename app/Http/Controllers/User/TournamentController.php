@@ -65,11 +65,21 @@ class TournamentController extends BaseController
             ->where('customer_id', $customerId)
             ->exists();
 
+        $rounds = \App\Models\TournamentRound::with([
+            'matches.player1.customer',
+            'matches.player2.customer',
+            'matches.winner.customer',
+        ])
+            ->where('tournament_id', $id)
+            ->orderBy('round_number', 'asc')
+            ->get();
+
         return Inertia::render('User/Tournament/Show', $this->mergeSession([
             'data' => [
                 'title' => 'Chi tiết giải đấu: ' . $tournament->name,
                 'tournament' => $tournament,
-                'isRegistered' => $isRegistered
+                'isRegistered' => $isRegistered,
+                'rounds' => $rounds,
             ]
         ]));
     }
@@ -86,5 +96,21 @@ class TournamentController extends BaseController
         }
 
         return back();
+    }
+
+    public function getBracket($id)
+    {
+        $rounds = \App\Models\TournamentRound::with([
+            'matches.player1.customer',
+            'matches.player2.customer',
+            'matches.winner.customer',
+        ])
+            ->where('tournament_id', $id)
+            ->orderBy('round_number', 'asc')
+            ->get();
+
+        return response()->json([
+            'rounds' => $rounds
+        ]);
     }
 }

@@ -32,7 +32,7 @@ Route::group([
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::resource('register', RegisterController::class);
     Route::group([
-        'middleware' => 'assign.guard:customer',
+        'middleware' => ['assign.guard:customer', 'customer'],
     ], function () {
         Route::get('dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard.index');
         Route::get('table', [\App\Http\Controllers\User\TableController::class, 'index'])->name('table.index');

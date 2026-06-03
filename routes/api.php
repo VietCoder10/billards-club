@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('login', \App\Http\Actions\Api\Auth\LoginAction::class);
+Route::get('tournaments/{id}/bracket', [\App\Http\Controllers\User\TournamentController::class, 'getBracket']);
+
 Route::group([
     'middleware' => ['jwt.verify', 'auth.jwt'],
 ], function () {

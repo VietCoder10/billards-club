@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, computed } from 'vue';
 import Dialog from 'primevue/dialog';
 import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
@@ -44,6 +44,23 @@ watch(() => props.match, (newMatch) => {
   }
 }, { immediate: true, deep: true });
 
+const matchPlayersOptions = computed(() => {
+  const options = [];
+  if (props.match?.player1) {
+    options.push({
+      label: props.match.player1.special_name || props.match.player1.customer?.name || 'Tuyển thủ 1',
+      value: props.match.player1.id
+    });
+  }
+  if (props.match?.player2) {
+    options.push({
+      label: props.match.player2.special_name || props.match.player2.customer?.name || 'Tuyển thủ 2',
+      value: props.match.player2.id
+    });
+  }
+  return options;
+});
+
 const form = useForm(state.model);
 
 const onSubmit = () => {
@@ -71,11 +88,11 @@ const onInvalidSubmit = ({ errors }) => {
       <form @submit="handleSubmit($event, onSubmit)" id="match-edit-form" class="flex flex-col gap-4 mt-2">
         <div class="grid grid-cols-2 gap-4">
           <div class="field">
-            <label class="block mb-1 font-semibold text-center">Điểm: {{ props.match.player1?.name || 'P1' }}</label>
+            <label class="block mb-1 font-semibold text-center truncate">Điểm: {{ props.match.player1?.special_name || props.match.player1?.customer?.name || 'Tuyển thủ 1' }}</label>
             <InputNumber v-model="state.model.player1_score" showButtons buttonLayout="horizontal" :min="0" class="w-full justify-center" />
           </div>
           <div class="field">
-            <label class="block mb-1 font-semibold text-center">Điểm: {{ props.match.player2?.name || 'P2' }}</label>
+            <label class="block mb-1 font-semibold text-center truncate">Điểm: {{ props.match.player2?.special_name || props.match.player2?.customer?.name || 'Tuyển thủ 2' }}</label>
             <InputNumber v-model="state.model.player2_score" showButtons buttonLayout="horizontal" :min="0" class="w-full justify-center" />
           </div>
         </div>
@@ -87,7 +104,7 @@ const onInvalidSubmit = ({ errors }) => {
 
         <div class="field">
           <label class="block mb-1 font-semibold">Người chiến thắng</label>
-          <Select v-model="state.model.winner_id" :options="participants" optionLabel="label" optionValue="value" placeholder="Chọn người thắng" showClear class="w-full" />
+          <Select v-model="state.model.winner_id" :options="matchPlayersOptions" optionLabel="label" optionValue="value" placeholder="Chọn người thắng" showClear class="w-full" />
         </div>
 
         <div class="flex justify-end gap-2 mt-4">

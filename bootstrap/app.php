@@ -13,6 +13,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AssignGuard;
 use App\Http\Middleware\Admin;
+use App\Http\Middleware\Customer;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Http\Request;
 
@@ -61,6 +62,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'assign.guard' => AssignGuard::class,
             'admin' => Admin::class,
+            'customer' => Customer::class,
             'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
             'jwt.verify' => \App\Http\Middleware\JwtVerify::class,
             'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
