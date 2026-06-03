@@ -157,56 +157,16 @@ class TournamentController extends BaseController
     // Bracket & Match Management
     public function generateBracket(Request $request, $id)
     {
-        $tournament = \App\Models\Tournament::find($id);
-        if (!$tournament) {
+        $result = $this->interface->generateBracket($id);
+
+        if (!$result['success'] && $result['error'] === 'not_found') {
             $this->setFlash(__('Không tìm thấy giải đấu.'), 'error');
             return redirect()->back();
         }
 
-        $participants = \App\Models\TournamentParticipant::where('tournament_id', $id)
-            ->where('status', 1)
-            ->get();
-
-        if ($participants->count() < 2) {
+        if (!$result['success'] && $result['error'] === 'not_enough_participants') {
             $this->setFlash(__('Giải đấu cần tối thiểu 2 tuyển thủ đã duyệt để tạo sơ đồ thi đấu.'), 'error');
             return redirect()->back();
-        }
-
-        \App\Models\TournamentMatch::where('tournament_id', $id)->delete();
-        \App\Models\TournamentRound::where('tournament_id', $id)->delete();
-
-        $shuffled = $participants->shuffle()->values();
-
-        $round = \App\Models\TournamentRound::create([
-            'tournament_id' => $id,
-            'round_number' => 1,
-            'name' => 'Vòng 1',
-        ]);
-
-        for ($i = 0; $i < $shuffled->count(); $i += 2) {
-            $player1 = $shuffled[$i];
-            $player2 = isset($shuffled[$i + 1]) ? $shuffled[$i + 1] : null;
-
-            $matchData = [
-                'tournament_id' => $id,
-                'round_id' => $round->id,
-                'player1_id' => $player1->id,
-                'player2_id' => $player2 ? $player2->id : null,
-                'player1_score' => 0,
-                'player2_score' => 0,
-                'status' => 0,
-            ];
-
-            if (!$player2) {
-                $matchData['winner_id'] = $player1->id;
-                $matchData['status'] = 2; // Bye automatically wins
-            }
-
-            \App\Models\TournamentMatch::create($matchData);
-        }
-
-        if ($tournament->status == 1) {
-            $tournament->update(['status' => 2]); // Ongoing
         }
 
         $this->setFlash(__('Tạo sơ đồ thi đấu thành công.'), 'success');
@@ -215,83 +175,31 @@ class TournamentController extends BaseController
 
     public function generateNextRound(Request $request, $id)
     {
-        $tournament = \App\Models\Tournament::find($id);
-        if (!$tournament) {
+        $result = $this->interface->generateNextRound($id);
+
+        if (!$result['success'] && $result['error'] === 'not_found') {
             $this->setFlash(__('Không tìm thấy giải đấu.'), 'error');
             return redirect()->back();
         }
 
-        $latestRound = \App\Models\TournamentRound::where('tournament_id', $id)
-            ->orderBy('round_number', 'desc')
-            ->first();
-
-        if (!$latestRound) {
+        if (!$result['success'] && $result['error'] === 'round_not_found') {
             $this->setFlash(__('Chưa có vòng đấu nào được tạo.'), 'error');
             return redirect()->back();
         }
 
-        $unfinished = \App\Models\TournamentMatch::where('round_id', $latestRound->id)
-            ->where('status', '!=', 2)
-            ->exists();
-
-        if ($unfinished) {
+        if (!$result['success'] && $result['error'] === 'unfinished_matches') {
             $this->setFlash(__('Vui lòng hoàn thành tất cả các trận đấu ở vòng hiện tại trước khi sinh vòng tiếp theo.'), 'error');
             return redirect()->back();
         }
 
-        $winners = \App\Models\TournamentMatch::where('round_id', $latestRound->id)
-            ->orderBy('id', 'asc')
-            ->pluck('winner_id')
-            ->filter()
-            ->values();
-
-        if ($winners->count() === 0) {
+        if (!$result['success'] && $result['error'] === 'winner_not_found') {
             $this->setFlash(__('Không tìm thấy người chiến thắng nào từ vòng trước.'), 'error');
             return redirect()->back();
         }
 
-        if ($winners->count() === 1) {
-            $tournament->update(['status' => 3]); // Completed
+        if ($result['completed'] ?? false) {
             $this->setFlash(__('Giải đấu đã tìm ra nhà vô địch và kết thúc!'), 'success');
             return redirect()->route('admin.tournament.show', $id);
-        }
-
-        $nextRoundNumber = $latestRound->round_number + 1;
-        $roundName = 'Vòng ' . $nextRoundNumber;
-        if ($winners->count() <= 2) {
-            $roundName = 'Chung kết';
-        } elseif ($winners->count() <= 4) {
-            $roundName = 'Bán kết';
-        } elseif ($winners->count() <= 8) {
-            $roundName = 'Tứ kết';
-        }
-
-        $nextRound = \App\Models\TournamentRound::create([
-            'tournament_id' => $id,
-            'round_number' => $nextRoundNumber,
-            'name' => $roundName,
-        ]);
-
-        for ($i = 0; $i < $winners->count(); $i += 2) {
-            $player1Id = $winners[$i];
-            $player2Id = isset($winners[$i + 1]) ? $winners[$i + 1] : null;
-
-            $matchData = [
-                'tournament_id' => $id,
-                'round_id' => $nextRound->id,
-                'player1_id' => $player1Id,
-                'player2_id' => $player2Id,
-                'player1_score' => 0,
-                'player2_score' => 0,
-                'status' => 0,
-            ];
-
-            if (!$player2Id) {
-                $matchData['winner_id'] = $player1Id;
-                $matchData['status'] = 2; // Bye automatically wins
-            }
-
-            \App\Models\TournamentMatch::create($matchData);
         }
 
         $this->setFlash(__('Sinh vòng đấu tiếp theo thành công.'), 'success');
@@ -300,17 +208,11 @@ class TournamentController extends BaseController
 
     public function resetBracket(Request $request, $id)
     {
-        $tournament = \App\Models\Tournament::find($id);
-        if (!$tournament) {
+        $result = $this->interface->resetBracket($id);
+
+        if (!$result['success'] && $result['error'] === 'not_found') {
             $this->setFlash(__('Không tìm thấy giải đấu.'), 'error');
             return redirect()->back();
-        }
-
-        \App\Models\TournamentMatch::where('tournament_id', $id)->delete();
-        \App\Models\TournamentRound::where('tournament_id', $id)->delete();
-
-        if ($tournament->status == 2) {
-            $tournament->update(['status' => 1]); // Revert to Open
         }
 
         $this->setFlash(__('Đã xóa toàn bộ sơ đồ thi đấu và đặt lại trạng thái.'), 'success');
@@ -329,22 +231,11 @@ class TournamentController extends BaseController
             'player2_id.different' => 'Tuyển thủ 2 phải khác tuyển thủ 1.',
         ]);
 
-        $round = \App\Models\TournamentRound::firstOrCreate([
-            'tournament_id' => $tournamentId,
-            'round_number' => 1,
-        ], [
-            'name' => $request->round_name,
-        ]);
-
-        \App\Models\TournamentMatch::create([
-            'tournament_id' => $tournamentId,
-            'round_id' => $round->id,
-            'player1_id' => $request->player1_id,
-            'player2_id' => $request->player2_id,
-            'player1_score' => 0,
-            'player2_score' => 0,
-            'status' => 0,
-        ]);
+        $this->interface->storeMatch($tournamentId, $request->only([
+            'round_name',
+            'player1_id',
+            'player2_id',
+        ]));
 
         $this->setFlash(__('Tạo trận đấu thủ công thành công.'), 'success');
         return redirect()->route('admin.tournament.show', $tournamentId);
@@ -352,8 +243,6 @@ class TournamentController extends BaseController
 
     public function updateMatch(Request $request, $tournamentId, $matchId)
     {
-        $match = \App\Models\TournamentMatch::findOrFail($matchId);
-
         $request->validate([
             'player1_score' => 'required|integer|min:0',
             'player2_score' => 'required|integer|min:0',
@@ -363,15 +252,10 @@ class TournamentController extends BaseController
 
         $data = $request->only(['player1_score', 'player2_score', 'status', 'winner_id']);
 
-        if ($data['status'] == 2 && !$data['winner_id']) {
-            if ($data['player1_score'] > $data['player2_score']) {
-                $data['winner_id'] = $match->player1_id;
-            } elseif ($data['player2_score'] > $data['player1_score']) {
-                $data['winner_id'] = $match->player2_id;
-            }
+        if (!$this->interface->updateMatch($matchId, $data)) {
+            $this->setFlash(__('Không tìm thấy trận đấu.'), 'error');
+            return redirect()->route('admin.tournament.show', $tournamentId);
         }
-
-        $match->update($data);
 
         $this->setFlash(__('Cập nhật kết quả trận đấu thành công.'), 'success');
         return redirect()->route('admin.tournament.show', $tournamentId);
@@ -379,8 +263,10 @@ class TournamentController extends BaseController
 
     public function destroyMatch(Request $request, $tournamentId, $matchId)
     {
-        $match = \App\Models\TournamentMatch::findOrFail($matchId);
-        $match->delete();
+        if (!$this->interface->destroyMatch($matchId)) {
+            $this->setFlash(__('Không tìm thấy trận đấu.'), 'error');
+            return redirect()->route('admin.tournament.show', $tournamentId);
+        }
 
         $this->setFlash(__('Xóa trận đấu thành công.'), 'success');
         return redirect()->route('admin.tournament.show', $tournamentId);

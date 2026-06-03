@@ -4,8 +4,10 @@ namespace App\Repositories\Tournament;
 
 use App\Components\CommonComponent;
 use App\Models\Tournament;
+use App\Models\TournamentMatch;
 use App\Models\TournamentParticipant;
-use Carbon\Carbon;
+use App\Models\TournamentRound;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 
 class TournamentRepository implements TournamentInterface
@@ -140,5 +142,220 @@ class TournamentRepository implements TournamentInterface
         }
         
         return false;
+    }
+
+    public function generateBracket($tournamentId)
+    {
+        $tournament = $this->tournament->find($tournamentId);
+        if (!$tournament) {
+            return ['success' => false, 'error' => 'not_found'];
+        }
+
+        $participants = TournamentParticipant::where('tournament_id', $tournamentId)
+            ->where('status', 1)
+            ->get();
+
+        if ($participants->count() < 2) {
+            return ['success' => false, 'error' => 'not_enough_participants'];
+        }
+
+        DB::transaction(function () use ($tournament, $tournamentId, $participants) {
+            TournamentMatch::where('tournament_id', $tournamentId)->delete();
+            TournamentRound::where('tournament_id', $tournamentId)->delete();
+
+            $shuffled = $participants->shuffle()->values();
+
+            $round = TournamentRound::create([
+                'tournament_id' => $tournamentId,
+                'round_number' => 1,
+                'name' => 'Vòng 1',
+            ]);
+
+            for ($i = 0; $i < $shuffled->count(); $i += 2) {
+                $player1 = $shuffled[$i];
+                $player2 = isset($shuffled[$i + 1]) ? $shuffled[$i + 1] : null;
+
+                $matchData = [
+                    'tournament_id' => $tournamentId,
+                    'round_id' => $round->id,
+                    'player1_id' => $player1->id,
+                    'player2_id' => $player2 ? $player2->id : null,
+                    'player1_score' => 0,
+                    'player2_score' => 0,
+                    'status' => 0,
+                ];
+
+                if (!$player2) {
+                    $matchData['winner_id'] = $player1->id;
+                    $matchData['status'] = 2;
+                }
+
+                TournamentMatch::create($matchData);
+            }
+
+            if ($tournament->status == 1) {
+                $tournament->update(['status' => 2]);
+            }
+        });
+
+        return ['success' => true];
+    }
+
+    public function generateNextRound($tournamentId)
+    {
+        $tournament = $this->tournament->find($tournamentId);
+        if (!$tournament) {
+            return ['success' => false, 'error' => 'not_found'];
+        }
+
+        $latestRound = TournamentRound::where('tournament_id', $tournamentId)
+            ->orderBy('round_number', 'desc')
+            ->first();
+
+        if (!$latestRound) {
+            return ['success' => false, 'error' => 'round_not_found'];
+        }
+
+        $unfinished = TournamentMatch::where('round_id', $latestRound->id)
+            ->where('status', '!=', 2)
+            ->exists();
+
+        if ($unfinished) {
+            return ['success' => false, 'error' => 'unfinished_matches'];
+        }
+
+        $winners = TournamentMatch::where('round_id', $latestRound->id)
+            ->orderBy('id', 'asc')
+            ->pluck('winner_id')
+            ->filter()
+            ->values();
+
+        if ($winners->count() === 0) {
+            return ['success' => false, 'error' => 'winner_not_found'];
+        }
+
+        if ($winners->count() === 1) {
+            $tournament->update(['status' => 3]);
+            return ['success' => true, 'completed' => true];
+        }
+
+        DB::transaction(function () use ($tournamentId, $latestRound, $winners) {
+            $nextRoundNumber = $latestRound->round_number + 1;
+            $roundName = $this->getRoundName($nextRoundNumber, $winners->count());
+
+            $nextRound = TournamentRound::create([
+                'tournament_id' => $tournamentId,
+                'round_number' => $nextRoundNumber,
+                'name' => $roundName,
+            ]);
+
+            for ($i = 0; $i < $winners->count(); $i += 2) {
+                $player1Id = $winners[$i];
+                $player2Id = isset($winners[$i + 1]) ? $winners[$i + 1] : null;
+
+                $matchData = [
+                    'tournament_id' => $tournamentId,
+                    'round_id' => $nextRound->id,
+                    'player1_id' => $player1Id,
+                    'player2_id' => $player2Id,
+                    'player1_score' => 0,
+                    'player2_score' => 0,
+                    'status' => 0,
+                ];
+
+                if (!$player2Id) {
+                    $matchData['winner_id'] = $player1Id;
+                    $matchData['status'] = 2;
+                }
+
+                TournamentMatch::create($matchData);
+            }
+        });
+
+        return ['success' => true, 'completed' => false];
+    }
+
+    public function resetBracket($tournamentId)
+    {
+        $tournament = $this->tournament->find($tournamentId);
+        if (!$tournament) {
+            return ['success' => false, 'error' => 'not_found'];
+        }
+
+        DB::transaction(function () use ($tournament, $tournamentId) {
+            TournamentMatch::where('tournament_id', $tournamentId)->delete();
+            TournamentRound::where('tournament_id', $tournamentId)->delete();
+
+            if ($tournament->status == 2) {
+                $tournament->update(['status' => 1]);
+            }
+        });
+
+        return ['success' => true];
+    }
+
+    public function storeMatch($tournamentId, array $data)
+    {
+        $round = TournamentRound::firstOrCreate([
+            'tournament_id' => $tournamentId,
+            'round_number' => 1,
+        ], [
+            'name' => $data['round_name'],
+        ]);
+
+        return TournamentMatch::create([
+            'tournament_id' => $tournamentId,
+            'round_id' => $round->id,
+            'player1_id' => $data['player1_id'],
+            'player2_id' => $data['player2_id'],
+            'player1_score' => 0,
+            'player2_score' => 0,
+            'status' => 0,
+        ]);
+    }
+
+    public function updateMatch($matchId, array $data)
+    {
+        $match = TournamentMatch::find($matchId);
+        if (!$match) {
+            return false;
+        }
+
+        if ($data['status'] == 2 && empty($data['winner_id'])) {
+            if ($data['player1_score'] > $data['player2_score']) {
+                $data['winner_id'] = $match->player1_id;
+            } elseif ($data['player2_score'] > $data['player1_score']) {
+                $data['winner_id'] = $match->player2_id;
+            }
+        }
+
+        return $match->update($data);
+    }
+
+    public function destroyMatch($matchId)
+    {
+        $match = TournamentMatch::find($matchId);
+        if (!$match) {
+            return false;
+        }
+
+        return $match->delete();
+    }
+
+    private function getRoundName($roundNumber, $winnerCount): string
+    {
+        if ($winnerCount <= 2) {
+            return 'Chung kết';
+        }
+
+        if ($winnerCount <= 4) {
+            return 'Bán kết';
+        }
+
+        if ($winnerCount <= 8) {
+            return 'Tứ kết';
+        }
+
+        return 'Vòng ' . $roundNumber;
     }
 }

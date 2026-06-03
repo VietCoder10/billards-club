@@ -18,4 +18,12 @@ interface TournamentInterface
     public function registerParticipant($tournamentId, $customerId, $data = []);
     public function updateParticipantStatus($participantId, $status);
     public function cancelRegistration($tournamentId, $customerId);
+
+    // Bracket & match methods
+    public function generateBracket($tournamentId);
+    public function generateNextRound($tournamentId);
+    public function resetBracket($tournamentId);
+    public function storeMatch($tournamentId, array $data);
+    public function updateMatch($matchId, array $data);
+    public function destroyMatch($matchId);
 }
