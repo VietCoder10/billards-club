@@ -150,7 +150,7 @@ const onSubmit = () => {
                       <InputText
                         class="w-full"
                         type="text"
-                        v-model="state.model.name"
+                        :modelValue="field.value"
                         v-on:update:model-value="handleChange"
                         v-bind="field"
                         :class="{
@@ -164,12 +164,12 @@ const onSubmit = () => {
                 <div class="form-group">
                   <label class="form-label" require>Email:</label>
                   <div class="form-input">
-                    <Field name="email" :rules="flagValidateUnique ? 'required|email|max:255' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
+                    <Field name="email" :rules="flagValidateUnique ? 'required|email|max:255|unique_custom' : 'required|email|max:255'" v-model="state.model.email" v-slot="{ field, meta: metaField, handleChange }">
                       <InputText
                         class="w-full"
                         @keypress="flagValidateUnique = false"
                         @blur="flagValidateUnique = true"
-                        v-model="state.model.email"
+                        :modelValue="field.value"
                         v-bind="field"
                         autocomplete="username"
                         v-on:update:model-value="handleChange"
@@ -208,7 +208,8 @@ const onSubmit = () => {
                     <Field name="password" :rules="props.data.isEdit ? 'max:16|min:10|password_rule' : 'required|max:16|min:10|password_rule'" v-model="state.model.password" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
-                        v-model="state.model.password"
+                        :modelValue="field.value"
+                        v-on:update:model-value="handleChange"
                         inputClass="w-full"
                         placeholder="Nhập mật khẩu"
                         hideIcon="pi pi-eye"
@@ -216,7 +217,6 @@ const onSubmit = () => {
                         :feedback="false"
                         aria-describedby="password-error"
                         :inputProps="{ autocomplete: 'new-password' }"
-                        v-on:update:model-value="handleChange"
                         toggleMask
                         class="w-full"
                         :id="'password'"
@@ -232,15 +232,11 @@ const onSubmit = () => {
                   <label class="form-label" v-if="props.data.isEdit"> Xác nhận mật khẩu mới: </label>
                   <label class="form-label" v-else require>Xác nhận mật khẩu: </label>
                   <div class="form-input">
-                    <Field
-                      name="password_confirmation"
-                      :rules="props.data.isEdit ? (state.model.password ? 'required|confirmed:@password' : '') : 'required|confirmed:@password'"
-                      v-model="state.model.password_confirmation"
-                      v-slot="{ field, meta: metaField, handleChange }"
-                    >
+                    <Field name="password_confirmation" :rules="props.data.isEdit ? (state.model.password ? 'required|confirmed:@password' : '') : 'required|confirmed:@password'" v-slot="{ field, meta: metaField, handleChange }">
                       <Password
                         v-bind="field"
-                        v-model="state.model.password_confirmation"
+                        :modelValue="field.value"
+                        v-on:update:model-value="handleChange"
                         inputClass="w-full"
                         placeholder="Xác nhận mật khẩu"
                         hideIcon="pi pi-eye"
@@ -248,7 +244,6 @@ const onSubmit = () => {
                         :feedback="false"
                         aria-describedby="password-confirmation-error"
                         :inputProps="{ autocomplete: 'new-password' }"
-                        v-on:update:model-value="handleChange"
                         toggleMask
                         class="w-full"
                         :class="{

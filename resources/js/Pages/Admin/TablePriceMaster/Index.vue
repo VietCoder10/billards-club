@@ -11,7 +11,7 @@ import { Link, usePage } from '@inertiajs/inertia-vue3';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.table_price_master.index'" :createUrl="route('admin.table_price_master.create')" :csvRoute="'admin.table_price_master.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.table_price_master.index'" :createUrl="route('admin.table_price_master.create')" />
 
         <!-- Bảng dữ liệu products -->
         <template v-if="$page.props.data.tablePrices.length">

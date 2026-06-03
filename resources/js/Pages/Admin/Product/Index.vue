@@ -31,7 +31,7 @@ const handleAvatarUploaded = (newAvatar) => {
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.product.index'" :createUrl="route('admin.product.create')" :csvRoute="'admin.product.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.product.index'" :createUrl="route('admin.product.create')" />
 
         <!-- Bảng dữ liệu products -->
         <template v-if="$page.props.data.products.length">

@@ -47,15 +47,25 @@ const onInvalidSubmit = ({ errors }) => {
 };
 const setMessageError = () => {
   let messError = {
-    ja: {
-      fields: {}
+    en: {
+      fields: {
+        table_name: {
+          required: 'Tên bàn không được để trống',
+          max: 'Tên bàn không được vượt quá 255 ký tự'
+        },
+        table_price_id: {
+          required: 'Giá bàn không được để trống'
+        },
+        status: {
+          required: 'Trạng thái không được để trống'
+        }
+      }
     }
   };
   configure({
     generateMessage: localize(messError)
   });
 };
-setLocale('ja');
 
 const normalizeState = (obj) => {
   return JSON.stringify(obj, (_, value) => {
@@ -122,16 +132,16 @@ const onSubmit = () => {
             <div class="card flex flex-col gap-4">
               <div class="flex flex-wrap gap-4">
                 <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="table_name" v-model="state.model.table_name" v-slot="{ field, meta: metaField, handleChange }">
+                  <Field name="table_name" rules="required|max:255" v-model="state.model.table_name" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
                       <InputText class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
-                      <label :for="field.name">Tên bàn</label>
+                      <label :for="field.name"> Tên bàn <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                   </Field>
                   <ErrorMessage name="table_name" class="text-red-500" />
                 </div>
                 <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="table_price_id" v-model="state.model.table_price_id" v-slot="{ field, meta: metaField, handleChange }">
+                  <Field name="table_price_id" rules="required" v-model="state.model.table_price_id" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
                       <Select
                         class="w-full"
@@ -140,15 +150,17 @@ const onSubmit = () => {
                         optionValue="value"
                         :modelValue="field.value"
                         @update:model-value="handleChange"
+                        filter
+                        show-clear
                         :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
                       />
-                      <label :for="field.name">Giá bàn</label>
+                      <label :for="field.name">Giá bàn <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                   </Field>
                   <ErrorMessage name="table_price_id" class="text-red-500" />
                 </div>
                 <div class="flex flex-col gap-2 basis-0 grow min-w-[150]">
-                  <Field name="status" v-model="state.model.status" v-slot="{ field, meta: metaField, handleChange }">
+                  <Field name="status" rules="required" v-model="state.model.status" v-slot="{ field, meta: metaField, handleChange }">
                     <FloatLabel variant="on">
                       <Select
                         class="w-full"
@@ -158,8 +170,10 @@ const onSubmit = () => {
                         :modelValue="field.value"
                         @update:model-value="handleChange"
                         :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
+                        filter
+                        show-clear
                       />
-                      <label :for="field.name">Trạng thái</label>
+                      <label :for="field.name">Trạng thái <span class="required">(Bắt buộc)</span></label>
                     </FloatLabel>
                   </Field>
                   <ErrorMessage name="status" class="text-red-500" />

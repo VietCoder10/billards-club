@@ -61,17 +61,36 @@ const setMessageError = () => {
         supplier_id: {
           required: 'Vui lòng chọn nhà cung cấp'
         },
-        price_purchase: {
-          required: 'Vui lòng nhập giá nhập',
-          max: 'Giá nhập không được vượt quá 255 ký tự'
+        category: {
+          required: 'Vui lòng chọn danh mục',
+          max: 'Danh mục không được vượt quá 255 ký tự'
         },
-        price_sale: {
-          required: 'Vui lòng nhập giá bán',
-          max: 'Giá bán không được vượt quá 255 ký tự'
+        supplier_id: {
+          required: 'Vui lòng chọn nhà cung cấp',
+          max: 'Nhà cung cấp không được vượt quá 255 ký tự'
+        },
+        cost_price: {
+          required: 'Vui lòng nhập giá nhập',
+          max_value: 'Giá nhập không được vượt quá 999,999,999',
+          min_value: 'Giá nhập không được nhỏ hơn 0'
         },
         quantity: {
           required: 'Vui lòng nhập số lượng',
-          max: 'Số lượng không được vượt quá 255 ký tự'
+          max_value: 'Số lượng không được vượt quá 999,999',
+          min_value: 'Số lượng không được nhỏ hơn 0'
+        },
+        sale_price: {
+          required: 'Vui lòng nhập giá bán',
+          max_value: 'Giá bán không được vượt quá 999,999',
+          min_value: 'Giá bán không được nhỏ hơn 0'
+        },
+        total_amount: {
+          required: 'Vui lòng nhập tổng số lượng',
+          max_value: 'Tổng số lượng không được vượt quá 999,999,999',
+          min_value: 'Tổng số lượng không được nhỏ hơn 0'
+        },
+        description: {
+          max: 'Mô tả không được vượt quá 255 ký tự'
         }
       }
     }
@@ -245,7 +264,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                   </div>
                   <div class="inline-flex flex-wrap gap-4 border rounded p-4 bg-gray-50 w-full">
                     <div class="flex flex-col grow basis-0">
-                      <Field name="cost_price" rules="required|max_value:999999999" v-model="state.model.cost_price" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="cost_price" rules="required|max_value:999999999|min_value:0" v-model="state.model.cost_price" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label>Giá nhập (1 Thùng)</label>
@@ -254,7 +273,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="quantity" rules="required|max_value:999999" v-model="state.model.quantity" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="quantity" rules="required|max_value:999999|min_value:0" v-model="state.model.quantity" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label :for="field.name">Số lượng sản phẩm<span class="required"> (Bắt buộc)</span></label>
@@ -263,7 +282,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="sale_price" rules="required|max_value:999999" v-model="state.model.sale_price" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="sale_price" rules="required|max_value:999999|min_value:0" v-model="state.model.sale_price" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label :for="field.name">Giá bán / 1 sản phẩm <span class="required">(Bắt buộc)</span></label>
@@ -272,7 +291,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                       </Field>
                     </div>
                     <div class="flex flex-col grow basis-0">
-                      <Field name="total_amount" rules="required|max_value:999999999" v-model="state.model.total_amount" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field name="total_amount" rules="required|max_value:999999999|min_value:0" v-model="state.model.total_amount" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <InputNumber class="w-full" :name="field.name" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label :for="field.name">Tổng tiền hàng nhập <span class="required">(Bắt buộc)</span></label>
@@ -283,7 +302,7 @@ useDirtyForm(hasUnsavedChanges, isSubmitting);
                   </div>
                   <div class="flex flex-wrap gap-4">
                     <div class="flex flex-col grow basis-0">
-                      <Field name="description" v-model="state.model.description" v-slot="{ field, meta: metaField, handleChange }">
+                      <Field rules="max:255" name="description" v-model="state.model.description" v-slot="{ field, meta: metaField, handleChange }">
                         <FloatLabel variant="on">
                           <Textarea class="w-full border" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                           <label>Mô tả</label>

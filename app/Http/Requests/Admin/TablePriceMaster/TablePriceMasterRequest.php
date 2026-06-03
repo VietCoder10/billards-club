@@ -21,7 +21,7 @@ class TablePriceMasterRequest extends FormRequest
     {
         return [
             'price_name' => 'required|string|max:255',
-            'price_per_hour' => 'required|numeric|min:1|max:999999',
+            'price_per_hour' => 'required|numeric|min:0|max:999999999',
         ];
     }
 
@@ -32,8 +32,8 @@ class TablePriceMasterRequest extends FormRequest
             'price_name.max' => 'Tên loại giá không được vượt quá 255 ký tự',
             'price_per_hour.required' => 'Giá mỗi giờ là trường bắt buộc',
             'price_per_hour.numeric' => 'Giá mỗi giờ phải là số',
-            'price_per_hour.min' => 'Giá mỗi giờ không được dưới 1',
-            'price_per_hour.max' => 'Giá mỗi giờ không được vượt quá 999999',
+            'price_per_hour.min' => 'Giá mỗi giờ không được dưới 0',
+            'price_per_hour.max' => 'Giá mỗi giờ không được vượt quá 999,999,999',
         ];
     }
 }

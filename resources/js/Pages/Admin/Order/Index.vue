@@ -12,7 +12,7 @@ import moment from 'moment';
     <template #content>
       <Panel :header="$page.props.data.title">
         <!-- Form tìm kiếm -->
-        <FormSearch :request="$page.props.data.request" :routeName="'admin.order.index'" :createUrl="route('admin.order.create')" :csvRoute="'admin.order.exportCsv'" />
+        <FormSearch :request="$page.props.data.request" :routeName="'admin.order.index'" :createUrl="route('admin.order.create')" />
 
         <!-- Bảng dữ liệu products -->
         <template v-if="$page.props.data.orders.length">
