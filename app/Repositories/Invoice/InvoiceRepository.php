@@ -109,7 +109,7 @@ class InvoiceRepository implements InvoiceInterface
             $order->table_total = $request->table_total;
             $order->service_total = $request->service_total;
             $order->final_total = $request->final_total;
-            $order->ended_at = Carbon::now();
+            $order->ended_at = $request->ended_at ? Carbon::parse($request->ended_at) : Carbon::now();
             if (!$order->save()) {
                 return false;
             }

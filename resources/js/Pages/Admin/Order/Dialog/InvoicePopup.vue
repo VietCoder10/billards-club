@@ -77,6 +77,23 @@ const invoiceDetails = computed(() => {
   return details;
 });
 
+const qrCodeDescription = computed(() => {
+  const orderNumber = state.model.order?.order_number || '';
+  return `Thanh toan don hang ${orderNumber}`.trim();
+});
+
+const qrCodeUrl = computed(() => {
+  const bankId = page.props.value.vietqr?.bank_id || 'MB';
+  const accountNo = page.props.value.vietqr?.account_no || '0356166166';
+  const accountName = encodeURIComponent(page.props.value.vietqr?.account_name || 'BILLIARD CLUB');
+  const template = page.props.value.vietqr?.template || 'qr_only';
+
+  const amount = state.model.order?.final_total || 0;
+  const description = encodeURIComponent(qrCodeDescription.value);
+
+  return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;
+});
+
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
 };
@@ -242,9 +259,37 @@ const handleSelectCustomer = (customer) => {
                 </div>
               </div>
 
-              <div v-if="state.model.payment_method === 2" class="mt-4 flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50">
-                <img src="/images/Qr.jpg" alt="QR Code" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2 border" />
-                <span class="mt-3 text-sm text-gray-500 font-medium">Quét mã QR để thanh toán</span>
+              <div v-if="state.model.payment_method === 2" class="mt-4 flex flex-col items-center justify-center p-6 border border-dashed border-gray-300 rounded-xl bg-gray-50 w-full">
+                <div class="relative group">
+                  <img :src="qrCodeUrl" alt="QR Code" class="w-48 h-48 rounded-lg shadow-md bg-white p-2 border border-gray-200 transition-transform duration-300 group-hover:scale-105" />
+                  <div class="absolute -bottom-2 -right-2 bg-blue-600 text-white rounded-full p-1.5 shadow-md flex items-center justify-center">
+                    <i class="pi pi-qrcode text-xs"></i>
+                  </div>
+                </div>
+                <span class="mt-4 text-xs text-gray-650 font-bold uppercase tracking-wider">Quét mã QR để chuyển khoản</span>
+
+                <div class="w-full mt-4 p-4 bg-white rounded-lg border border-gray-250 text-xs flex flex-col gap-2">
+                  <div class="flex justify-between border-b pb-1.5 border-gray-100">
+                    <span class="text-gray-500">Ngân hàng:</span>
+                    <span class="font-bold text-gray-800">{{ $page.props.vietqr?.bank_id || 'MB' }}</span>
+                  </div>
+                  <div class="flex justify-between border-b pb-1.5 border-gray-100">
+                    <span class="text-gray-500">Số tài khoản:</span>
+                    <span class="font-bold text-gray-800 copy-field select-all cursor-pointer hover:text-blue-600" title="Click để copy">{{ $page.props.vietqr?.account_no || '0356166166' }}</span>
+                  </div>
+                  <div class="flex justify-between border-b pb-1.5 border-gray-100">
+                    <span class="text-gray-500">Chủ tài khoản:</span>
+                    <span class="font-bold text-gray-800">{{ $page.props.vietqr?.account_name || 'BILLIARD CLUB' }}</span>
+                  </div>
+                  <div class="flex justify-between border-b pb-1.5 border-gray-100">
+                    <span class="text-gray-500">Số tiền:</span>
+                    <span class="font-bold text-blue-600">{{ formatCurrency(state.model.order?.final_total) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Nội dung CK:</span>
+                    <span class="font-bold text-amber-600 select-all cursor-pointer hover:text-blue-600" title="Click để copy">{{ qrCodeDescription }}</span>
+                  </div>
+                </div>
               </div>
             </div>
 

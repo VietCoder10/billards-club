@@ -234,7 +234,12 @@ class AdminHandleInertiaRequests extends Middleware
             'leftMenu' => $leftMenu,
             'breadcrumbs' => $breadcrumbs,
             'user' => Auth::guard('admin')->user(),
-
+            'vietqr' => [
+                'bank_id' => env('VIETQR_BANK_ID', 'MB'),
+                'account_no' => env('VIETQR_ACCOUNT_NO', '88888110022004'),
+                'account_name' => env('VIETQR_ACCOUNT_NAME', 'TQ BILLIARD CLUB'),
+                'template' => env('VIETQR_TEMPLATE', 'qr_only'),
+            ]
         ]);
     }
 }

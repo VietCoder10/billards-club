@@ -34,6 +34,7 @@ class InvoiceRequest extends FormRequest
             'final_total' => 'required|numeric|min:0|max:999999999',
             'discount' => 'nullable|numeric|min:0|max:999999999',
             'total_minutes' => 'nullable|integer|min:0|max:999999',
+            'ended_at' => 'nullable|string',
         ];
     }
 

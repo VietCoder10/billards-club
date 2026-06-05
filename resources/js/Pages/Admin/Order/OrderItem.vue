@@ -83,7 +83,7 @@ const initData = () => {
 const calculatePlayTime = () => {
   if (!state.model.order.started_at) return;
   const start = moment(state.model.order.started_at);
-  const end = state.model.order.status === 1 ? moment() : moment(state.model.order.ended_at || undefined);
+  const end = state.model.order.status === 1 && !state.model.order.ended_at ? moment() : moment(state.model.order.ended_at || undefined);
   state.model.order.total_minutes = Math.max(0, end.diff(start, 'minutes'));
   updateTableTotal();
 };
@@ -176,6 +176,23 @@ const onSubmit = () => {
   });
 };
 
+const openPayment = () => {
+  if (state.model.order.status === 1 && !state.model.order.ended_at) {
+    state.model.order.ended_at = moment().format('YYYY-MM-DD HH:mm:ss');
+    calculatePlayTime();
+  }
+  showPopup.value = true;
+};
+
+watch(showPopup, (newVal) => {
+  if (!newVal) {
+    if (state.model.order.status === 1) {
+      state.model.order.ended_at = null;
+      calculatePlayTime();
+    }
+  }
+});
+
 const formatPrice = (value) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
 };
@@ -190,12 +207,12 @@ const formatPrice = (value) => {
             <span class="font-bold">{{ $page.props.data.title }}</span>
           </div>
         </template>
-        <template #icons>
+        <!-- <template #icons>
           <Link :href="$page.props.data.urlBack">
             <Button label="Quay lại" icon="pi pi-arrow-left" class="btn-action"></Button>
           </Link>
           <Button label="Lưu" type="submit" form="order-form" icon="pi pi-save" class="btn-action ml-2"></Button>
-        </template>
+        </template> -->
         <InvoicePopup v-model:visible="showPopup" :request="state.model" v-model:isSubmitting="isSubmitting"></InvoicePopup>
         <VeeForm as="div" v-slot="{ handleSubmit }">
           <form @submit="handleSubmit($event, onSubmit)" id="order-form" class="form-data">
@@ -273,7 +290,7 @@ const formatPrice = (value) => {
 
                   <div class="flex justify-between items-center gap-2 mt-4">
                     <Button label="Tạm tính" type="submit" form="order-form" icon="pi pi-print" class="p-button-outlined p-button-secondary w-full" />
-                    <Button label="Thanh toán" icon="pi pi-check-circle" class="p-button-success w-full" @click="showPopup = !showPopup" />
+                    <Button label="Thanh toán" icon="pi pi-check-circle" class="p-button-success w-full" @click="openPayment" />
                   </div>
                 </div>
               </div>
