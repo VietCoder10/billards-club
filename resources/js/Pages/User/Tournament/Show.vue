@@ -144,12 +144,12 @@ const getAvatarGradient = (name) => {
                     <span
                       :class="[
                         'px-2.5 py-0.5 rounded-full text-xs font-bold border',
-                        $page.props.data.tournament.status === 1
+                        $page.props.data.tournament.status === 2
                           ? 'bg-blue-50 text-blue-650 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/50'
                           : 'bg-amber-50 text-amber-650 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50'
                       ]"
                     >
-                      {{ $page.props.data.tournament.status === 1 ? 'Mở đăng ký' : 'Đang diễn ra' }}
+                      {{ $page.props.data.tournament.status === 2 ? 'Mở đăng ký' : 'Đang diễn ra' }}
                     </span>
                   </div>
 
@@ -216,7 +216,7 @@ const getAvatarGradient = (name) => {
             <div class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl p-5 shadow-sm space-y-4">
               <span class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 tracking-wider block uppercase">ĐĂNG KÝ CỦA BẠN</span>
 
-              <template v-if="$page.props.data.tournament.status === 1">
+              <template v-if="$page.props.data.tournament.status === 2">
                 <!-- User already registered -->
                 <div v-if="$page.props.data.isRegistered" class="space-y-4">
                   <div class="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-xl text-center">
@@ -259,7 +259,7 @@ const getAvatarGradient = (name) => {
               </template>
 
               <!-- Ongoing status -->
-              <div v-else-if="$page.props.data.tournament.status === 2" class="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-center">
+              <div v-else-if="$page.props.data.tournament.status === 3" class="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-center">
                 <i class="pi pi-spin pi-spinner text-xl text-amber-600 dark:text-amber-400 mb-1.5 block"></i>
                 <p class="text-sm font-bold text-amber-800 dark:text-amber-300">Giải đấu đang diễn ra</p>
                 <p class="text-xs text-amber-650 dark:text-amber-450 mt-1">Đăng ký đã chính thức khép lại. Hãy theo dõi trực tiếp các trận đấu nhé!</p>
@@ -276,9 +276,7 @@ const getAvatarGradient = (name) => {
                 type="button"
                 :class="[
                   'flex-1 py-3 text-center font-extrabold text-sm rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98',
-                  activeTab === 'players'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                  activeTab === 'players' ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
                 ]"
               >
                 <i class="pi pi-users text-xs"></i>
@@ -289,9 +287,7 @@ const getAvatarGradient = (name) => {
                 type="button"
                 :class="[
                   'flex-1 py-3 text-center font-extrabold text-sm rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98',
-                  activeTab === 'bracket'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                  activeTab === 'bracket' ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-850'
                 ]"
               >
                 <i class="pi pi-sitemap text-xs"></i>
@@ -339,7 +335,7 @@ const getAvatarGradient = (name) => {
                     <p class="text-xs text-zinc-500 dark:text-zinc-500 max-w-xs mx-auto">Hãy là cơ thủ đầu tiên ghi danh tham gia tranh tài giải đấu này nhé!</p>
                   </div>
                   <button
-                    v-if="$page.props.data.tournament.status === 1"
+                    v-if="$page.props.data.tournament.status === 2"
                     @click="register($page.props.data.tournament)"
                     type="button"
                     class="inline-flex items-center gap-1.5 px-4 py-2 border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20 text-blue-650 dark:text-blue-400 rounded-xl text-xs font-bold shadow-sm"
@@ -408,14 +404,14 @@ const getAvatarGradient = (name) => {
                         <!-- Approval Status Badge -->
                         <td class="py-3 px-4 text-center">
                           <span
-                            v-if="participant.status === 1"
+                            v-if="participant.status === 2"
                             class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/20 text-emerald-650 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30"
                           >
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                             Đã duyệt
                           </span>
                           <span
-                            v-else-if="participant.status === 2"
+                            v-else-if="participant.status === 3"
                             class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/20 text-rose-650 dark:text-rose-450 border border-rose-200 dark:border-rose-900/30"
                           >
                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -439,15 +435,13 @@ const getAvatarGradient = (name) => {
             </div>
 
             <!-- Bracket Body -->
-            <div v-else-if="activeTab === 'bracket'" class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full p-5 space-y-4">
+            <div v-else-if="activeTab === 'bracket'" class="bg-white dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded-2xl shadow-sm overflow-hidden flex flex-col p-5 space-y-4">
               <div class="border-b border-zinc-100 dark:border-zinc-850 pb-4">
                 <h3 class="font-bold text-zinc-900 dark:text-white text-lg tracking-tight flex items-center gap-2">
                   <i class="pi pi-sitemap text-indigo-500"></i>
                   Sơ Đồ Thi Đấu Giải Đấu
                 </h3>
-                <p class="text-xs text-zinc-505 dark:text-zinc-500">
-                  Theo dõi hành trình tranh tài của các cơ thủ trong giải đấu này.
-                </p>
+                <p class="text-xs text-zinc-505 dark:text-zinc-500">Theo dõi hành trình tranh tài của các cơ thủ trong giải đấu này.</p>
               </div>
 
               <!-- Bracket Empty State -->
@@ -462,13 +456,9 @@ const getAvatarGradient = (name) => {
               </div>
 
               <!-- Bracket Graphic Tree -->
-              <div v-else class="overflow-x-auto py-6 bg-zinc-50/20 dark:bg-zinc-950/20 rounded-2xl border border-zinc-100 dark:border-zinc-800" style="min-height: 480px;">
-                <div class="flex gap-10 px-6" style="width: max-content; min-width: 100%;">
-                  <div 
-                    v-for="round in $page.props.data.rounds" 
-                    :key="round.id" 
-                    class="flex flex-col gap-6 w-[260px]"
-                  >
+              <div v-else class="overflow-x-auto py-6 bg-zinc-50/20 dark:bg-zinc-950/20 rounded-2xl border border-zinc-100 dark:border-zinc-800" style="min-height: 480px">
+                <div class="flex gap-10 px-6" style="width: max-content; min-width: 100%">
+                  <div v-for="round in $page.props.data.rounds" :key="round.id" class="flex flex-col gap-6 w-[260px]">
                     <!-- Round Title -->
                     <div class="font-bold text-center border-b border-zinc-150 dark:border-zinc-800 pb-2 text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-900 rounded-xl py-2 px-3 shadow-sm text-xs tracking-wider uppercase">
                       {{ round.name }}
@@ -476,28 +466,32 @@ const getAvatarGradient = (name) => {
 
                     <!-- Round Matches list -->
                     <div class="flex-1 flex flex-col justify-around gap-6 py-4">
-                      <div 
-                        v-for="match in round.matches" 
-                        :key="match.id" 
+                      <div
+                        v-for="match in round.matches"
+                        :key="match.id"
                         class="border border-zinc-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden transition-all duration-300 hover:border-indigo-500/50 hover:shadow-md"
                       >
                         <!-- Match Header info -->
                         <div class="bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-2 flex justify-between items-center text-[10px] text-zinc-400 dark:text-zinc-550 border-b border-zinc-100 dark:border-zinc-850">
                           <span class="font-semibold">Trận #{{ match.id }}</span>
-                          <span :class="[
-                            'px-2 py-0.5 rounded-full font-bold uppercase tracking-wider',
-                            match.status === 0 ? 'bg-zinc-100 dark:bg-zinc-850 text-zinc-500' :
-                            match.status === 1 ? 'bg-blue-50/50 dark:bg-blue-950/20 text-blue-550 border border-blue-200/50 dark:border-blue-900/30' :
-                            'bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 border border-emerald-200/50 dark:border-emerald-900/30'
-                          ]">
-                            {{ match.status === 0 ? 'Chờ đấu' : match.status === 1 ? 'Đang đấu' : 'Đã xong' }}
+                          <span
+                            :class="[
+                              'px-2 py-0.5 rounded-full font-bold uppercase tracking-wider',
+                              match.status === 1
+                                ? 'bg-zinc-100 dark:bg-zinc-850 text-zinc-500'
+                                : match.status === 2
+                                ? 'bg-blue-50/50 dark:bg-blue-950/20 text-blue-550 border border-blue-200/50 dark:border-blue-900/30'
+                                : 'bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 border border-emerald-200/50 dark:border-emerald-900/30'
+                            ]"
+                          >
+                            {{ match.status === 1 ? 'Chờ đấu' : match.status === 2 ? 'Đang đấu' : 'Đã xong' }}
                           </span>
                         </div>
 
                         <!-- Match Players and scores -->
                         <div class="p-3 space-y-2.5">
                           <!-- Player 1 -->
-                          <div 
+                          <div
                             class="flex justify-between items-center text-xs"
                             :class="[
                               match.winner_id && match.winner_id === match.player1_id ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-300',
@@ -514,7 +508,7 @@ const getAvatarGradient = (name) => {
                           <div class="h-px bg-zinc-100 dark:bg-zinc-800"></div>
 
                           <!-- Player 2 -->
-                          <div 
+                          <div
                             class="flex justify-between items-center text-xs"
                             :class="[
                               match.winner_id && match.winner_id === match.player2_id ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-300',

@@ -3,6 +3,9 @@
 namespace App\Repositories\Tournament;
 
 use App\Components\CommonComponent;
+use App\Enums\TournamentMatchStatus;
+use App\Enums\TournamentParticipantStatus;
+use App\Enums\TournamentStatus;
 use App\Models\Tournament;
 use App\Models\TournamentMatch;
 use App\Models\TournamentParticipant;
@@ -41,20 +44,27 @@ class TournamentRepository implements TournamentInterface
     public function getActiveTournaments()
     {
         // Get Open and Ongoing tournaments for users to see
-        return $this->tournament->withCount('participants')->whereIn('status', [1, 2])->orderBy('start_date', 'asc')->get();
+        return $this->tournament->withCount('participants')->whereIn('status', [TournamentStatus::OPEN, TournamentStatus::ONGOING])->orderBy('start_date', 'asc')->get();
     }
 
     public function store($request)
     {
         $tournament = $this->tournament->fill($request->only([
-            'name', 'description', 'start_date', 'end_date', 'registration_deadline',
-            'max_participants', 'entry_fee', 'prize_pool', 'status'
+            'name',
+            'description',
+            'start_date',
+            'end_date',
+            'registration_deadline',
+            'max_participants',
+            'entry_fee',
+            'prize_pool',
+            'status'
         ]));
-        
+
         $tournament->created_by = auth('admin')->id();
         $saved = $tournament->save();
 
-        if ($saved && $tournament->status == 1) { // Open
+        if ($saved && $tournament->status == TournamentStatus::OPEN) { // Open
             $customers = \App\Models\Customer::all();
             \Illuminate\Support\Facades\Notification::send($customers, new \App\Notifications\TournamentCreated($tournament));
         }
@@ -75,13 +85,20 @@ class TournamentRepository implements TournamentInterface
         $oldStatus = $tournament->status;
 
         $tournament->fill($request->only([
-            'name', 'description', 'start_date', 'end_date', 'registration_deadline',
-            'max_participants', 'entry_fee', 'prize_pool', 'status'
+            'name',
+            'description',
+            'start_date',
+            'end_date',
+            'registration_deadline',
+            'max_participants',
+            'entry_fee',
+            'prize_pool',
+            'status'
         ]));
-        
+
         $saved = $tournament->save();
 
-        if ($saved && $oldStatus != 1 && $tournament->status == 1) { // Changed to Open
+        if ($saved && $oldStatus != TournamentStatus::OPEN && $tournament->status == TournamentStatus::OPEN) { // Changed to Open
             $customers = \App\Models\Customer::all();
             \Illuminate\Support\Facades\Notification::send($customers, new \App\Notifications\TournamentCreated($tournament));
         }
@@ -109,7 +126,7 @@ class TournamentRepository implements TournamentInterface
         $exists = TournamentParticipant::where('tournament_id', $tournamentId)
             ->where('customer_id', $customerId)
             ->exists();
-            
+
         if ($exists) {
             return false;
         }
@@ -117,7 +134,7 @@ class TournamentRepository implements TournamentInterface
         return TournamentParticipant::create(array_merge([
             'tournament_id' => $tournamentId,
             'customer_id' => $customerId,
-            'status' => 0, // Pending
+            'status' => TournamentParticipantStatus::PENDING,
             'payment_status' => 0 // Unpaid
         ], $data));
     }
@@ -126,7 +143,7 @@ class TournamentRepository implements TournamentInterface
     {
         $participant = TournamentParticipant::find($participantId);
         if (!$participant) return false;
-        
+
         $participant->status = $status;
         return $participant->save();
     }
@@ -136,11 +153,11 @@ class TournamentRepository implements TournamentInterface
         $participant = TournamentParticipant::where('tournament_id', $tournamentId)
             ->where('customer_id', $customerId)
             ->first();
-            
+
         if ($participant) {
             return $participant->delete();
         }
-        
+
         return false;
     }
 
@@ -152,7 +169,7 @@ class TournamentRepository implements TournamentInterface
         }
 
         $participants = TournamentParticipant::where('tournament_id', $tournamentId)
-            ->where('status', 1)
+            ->where('status', TournamentParticipantStatus::APPROVED)
             ->get();
 
         if ($participants->count() < 2) {
@@ -182,19 +199,19 @@ class TournamentRepository implements TournamentInterface
                     'player2_id' => $player2 ? $player2->id : null,
                     'player1_score' => 0,
                     'player2_score' => 0,
-                    'status' => 0,
+                    'status' => TournamentMatchStatus::UPCOMING,
                 ];
 
                 if (!$player2) {
                     $matchData['winner_id'] = $player1->id;
-                    $matchData['status'] = 2;
+                    $matchData['status'] = TournamentMatchStatus::COMPLETED;
                 }
 
                 TournamentMatch::create($matchData);
             }
 
-            if ($tournament->status == 1) {
-                $tournament->update(['status' => 2]);
+            if ($tournament->status == TournamentStatus::OPEN) {
+                $tournament->update(['status' => TournamentStatus::ONGOING]);
             }
         });
 
@@ -217,7 +234,7 @@ class TournamentRepository implements TournamentInterface
         }
 
         $unfinished = TournamentMatch::where('round_id', $latestRound->id)
-            ->where('status', '!=', 2)
+            ->where('status', '!=', TournamentMatchStatus::COMPLETED)
             ->exists();
 
         if ($unfinished) {
@@ -235,7 +252,7 @@ class TournamentRepository implements TournamentInterface
         }
 
         if ($winners->count() === 1) {
-            $tournament->update(['status' => 3]);
+            $tournament->update(['status' => TournamentStatus::COMPLETED]);
             return ['success' => true, 'completed' => true];
         }
 
@@ -260,12 +277,12 @@ class TournamentRepository implements TournamentInterface
                     'player2_id' => $player2Id,
                     'player1_score' => 0,
                     'player2_score' => 0,
-                    'status' => 0,
+                    'status' => TournamentMatchStatus::UPCOMING,
                 ];
 
                 if (!$player2Id) {
                     $matchData['winner_id'] = $player1Id;
-                    $matchData['status'] = 2;
+                    $matchData['status'] = TournamentMatchStatus::COMPLETED;
                 }
 
                 TournamentMatch::create($matchData);
@@ -286,8 +303,8 @@ class TournamentRepository implements TournamentInterface
             TournamentMatch::where('tournament_id', $tournamentId)->delete();
             TournamentRound::where('tournament_id', $tournamentId)->delete();
 
-            if ($tournament->status == 2) {
-                $tournament->update(['status' => 1]);
+            if ($tournament->status == TournamentStatus::ONGOING) {
+                $tournament->update(['status' => TournamentStatus::OPEN]);
             }
         });
 
@@ -310,7 +327,7 @@ class TournamentRepository implements TournamentInterface
             'player2_id' => $data['player2_id'],
             'player1_score' => 0,
             'player2_score' => 0,
-            'status' => 0,
+            'status' => TournamentMatchStatus::UPCOMING,
         ]);
     }
 
@@ -321,7 +338,7 @@ class TournamentRepository implements TournamentInterface
             return false;
         }
 
-        if ($data['status'] == 2 && empty($data['winner_id'])) {
+        if ($data['status'] == TournamentMatchStatus::COMPLETED && empty($data['winner_id'])) {
             if ($data['player1_score'] > $data['player2_score']) {
                 $data['winner_id'] = $match->player1_id;
             } elseif ($data['player2_score'] > $data['player1_score']) {

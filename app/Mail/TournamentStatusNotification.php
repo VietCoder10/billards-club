@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Enums\TournamentParticipantStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -28,11 +29,11 @@ class TournamentStatusNotification extends Mailable
      */
     public function build()
     {
-        $subject = $this->data['status'] == 1 
+        $subject = $this->data['status'] == TournamentParticipantStatus::APPROVED
             ? '[' . env('APP_NAME') . '] Đăng ký giải đấu thành công' 
             : '[' . env('APP_NAME') . '] Đăng ký giải đấu bị từ chối';
 
-        $view = $this->data['status'] == 1 
+        $view = $this->data['status'] == TournamentParticipantStatus::APPROVED
             ? 'mails.tournament_accepted' 
             : 'mails.tournament_rejected';
 

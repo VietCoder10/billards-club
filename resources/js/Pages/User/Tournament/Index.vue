@@ -62,7 +62,7 @@ const register = (tournament) => {
             <div 
               :class="[
                 'p-6 text-white relative overflow-hidden',
-                tournament.status === 1 
+                tournament.status === 2 
                   ? 'bg-gradient-to-br from-blue-600 via-indigo-650 to-violet-750' 
                   : 'bg-gradient-to-br from-amber-500 to-orange-600'
               ]"
@@ -74,7 +74,7 @@ const register = (tournament) => {
               <div class="relative z-10 space-y-2">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/20">
                   <span class="w-1.5 h-1.5 rounded-full bg-white mr-1.5 animate-pulse"></span>
-                  {{ tournament.status === 1 ? 'Mở đăng ký' : 'Đang diễn ra' }}
+                  {{ tournament.status === 2 ? 'Mở đăng ký' : 'Đang diễn ra' }}
                 </span>
                 
                 <h2 class="text-xl font-bold tracking-tight leading-tight line-clamp-1 group-hover:text-blue-50 transition-colors" :title="tournament.name">
@@ -186,7 +186,7 @@ const register = (tournament) => {
               </Link>
 
               <!-- Registration Status / Actions -->
-              <template v-if="tournament.status === 1">
+              <template v-if="tournament.status === 2">
                 <!-- User already registered -->
                 <div 
                   v-if="tournament.is_registered" 
@@ -221,7 +221,7 @@ const register = (tournament) => {
               
               <!-- Ongoing status -->
               <div 
-                v-else-if="tournament.status === 2" 
+                v-else-if="tournament.status === 3" 
                 class="flex-1 inline-flex justify-center items-center gap-1.5 px-4 py-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl text-sm font-bold text-amber-600 dark:text-amber-400 shadow-sm"
               >
                 <i class="pi pi-spin pi-spinner text-base"></i>

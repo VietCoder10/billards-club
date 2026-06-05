@@ -147,7 +147,7 @@ class TournamentController extends BaseController
     {
         if ($this->interface->updateParticipantStatus($participantId, $request->status)) {
             $participant = \App\Models\TournamentParticipant::with(['customer', 'tournament'])->find($participantId);
-            if ($participant && $participant->customer && $participant->customer->email && in_array($request->status, [1, 2])) {
+            if ($participant && $participant->customer && $participant->customer->email && in_array($request->status, [TournamentParticipantStatus::APPROVED, TournamentParticipantStatus::REJECTED])) {
                 $data = [
                     'status' => $request->status,
                     'customer_name' => $participant->customer->name,
