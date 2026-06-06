@@ -21,7 +21,17 @@ const emit = defineEmits(['update:visible', 'update:isSubmitting']);
 const localVisible = ref(props.visible);
 watch(
   () => props.visible,
-  (v) => (localVisible.value = v)
+  (v) => {
+    localVisible.value = v;
+    if (v) {
+      state.model = {
+        ...props.request,
+        payment_method: props.request.payment_method || 1,
+        created_by: props.request.created_by || page.props.value.user?.id,
+        customer_paid: props.request.customer_paid || 0
+      };
+    }
+  }
 );
 watch(localVisible, (v) => emit('update:visible', v));
 const state = reactive({
@@ -88,7 +98,7 @@ const qrCodeUrl = computed(() => {
   const accountName = encodeURIComponent(page.props.value.vietqr?.account_name || 'BILLIARD CLUB');
   const template = page.props.value.vietqr?.template || 'qr_only';
 
-  const amount = state.model.order?.final_total || 0;
+  const amount = Math.round(state.model.order?.final_total || 0);
   const description = encodeURIComponent(qrCodeDescription.value);
 
   return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;

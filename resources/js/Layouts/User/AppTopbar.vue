@@ -19,7 +19,7 @@ const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout();
             fill="var(--primary-color)"
           />
         </svg>
-        <span>BILLIARDS CLUB</span>
+        <span>TQ BILLIARDS</span>
       </Link>
     </div>
 

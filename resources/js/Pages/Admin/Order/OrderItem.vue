@@ -91,7 +91,7 @@ const calculatePlayTime = () => {
 const updateTableTotal = () => {
   const minutes = Number(state.model.order.total_minutes || 0);
   const pricePerHour = Number(state.model.order.price_per_hour || 0);
-  state.model.order.table_total = (minutes / 60) * pricePerHour;
+  state.model.order.table_total = Math.round((minutes / 60) * pricePerHour);
 };
 
 let timerInterval = null;
