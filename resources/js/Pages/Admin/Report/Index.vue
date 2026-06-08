@@ -187,7 +187,11 @@ const startAiReportGeneration = async () => {
       payload.end_date = customEndDate.value;
     }
 
-    const response = await axios.post(route('admin.report.aiReport'), payload);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const response = await axios.post(route('admin.report.aiReport'), payload, {
+      headers: { 'X-CSRF-TOKEN': csrfToken },
+      timeout: 90000, // 90s để AI có đủ thời gian phản hồi
+    });
     
     clearInterval(progressInterval.value);
     aiLoadingProgress.value = 100;

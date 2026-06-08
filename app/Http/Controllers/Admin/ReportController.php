@@ -7,11 +7,6 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use App\Repositories\Report\ReportInterface;
-use App\Models\Order;
-use App\Models\Table;
-use App\Models\OrderDetail;
-use App\Models\Invoice;
-use App\Enums\OrderStatus;
 use Illuminate\Support\Facades\Http;
 
 class ReportController extends BaseController
@@ -70,169 +65,111 @@ class ReportController extends BaseController
      */
     public function generateAIReport(Request $request)
     {
-        $timeRange = $request->input('time_range', 'this_month'); // today, this_week, this_month, custom
+        $timeRange  = $request->input('time_range', 'this_month');
         $startDateStr = $request->input('start_date');
-        $endDateStr = $request->input('end_date');
+        $endDateStr   = $request->input('end_date');
 
-        $startDate = Carbon::today()->startOfDay();
-        $endDate = Carbon::today()->endOfDay();
-
+        // Determine date range
         switch ($timeRange) {
             case 'today':
-                $startDate = Carbon::today()->startOfDay();
-                $endDate = Carbon::today()->endOfDay();
-                $reportPeriod = "Hôm nay (" . Carbon::today()->format('d/m/Y') . ")";
-                
+                $startDate   = Carbon::today()->startOfDay();
+                $endDate     = Carbon::today()->endOfDay();
+                $reportPeriod = 'Hôm nay (' . Carbon::today()->format('d/m/Y') . ')';
                 $prevStartDate = Carbon::yesterday()->startOfDay();
-                $prevEndDate = Carbon::yesterday()->endOfDay();
+                $prevEndDate   = Carbon::yesterday()->endOfDay();
                 break;
+
             case 'this_week':
-                $startDate = Carbon::now()->startOfWeek()->startOfDay();
-                $endDate = Carbon::now()->endOfWeek()->endOfDay();
-                $reportPeriod = "Tuần này (Từ " . $startDate->format('d/m/Y') . " đến " . $endDate->format('d/m/Y') . ")";
-                
+                $startDate   = Carbon::now()->startOfWeek()->startOfDay();
+                $endDate     = Carbon::now()->endOfWeek()->endOfDay();
+                $reportPeriod = 'Tuần này (Từ ' . $startDate->format('d/m/Y') . ' đến ' . $endDate->format('d/m/Y') . ')';
                 $prevStartDate = $startDate->copy()->subWeek()->startOfDay();
-                $prevEndDate = $endDate->copy()->subWeek()->endOfDay();
+                $prevEndDate   = $endDate->copy()->subWeek()->endOfDay();
                 break;
+
             case 'this_month':
-                $startDate = Carbon::now()->startOfMonth()->startOfDay();
-                $endDate = Carbon::now()->endOfMonth()->endOfDay();
-                $reportPeriod = "Tháng này (Từ " . $startDate->format('d/m/Y') . " đến " . $endDate->format('d/m/Y') . ")";
-                
+                $startDate   = Carbon::now()->startOfMonth()->startOfDay();
+                $endDate     = Carbon::now()->endOfMonth()->endOfDay();
+                $reportPeriod = 'Tháng này (Từ ' . $startDate->format('d/m/Y') . ' đến ' . $endDate->format('d/m/Y') . ')';
                 $prevStartDate = $startDate->copy()->subMonth()->startOfDay();
-                $prevEndDate = $endDate->copy()->subMonth()->endOfDay();
+                $prevEndDate   = $endDate->copy()->subMonth()->endOfDay();
                 break;
+
             case 'custom':
                 if (empty($startDateStr) || empty($endDateStr)) {
                     return response()->json([
                         'error' => 'Vui lòng chọn khoảng thời gian bắt đầu và kết thúc đầy đủ.'
                     ], 400);
                 }
-                $startDate = Carbon::parse($startDateStr)->startOfDay();
-                $endDate = Carbon::parse($endDateStr)->endOfDay();
-                $reportPeriod = "Tùy chỉnh (Từ " . $startDate->format('d/m/Y') . " đến " . $endDate->format('d/m/Y') . ")";
-                
-                $diffInDays = $startDate->diffInDays($endDate) + 1;
+                $startDate   = Carbon::parse($startDateStr)->startOfDay();
+                $endDate     = Carbon::parse($endDateStr)->endOfDay();
+                $reportPeriod = 'Tùy chỉnh (Từ ' . $startDate->format('d/m/Y') . ' đến ' . $endDate->format('d/m/Y') . ')';
+                $diffInDays    = $startDate->diffInDays($endDate) + 1;
                 $prevStartDate = $startDate->copy()->subDays($diffInDays)->startOfDay();
-                $prevEndDate = $endDate->copy()->subDays($diffInDays)->endOfDay();
+                $prevEndDate   = $endDate->copy()->subDays($diffInDays)->endOfDay();
+                break;
+
+            default:
+                $startDate   = Carbon::now()->startOfMonth()->startOfDay();
+                $endDate     = Carbon::now()->endOfMonth()->endOfDay();
+                $reportPeriod = 'Tháng này';
+                $prevStartDate = $startDate->copy()->subMonth()->startOfDay();
+                $prevEndDate   = $endDate->copy()->subMonth()->endOfDay();
                 break;
         }
 
-        // 1. Doanh thu tiền bàn
-        $tableRevenue = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->sum('table_total');
+        // Collect all metrics from repository
+        $tableRevenue   = $this->report->getTableRevenue($startDate, $endDate);
+        $serviceRevenue = $this->report->getServiceRevenue($startDate, $endDate);
+        $totalRevenue   = $this->report->getTotalRevenue($startDate, $endDate);
+        $orderCount     = $this->report->getOrderCount($startDate, $endDate);
+        $totalMinutes   = $this->report->getTotalMinutes($startDate, $endDate);
+        $totalHours     = round($totalMinutes / 60, 1);
 
-        // 2. Doanh thu dịch vụ
-        $serviceRevenue = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->sum('service_total');
-
-        // 3. Tổng doanh thu
-        $totalRevenue = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->sum('final_total');
-
-        // 4. Số lượng đơn hàng
-        $orderCount = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->count();
-
-        // 5. Số lượt khách (đếm số hóa đơn / orders)
-        $customerCount = $orderCount;
-
-        // 6. Số giờ sử dụng bàn
-        $totalMinutes = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->sum('total_minutes');
-        $totalHours = round($totalMinutes / 60, 1);
-
-        // 7. Tỷ lệ sử dụng bàn trung bình
-        $totalTables = Table::count();
-        $daysDiff = $startDate->diffInDays($endDate) + 1;
+        $totalTables        = $this->report->getTotalTableCount();
+        $daysDiff           = $startDate->diffInDays($endDate) + 1;
         $totalCapacityHours = $totalTables * 24 * $daysDiff;
-        $tableUsageRate = $totalCapacityHours > 0 ? round(($totalHours / $totalCapacityHours) * 100, 1) : 0;
+        $tableUsageRate     = $totalCapacityHours > 0 ? round(($totalHours / $totalCapacityHours) * 100, 1) : 0;
 
-        // 8. Khung giờ đông khách / vắng khách
-        $hoursDistribution = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->selectRaw('HOUR(started_at) as hour, COUNT(*) as count')
-            ->groupBy('hour')
-            ->orderByDesc('count')
-            ->get();
-        
-        $busyHours = "";
-        $quietHours = "";
+        $hoursDistribution = $this->report->getHoursDistribution($startDate, $endDate);
         if ($hoursDistribution->isNotEmpty()) {
-            $topHours = $hoursDistribution->take(2)->pluck('hour')->map(fn($h) => "{$h}h - " . ($h + 1) . "h")->implode(', ');
-            $busyHours = "{$topHours}";
-            
-            $bottomHours = $hoursDistribution->reverse()->take(2)->pluck('hour')->map(fn($h) => "{$h}h - " . ($h + 1) . "h")->implode(', ');
-            $quietHours = "{$bottomHours}";
+            $busyHours  = $hoursDistribution->take(2)->pluck('hour')
+                ->map(fn($h) => "{$h}h - " . ($h + 1) . 'h')->implode(', ');
+            $quietHours = $hoursDistribution->reverse()->take(2)->pluck('hour')
+                ->map(fn($h) => "{$h}h - " . ($h + 1) . 'h')->implode(', ');
         } else {
-            $busyHours = "Không có số liệu";
-            $quietHours = "Không có số liệu";
+            $busyHours  = 'Không có số liệu';
+            $quietHours = 'Không có số liệu';
         }
 
-        // 9. Top bàn sử dụng nhiều nhất
-        $topTablesData = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$startDate, $endDate])
-            ->join('tables', 'orders.table_id', '=', 'tables.id')
-            ->selectRaw('tables.table_name, COUNT(*) as count, SUM(total_minutes) as minutes')
-            ->groupBy('tables.table_name')
-            ->orderByDesc('count')
-            ->take(3)
-            ->get();
-        
+        $topTablesData = $this->report->getTopTables($startDate, $endDate);
         $topTables = $topTablesData->isNotEmpty()
-            ? $topTablesData->map(fn($t) => "Bàn {$t->table_name} ({$t->count} lượt, " . round($t->minutes / 60, 1) . " giờ)")->implode(', ')
-            : "Không có số liệu";
+            ? $topTablesData->map(fn($t) => "Bàn {$t->table_name} ({$t->count} lượt, " . round($t->minutes / 60, 1) . ' giờ)')->implode(', ')
+            : 'Không có số liệu';
 
-        // 10. Top dịch vụ bán chạy
-        $topServicesData = OrderDetail::join('orders', 'order_details.order_id', '=', 'orders.id')
-            ->where('orders.status', OrderStatus::COMPLETED)
-            ->whereBetween('orders.ended_at', [$startDate, $endDate])
-            ->whereNotNull('order_details.product_id')
-            ->selectRaw('order_details.product_name, SUM(order_details.quantity) as total_qty')
-            ->groupBy('order_details.product_name')
-            ->orderByDesc('total_qty')
-            ->take(3)
-            ->get();
-        
+        $topServicesData = $this->report->getTopServices($startDate, $endDate);
         $topServices = $topServicesData->isNotEmpty()
             ? $topServicesData->map(fn($p) => "{$p->product_name} ({$p->total_qty} phần)")->implode(', ')
-            : "Không có số liệu";
+            : 'Không có số liệu';
 
-        // 11. Top khách hàng chi tiêu cao
-        $topCustomersData = Invoice::whereBetween('created_at', [$startDate, $endDate])
-            ->join('customers', 'invoices.customer_id', '=', 'customers.id')
-            ->selectRaw('customers.name, SUM(invoices.final_amount) as total_spent')
-            ->groupBy('customers.name')
-            ->orderByDesc('total_spent')
-            ->take(3)
-            ->get();
-        
+        $topCustomersData = $this->report->getTopCustomers($startDate, $endDate);
         $topCustomers = $topCustomersData->isNotEmpty()
-            ? $topCustomersData->map(fn($c) => "{$c->name} (" . number_format($c->total_spent, 0, ',', '.') . " VNĐ)")->implode(', ')
-            : "Không có số liệu";
+            ? $topCustomersData->map(fn($c) => "{$c->name} (" . number_format($c->total_spent, 0, ',', '.') . ' VNĐ)')->implode(', ')
+            : 'Không có số liệu';
 
-        // 12. Dữ liệu so sánh kỳ trước
-        $prevRevenue = Order::where('status', OrderStatus::COMPLETED)
-            ->whereBetween('ended_at', [$prevStartDate, $prevEndDate])
-            ->sum('final_total');
-        
-        $revenueDiff = $totalRevenue - $prevRevenue;
+        $prevRevenue        = $this->report->getTotalRevenue($prevStartDate, $prevEndDate);
+        $revenueDiff        = $totalRevenue - $prevRevenue;
         $revenueDiffPercent = $prevRevenue > 0 ? round(($revenueDiff / $prevRevenue) * 100, 1) : 0;
-        $compareText = "Kỳ trước liền kề đạt " . number_format($prevRevenue, 0, ',', '.') . " VNĐ. ";
+        $compareText        = 'Kỳ trước liền kề đạt ' . number_format($prevRevenue, 0, ',', '.') . ' VNĐ. ';
         if ($revenueDiff > 0) {
-            $compareText .= "Tăng trưởng +" . number_format($revenueDiff, 0, ',', '.') . " VNĐ (+" . $revenueDiffPercent . "%).";
+            $compareText .= 'Tăng trưởng +' . number_format($revenueDiff, 0, ',', '.') . ' VNĐ (+' . $revenueDiffPercent . '%).';
         } elseif ($revenueDiff < 0) {
-            $compareText .= "Sụt giảm " . number_format(abs($revenueDiff), 0, ',', '.') . " VNĐ (" . $revenueDiffPercent . "%).";
+            $compareText .= 'Sụt giảm ' . number_format(abs($revenueDiff), 0, ',', '.') . ' VNĐ (' . $revenueDiffPercent . '%).';
         } else {
-            $compareText .= "Bằng kỳ trước.";
+            $compareText .= 'Bằng kỳ trước.';
         }
 
-        // Construct the prompt
+        // Build prompt
         $prompt = "
 Vai trò: Bạn là chuyên gia phân tích dữ liệu và tư vấn kinh doanh trong lĩnh vực billiards.
 Nhiệm vụ: Dựa trên các số liệu được cung cấp dưới đây, hãy tạo một báo cáo kinh doanh chuyên nghiệp dành cho chủ quán billiards.
@@ -252,7 +189,7 @@ Tổng doanh thu: " . number_format($totalRevenue, 0, ',', '.') . " VNĐ
 Doanh thu tiền bàn: " . number_format($tableRevenue, 0, ',', '.') . " VNĐ
 Doanh thu dịch vụ: " . number_format($serviceRevenue, 0, ',', '.') . " VNĐ
 Số lượng đơn hàng: {$orderCount}
-Số lượt khách: {$customerCount}
+Số lượt khách: {$orderCount}
 Số giờ sử dụng bàn: {$totalHours} giờ
 Tỷ lệ sử dụng bàn trung bình: {$tableUsageRate}%
 Khung giờ đông khách: {$busyHours}
@@ -281,7 +218,7 @@ Dữ liệu so sánh kỳ trước: {$compareText}
 [Tóm tắt tình hình hoạt động và triển vọng kinh doanh sắp tới]
 ";
 
-        // Call AI API
+        // Call Gemini API
         $apiKey = env('GEMINI_API_KEY');
         if (!$apiKey) {
             return response()->json([
@@ -289,11 +226,11 @@ Dữ liệu so sánh kỳ trước: {$compareText}
             ], 400);
         }
 
-        $model = env('GEMINI_MODEL', 'gemini-1.5-flash');
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+        $model = env('GEMINI_MODEL', 'gemini-2.5-flash');
+        $url   = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
         try {
-            $response = Http::post($url, [
+            $response = Http::timeout(60)->post($url, [
                 'contents' => [
                     [
                         'parts' => [
@@ -309,24 +246,24 @@ Dữ liệu so sánh kỳ trước: {$compareText}
                 ], 500);
             }
 
-            $result = $response->json();
+            $result        = $response->json();
             $generatedText = $result['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
             if (!$generatedText) {
                 return response()->json([
-                    'error' => 'Không nhận được nội dung trả về từ AI.'
+                    'error' => 'Không nhận được nội dung trả về từ AI. Phản hồi: ' . json_encode($result)
                 ], 500);
             }
 
             return response()->json([
-                'report' => $generatedText,
+                'report'  => $generatedText,
                 'metrics' => [
-                    'total_revenue' => $totalRevenue,
-                    'table_revenue' => $tableRevenue,
+                    'total_revenue'   => $totalRevenue,
+                    'table_revenue'   => $tableRevenue,
                     'service_revenue' => $serviceRevenue,
-                    'order_count' => $orderCount,
-                    'table_hours' => $totalHours,
-                    'usage_rate' => $tableUsageRate
+                    'order_count'     => $orderCount,
+                    'table_hours'     => $totalHours,
+                    'usage_rate'      => $tableUsageRate,
                 ]
             ]);
         } catch (\Exception $e) {
