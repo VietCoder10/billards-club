@@ -156,7 +156,7 @@ class OrderRepository implements OrderInterface
         $order->status = $request->status; //
         $order->ended_at = $request->status
             ? ($order->status == OrderStatus::PENDING
-                ? now()
+                ? null
                 : ($request->ended_at ? Carbon::parse($request->ended_at) : now()))
             : null;
         $order->price_per_hour = $request->price_per_hour;
