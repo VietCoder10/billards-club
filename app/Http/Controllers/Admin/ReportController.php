@@ -123,6 +123,13 @@ class ReportController extends BaseController
         $serviceRevenue = $this->report->getServiceRevenue($startDate, $endDate);
         $totalRevenue   = $this->report->getTotalRevenue($startDate, $endDate);
         $orderCount     = $this->report->getOrderCount($startDate, $endDate);
+
+        if ($orderCount == 0 && $totalRevenue == 0) {
+            return response()->json([
+                'error' => 'Không có dữ liệu giao dịch trong khoảng thời gian được chọn để tiến hành phân tích AI. Vui lòng chọn khoảng thời gian khác hoặc phát sinh giao dịch trước.'
+            ], 400);
+        }
+
         $totalMinutes   = $this->report->getTotalMinutes($startDate, $endDate);
         $totalHours     = round($totalMinutes / 60, 1);
 
@@ -171,52 +178,52 @@ class ReportController extends BaseController
 
         // Build prompt
         $prompt = "
-Vai trò: Bạn là chuyên gia phân tích dữ liệu và tư vấn kinh doanh trong lĩnh vực billiards.
-Nhiệm vụ: Dựa trên các số liệu được cung cấp dưới đây, hãy tạo một báo cáo kinh doanh chuyên nghiệp dành cho chủ quán billiards.
-Yêu cầu:
-- Phân tích dựa hoàn toàn trên dữ liệu đầu vào.
-- Đưa ra nhận xét khách quan và dễ hiểu.
-- Xác định các xu hướng nổi bật trong hoạt động kinh doanh.
-- Chỉ ra các vấn đề cần lưu ý nếu có.
-- Đưa ra các đề xuất thực tế giúp tăng doanh thu và nâng cao hiệu quả vận hành.
-- Văn phong chuyên nghiệp, ngắn gọn nhưng đầy đủ thông tin.
-- Không sử dụng các cụm từ như \"Tôi là AI\" hoặc \"Theo dữ liệu được cung cấp\".
-- Trả kết quả bằng tiếng Việt.
+            Vai trò: Bạn là chuyên gia phân tích dữ liệu và tư vấn kinh doanh trong lĩnh vực billiards.
+            Nhiệm vụ: Dựa trên các số liệu được cung cấp dưới đây, hãy tạo một báo cáo kinh doanh chuyên nghiệp dành cho chủ quán billiards.
+            Yêu cầu:
+            - Phân tích dựa hoàn toàn trên dữ liệu đầu vào.
+            - Đưa ra nhận xét khách quan và dễ hiểu.
+            - Xác định các xu hướng nổi bật trong hoạt động kinh doanh.
+            - Chỉ ra các vấn đề cần lưu ý nếu có.
+            - Đưa ra các đề xuất thực tế giúp tăng doanh thu và nâng cao hiệu quả vận hành.
+            - Văn phong chuyên nghiệp, ngắn gọn nhưng đầy đủ thông tin.
+            - Không sử dụng các cụm từ như \"Tôi là AI\" hoặc \"Theo dữ liệu được cung cấp\".
+            - Trả kết quả bằng tiếng Việt.
 
-Dữ liệu đầu vào:
-Kỳ báo cáo: {$reportPeriod}
-Tổng doanh thu: " . number_format($totalRevenue, 0, ',', '.') . " VNĐ
-Doanh thu tiền bàn: " . number_format($tableRevenue, 0, ',', '.') . " VNĐ
-Doanh thu dịch vụ: " . number_format($serviceRevenue, 0, ',', '.') . " VNĐ
-Số lượng đơn hàng: {$orderCount}
-Số lượt khách: {$orderCount}
-Số giờ sử dụng bàn: {$totalHours} giờ
-Tỷ lệ sử dụng bàn trung bình: {$tableUsageRate}%
-Khung giờ đông khách: {$busyHours}
-Khung giờ vắng khách: {$quietHours}
-Top bàn được sử dụng nhiều nhất: {$topTables}
-Top dịch vụ bán chạy: {$topServices}
-Top khách hàng chi tiêu cao: {$topCustomers}
-Dữ liệu so sánh kỳ trước: {$compareText}
+            Dữ liệu đầu vào:
+            Kỳ báo cáo: {$reportPeriod}
+            Tổng doanh thu: " . number_format($totalRevenue, 0, ',', '.') . " VNĐ
+            Doanh thu tiền bàn: " . number_format($tableRevenue, 0, ',', '.') . " VNĐ
+            Doanh thu dịch vụ: " . number_format($serviceRevenue, 0, ',', '.') . " VNĐ
+            Số lượng đơn hàng: {$orderCount}
+            Số lượt khách: {$orderCount}
+            Số giờ sử dụng bàn: {$totalHours} giờ
+            Tỷ lệ sử dụng bàn trung bình: {$tableUsageRate}%
+            Khung giờ đông khách: {$busyHours}
+            Khung giờ vắng khách: {$quietHours}
+            Top bàn được sử dụng nhiều nhất: {$topTables}
+            Top dịch vụ bán chạy: {$topServices}
+            Top khách hàng chi tiêu cao: {$topCustomers}
+            Dữ liệu so sánh kỳ trước: {$compareText}
 
-Định dạng kết quả trả về bắt buộc theo đúng cấu trúc sau:
-1. Tổng quan hoạt động
-[Nội dung tóm tắt ngắn gọn tình hình kinh doanh]
-2. Phân tích doanh thu
-[Đánh giá doanh thu tổng thể, cơ cấu doanh thu giữa tiền bàn và dịch vụ]
-3. Phân tích khách hàng
-[Đánh giá lượng khách, hành vi và mức chi tiêu của nhóm khách hàng]
-4. Phân tích hiệu suất sử dụng bàn
-[Đánh giá tỷ lệ sử dụng bàn, bàn hoạt động hiệu quả và giờ cao điểm]
-5. Điểm mạnh nổi bật
-[Các kết quả tích cực đạt được]
-6. Các vấn đề cần cải thiện
-[Hạn chế hoặc các dấu hiệu cần chú ý]
-7. Đề xuất cải thiện
-[Ít nhất 5 đề xuất cụ thể nhằm tăng doanh thu, hiệu suất, trải nghiệm và tối ưu vận hành]
-8. Kết luận
-[Tóm tắt tình hình hoạt động và triển vọng kinh doanh sắp tới]
-";
+            Định dạng kết quả trả về bắt buộc theo đúng cấu trúc sau:
+            1. Tổng quan hoạt động
+            [Nội dung tóm tắt ngắn gọn tình hình kinh doanh]
+            2. Phân tích doanh thu
+            [Đánh giá doanh thu tổng thể, cơ cấu doanh thu giữa tiền bàn và dịch vụ]
+            3. Phân tích khách hàng
+            [Đánh giá lượng khách, hành vi và mức chi tiêu của nhóm khách hàng]
+            4. Phân tích hiệu suất sử dụng bàn
+            [Đánh giá tỷ lệ sử dụng bàn, bàn hoạt động hiệu quả và giờ cao điểm]
+            5. Điểm mạnh nổi bật
+            [Các kết quả tích cực đạt được]
+            6. Các vấn đề cần cải thiện
+            [Hạn chế hoặc các dấu hiệu cần chú ý]
+            7. Đề xuất cải thiện
+            [Ít nhất 5 đề xuất cụ thể nhằm tăng doanh thu, hiệu suất, trải nghiệm và tối ưu vận hành]
+            8. Kết luận
+            [Tóm tắt tình hình hoạt động và triển vọng kinh doanh sắp tới]
+            ";
 
         // Call Gemini API
         $apiKey = env('GEMINI_API_KEY');
