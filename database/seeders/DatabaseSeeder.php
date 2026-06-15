@@ -25,5 +25,11 @@ class DatabaseSeeder extends Seeder
         // Tournament System
         // $this->call(TournamentSeeder::class);
         $this->call(CustomerSeeder::class);
+
+        // Ca làm việc tháng 6/2026
+        // $this->call(EventSeeder::class);
+
+        // Dữ liệu báo cáo doanh thu tháng 6/2026
+        // $this->call(ReportSeeder::class);
     }
 }

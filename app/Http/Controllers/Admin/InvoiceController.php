@@ -63,8 +63,26 @@ class InvoiceController extends BaseController
             $this->setFlash(__('Tạo hóa đơn thất bại'), 'error');
             return redirect()->route('admin.order.indexSession');
         }
-        $this->setFlash(__('Tạo hóa đơn thành công'), 'success');
+        $this->setFlash(__('Tạo hóa đơn thành công'), 'success', $invoice->id);
         return redirect()->route('admin.order.indexSession');
+    }
+
+    /**
+     * Print the specified resource.
+     */
+    public function print(string $id)
+    {
+        $invoice = $this->invoice->getById($id)->load('creator', 'customer');
+        $order = \App\Models\Order::where('order_number', $invoice->invoice_number)->first();
+
+        return Inertia::render('Admin/Invoice/Print', [
+            'data' => [
+                'title' => 'In hóa đơn #' . $invoice->invoice_number,
+                'invoice' => $invoice,
+                'invoiceDetails' => $invoice->invoice_details,
+                'order' => $order
+            ]
+        ]);
     }
 
     /**

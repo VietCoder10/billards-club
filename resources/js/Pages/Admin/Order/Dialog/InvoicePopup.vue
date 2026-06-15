@@ -3,6 +3,7 @@ import { reactive, ref, watch, computed, onMounted } from 'vue';
 import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
+import Checkbox from 'primevue/checkbox';
 import { Form as VeeForm, Field, ErrorMessage, defineRule, configure } from 'vee-validate';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import CustomerSearchModal from '@/Components/Billiard/CustomerSearchModal.vue';
@@ -19,6 +20,10 @@ const openCustomerModal = () => {
 };
 const emit = defineEmits(['update:visible', 'update:isSubmitting']);
 const localVisible = ref(props.visible);
+
+const isStudent = ref(false);
+const isPrint = ref(false);
+
 watch(
   () => props.visible,
   (v) => {
@@ -30,6 +35,8 @@ watch(
         created_by: props.request.created_by || page.props.value.user?.id,
         customer_paid: props.request.customer_paid || 0
       };
+      isStudent.value = false;
+      isPrint.value = false;
     }
   }
 );
@@ -45,6 +52,8 @@ onMounted(() => {
     created_by: props.request.created_by || page.props.value.user?.id,
     customer_paid: props.request.customer_paid || 0
   };
+  isStudent.value = false;
+  isPrint.value = false;
 });
 
 watch(
@@ -87,6 +96,19 @@ const invoiceDetails = computed(() => {
   return details;
 });
 
+const discount = computed(() => {
+  if (isStudent.value) {
+    return Math.round((state.model.order?.table_total || 0) * 0.1);
+  }
+  return 0;
+});
+
+const finalTotal = computed(() => {
+  const tableTotal = state.model.order?.table_total || 0;
+  const serviceTotal = state.model.order?.service_total || 0;
+  return Math.max(0, tableTotal + serviceTotal - discount.value);
+});
+
 const qrCodeDescription = computed(() => {
   const orderNumber = state.model.order?.order_number || '';
   return `Thanh toan don hang ${orderNumber}`.trim();
@@ -98,7 +120,7 @@ const qrCodeUrl = computed(() => {
   const accountName = encodeURIComponent(page.props.value.vietqr?.account_name || 'BILLIARD CLUB');
   const template = page.props.value.vietqr?.template || 'qr_only';
 
-  const amount = Math.round(state.model.order?.final_total || 0);
+  const amount = Math.round(finalTotal.value || 0);
   const description = encodeURIComponent(qrCodeDescription.value);
 
   return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${description}&accountName=${accountName}`;
@@ -119,13 +141,19 @@ const onSubmit = () => {
     customer_id: state.model.customer_id,
     payment_method: state.model.payment_method,
     table_name: state.model.order?.table?.table_name,
-    details: invoiceDetails.value
+    details: invoiceDetails.value,
+    discount: discount.value,
+    final_total: finalTotal.value
   };
 
   useForm(payload).post(route('admin.invoice.store'), {
     preserveScroll: true,
-    onSuccess: () => {
+    onSuccess: (pageRes) => {
       emit('update:visible', false);
+      if (isPrint.value && pageRes.props.dataSession?.urlRedirect) {
+        const invoiceId = pageRes.props.dataSession.urlRedirect;
+        window.open(route('admin.invoice.print', { invoice: invoiceId }), '_blank');
+      }
     },
     onFinish: () => {
       isSubmitting.value = false;
@@ -171,7 +199,16 @@ const handleSelectCustomer = (customer) => {
             <div class="flex flex-col gap-1 basis-0 grow">
               <span class="text-sm text-gray-500 font-medium">Nhân viên tạo HĐ</span>
               <Field name="created_by" v-model="state.model.created_by" v-slot="{ field, meta: metaField, handleChange }">
-                <Select :options="$page.props.data.userOptions" optionLabel="label" optionValue="value" :modelValue="field.value" @update:model-value="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" class="w-full" />
+                <Select
+                  :disabled="$page.props.user.user_role != 1"
+                  :options="$page.props.data.userOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  :modelValue="field.value"
+                  @update:model-value="handleChange"
+                  :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
+                  class="w-full"
+                />
               </Field>
             </div>
             <div class="flex flex-col gap-1 basis-0 grow">
@@ -232,6 +269,18 @@ const handleSelectCustomer = (customer) => {
 
           <div class="flex flex-wrap gap-4">
             <div class="flex flex-col gap-3 w-1/2">
+              <span class="font-bold text-gray-700">Tùy chọn hóa đơn</span>
+              <div class="flex flex-col gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200 mb-2">
+                <div class="flex items-center gap-3">
+                  <Checkbox id="chk-student" v-model="isStudent" :binary="true" />
+                  <label for="chk-student" class="text-sm font-semibold text-gray-700 cursor-pointer select-none"> Học sinh, sinh viên (Giảm 10% tiền bàn) </label>
+                </div>
+                <div class="flex items-center gap-3">
+                  <Checkbox id="chk-print" v-model="isPrint" :binary="true" />
+                  <label for="chk-print" class="text-sm font-semibold text-gray-700 cursor-pointer select-none"> In hóa đơn sau khi lưu </label>
+                </div>
+              </div>
+
               <span class="font-bold text-gray-700">Phương thức thanh toán</span>
               <div class="flex gap-4">
                 <div
@@ -264,7 +313,7 @@ const handleSelectCustomer = (customer) => {
                 <div class="flex flex-col gap-1">
                   <span class="text-sm font-bold text-gray-700">Tiền thừa</span>
                   <div class="p-inputtext p-component bg-gray-100 font-bold text-blue-600 flex items-center h-10 px-3 cursor-not-allowed">
-                    {{ formatCurrency(Math.max(0, (state.model.customer_paid || 0) - (state.model.order?.final_total || 0))) }}
+                    {{ formatCurrency(Math.max(0, (state.model.customer_paid || 0) - finalTotal)) }}
                   </div>
                 </div>
               </div>
@@ -293,7 +342,7 @@ const handleSelectCustomer = (customer) => {
                   </div>
                   <div class="flex justify-between border-b pb-1.5 border-gray-100">
                     <span class="text-gray-500">Số tiền:</span>
-                    <span class="font-bold text-blue-600">{{ formatCurrency(state.model.order?.final_total) }}</span>
+                    <span class="font-bold text-blue-600">{{ formatCurrency(finalTotal) }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-500">Nội dung CK:</span>
@@ -312,9 +361,13 @@ const handleSelectCustomer = (customer) => {
                 <span class="font-medium text-sm">Tiền bàn:</span>
                 <span class="font-bold">{{ formatCurrency(state.model.order?.table_total) }}</span>
               </div>
+              <div v-if="discount > 0" class="flex justify-between items-center text-red-600 font-bold transition-all duration-300">
+                <span class="text-sm">Giảm giá HSSV (10% tiền bàn):</span>
+                <span>-{{ formatCurrency(discount) }}</span>
+              </div>
               <div class="flex justify-between items-center mt-2 pt-2 border-t-2 border-dashed border-gray-200">
                 <span class="font-black text-lg text-blue-800">Tổng cộng:</span>
-                <span class="font-black text-2xl text-blue-600">{{ formatCurrency(state.model.order?.final_total) }}</span>
+                <span class="font-black text-2xl text-blue-600">{{ formatCurrency(finalTotal) }}</span>
               </div>
             </div>
           </div>

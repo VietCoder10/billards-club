@@ -59,6 +59,7 @@ Route::group([
         Route::post('product/{id}/update-avatar', [\App\Http\Controllers\Admin\ProductController::class, 'updateAvatar'])->name('product.updateAvatar');
         Route::resource('table', \App\Http\Controllers\Admin\TableController::class);
         Route::resource('table_price_master', \App\Http\Controllers\Admin\TablePriceMasterController::class);
+        Route::get('invoice/{invoice}/print', [InvoiceController::class, 'print'])->name('invoice.print');
         Route::resource('invoice', InvoiceController::class);
         Route::resource('tournament', \App\Http\Controllers\Admin\TournamentController::class);
         Route::post('tournament/{tournament}/participant/{participant}', [\App\Http\Controllers\Admin\TournamentController::class, 'updateParticipantStatus'])->name('tournament.participant.update');

@@ -79,7 +79,7 @@ const setMessageError = () => {
 const onSubmit = () => {
   // Format dates back to string before sending
   const formData = { ...state.model };
-  
+
   if (props.data.isEdit) {
     useForm({
       ...formData,
@@ -115,14 +115,7 @@ const onSubmit = () => {
                 <label class="form-label" require>Tên giải đấu: </label>
                 <div class="form-input">
                   <Field name="name" rules="required|max:255" v-model="state.model.name" v-slot="{ field, meta: metaField, handleChange }">
-                    <InputText
-                      class="w-full"
-                      type="text"
-                      v-model="state.model.name"
-                      v-on:update:model-value="handleChange"
-                      v-bind="field"
-                      :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
-                    />
+                    <InputText class="w-full" type="text" v-model="state.model.name" v-on:update:model-value="handleChange" v-bind="field" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                     <ErrorMessage class="p-error" name="name" />
                   </Field>
                 </div>
@@ -139,15 +132,7 @@ const onSubmit = () => {
                 <label class="form-label" require>Ngày bắt đầu: </label>
                 <div class="form-input">
                   <Field name="start_date" rules="required" v-model="state.model.start_date" v-slot="{ field, meta: metaField, handleChange }">
-                    <Calendar
-                      class="w-full"
-                      v-model="state.model.start_date"
-                      showTime hourFormat="24"
-                      dateFormat="dd/mm/yy"
-                      v-bind="field"
-                      @update:modelValue="handleChange"
-                      :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
-                    />
+                    <Calendar class="w-full" v-model="state.model.start_date" showTime hourFormat="24" dateFormat="dd/mm/yy" v-bind="field" @update:modelValue="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                     <ErrorMessage class="p-error" name="start_date" />
                   </Field>
                 </div>
@@ -157,15 +142,7 @@ const onSubmit = () => {
                 <label class="form-label" require>Ngày kết thúc: </label>
                 <div class="form-input">
                   <Field name="end_date" rules="required" v-model="state.model.end_date" v-slot="{ field, meta: metaField, handleChange }">
-                    <Calendar
-                      class="w-full"
-                      v-model="state.model.end_date"
-                      showTime hourFormat="24"
-                      dateFormat="dd/mm/yy"
-                      v-bind="field"
-                      @update:modelValue="handleChange"
-                      :class="{ 'p-invalid': !metaField.valid && metaField.touched }"
-                    />
+                    <Calendar class="w-full" v-model="state.model.end_date" showTime hourFormat="24" dateFormat="dd/mm/yy" v-bind="field" @update:modelValue="handleChange" :class="{ 'p-invalid': !metaField.valid && metaField.touched }" />
                     <ErrorMessage class="p-error" name="end_date" />
                   </Field>
                 </div>
@@ -178,7 +155,8 @@ const onSubmit = () => {
                     <Calendar
                       class="w-full"
                       v-model="state.model.registration_deadline"
-                      showTime hourFormat="24"
+                      showTime
+                      hourFormat="24"
                       dateFormat="dd/mm/yy"
                       v-bind="field"
                       @update:modelValue="handleChange"
@@ -192,13 +170,7 @@ const onSubmit = () => {
               <div class="form-group">
                 <label class="form-label">Trạng thái: </label>
                 <div class="form-input">
-                  <Select
-                    class="w-full"
-                    :options="statusOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    v-model="state.model.status"
-                  />
+                  <Select class="w-full" :options="statusOptions" optionLabel="label" optionValue="value" v-model="state.model.status" />
                 </div>
               </div>
 
@@ -222,7 +194,6 @@ const onSubmit = () => {
                   <InputText class="w-full" v-model="state.model.prize_pool" placeholder="VD: Nhất: 5tr, Nhì: 2tr" />
                 </div>
               </div>
-
             </div>
           </form>
         </VeeForm>

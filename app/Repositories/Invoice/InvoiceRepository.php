@@ -93,7 +93,7 @@ class InvoiceRepository implements InvoiceInterface
                 'table_name' => $request->table_name,
                 'table_total' => round($request->table_total),
                 'service_total' => round($request->service_total),
-                'total_amount' => round($request->final_total),
+                'total_amount' => round($request->table_total + $request->service_total),
                 'discount' => round($request->discount ?? 0),
                 'final_amount' => round($request->final_total),
                 'payment_method' => $request->payment_method,
@@ -102,12 +102,12 @@ class InvoiceRepository implements InvoiceInterface
             if (!$invoice->save()) {
                 return false;
             }
-            
+
             $order = $this->order->with('details')->find($request->order_id);
             if (!$order) {
                 return false;
             }
-            
+
             // Return old quantities to stock before updating details
             foreach ($order->details as $detail) {
                 if ($detail->product_id) {
@@ -118,9 +118,9 @@ class InvoiceRepository implements InvoiceInterface
                     }
                 }
             }
-            
+
             // Remove old details
-            $order->details()->delete();
+            $order->details()->forceDelete();
 
             // Save new details to the database and adjust stock levels
             foreach ($request->details ?? [] as $value) {
@@ -164,7 +164,7 @@ class InvoiceRepository implements InvoiceInterface
             if (!$order->save()) {
                 return false;
             }
-            
+
             $table = $this->table->find($order->table_id);
             if (!$table) {
                 return false;
@@ -173,7 +173,7 @@ class InvoiceRepository implements InvoiceInterface
             if (!$table->save()) {
                 return false;
             }
-            
+
             $row = [];
             foreach ($request->details as $value) {
                 $row[] = [
@@ -188,7 +188,7 @@ class InvoiceRepository implements InvoiceInterface
                 $invoice->invoice_details()->createMany($row);
             }
 
-            return true;
+            return $invoice;
         });
     }
     public function update(InvoiceRequest $request, $id) {}

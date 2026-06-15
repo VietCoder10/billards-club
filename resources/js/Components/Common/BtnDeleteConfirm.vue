@@ -2,7 +2,7 @@
   <div>
     <CDropdownItem @click="showAlert" style="cursor: pointer">
       <i class="fa fa-trash" aria-hidden="true"></i>
-      削除
+      Xóa bỏ
     </CDropdownItem>
   </div>
 </template>
@@ -29,8 +29,8 @@ export default {
       this.$swal({
         title: that.messageConfirm,
         icon: 'warning',
-        confirmButtonText: '削除する',
-        cancelButtonText: '閉じる',
+        confirmButtonText: 'Xóa bỏ',
+        cancelButtonText: 'Đóng',
         showCancelButton: true
       }).then((result) => {
         if (result.value) {
@@ -45,7 +45,7 @@ export default {
                 .$swal({
                   title: response.data.message,
                   icon: 'success',
-                  confirmButtonText: '閉じる'
+                  confirmButtonText: 'Đóng'
                 })
                 .then(function () {
                   // location.reload();
@@ -68,7 +68,7 @@ export default {
                   }
                 ]
               });
-              return notyf.error('エラーが発生しました。');
+              return notyf.error('Đã xảy ra lỗi. Vui lòng thử lại sau!');
             });
         }
       });
