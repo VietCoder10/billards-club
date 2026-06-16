@@ -74,12 +74,8 @@ const handleClose = () => {
       <div class="action-bar-content">
         <span class="action-title">Xem trước hóa đơn #{{ invoice.invoice_number }}</span>
         <div class="action-buttons">
-          <button @click="handlePrint" class="btn btn-print">
-            <i class="pi pi-print"></i> In hóa đơn (PDF)
-          </button>
-          <button @click="handleClose" class="btn btn-close">
-            <i class="pi pi-times"></i> Đóng cửa sổ
-          </button>
+          <button @click="handlePrint" class="btn btn-print"><i class="pi pi-print"></i> In hóa đơn (PDF)</button>
+          <button @click="handleClose" class="btn btn-close"><i class="pi pi-times"></i> Đóng cửa sổ</button>
         </div>
       </div>
     </div>
@@ -91,8 +87,8 @@ const handleClose = () => {
         <h1 class="brand-name">TQ BILLIARD CLUB</h1>
         <p class="brand-sub">Đường đi bóng đẳng cấp - Dịch vụ chuẩn 5 sao</p>
         <div class="brand-info">
-          <p>Địa chỉ: Đường số 12, P. Linh Trung, TP. Thủ Đức, TP. HCM</p>
-          <p>Hotline: 0356.166.166 - 0356.168.168</p>
+          <p>Địa chỉ: Triều Khúc, Hà Nội</p>
+          <p>Hotline: 0999999999</p>
         </div>
       </div>
 
@@ -197,11 +193,21 @@ const handleClose = () => {
         <div class="qr-content">
           <img :src="qrCodeUrl" alt="VietQR Pay" class="qr-image" />
           <div class="bank-details">
-            <p>Ngân hàng: <strong>{{ $page.props.vietqr?.bank_id || 'MB' }}</strong></p>
-            <p>Số tài khoản: <strong>{{ $page.props.vietqr?.account_no || '0356166166' }}</strong></p>
-            <p>Chủ TK: <strong>{{ $page.props.vietqr?.account_name || 'BILLIARD CLUB' }}</strong></p>
-            <p>Số tiền: <strong>{{ formatCurrency(invoice.final_amount) }}</strong></p>
-            <p class="text-sm">Nội dung CK: <strong class="text-amber">{{ qrCodeDescription }}</strong></p>
+            <p>
+              Ngân hàng: <strong>{{ $page.props.vietqr?.bank_id || 'MB' }}</strong>
+            </p>
+            <p>
+              Số tài khoản: <strong>{{ $page.props.vietqr?.account_no || '0356166166' }}</strong>
+            </p>
+            <p>
+              Chủ TK: <strong>{{ $page.props.vietqr?.account_name || 'BILLIARD CLUB' }}</strong>
+            </p>
+            <p>
+              Số tiền: <strong>{{ formatCurrency(invoice.final_amount) }}</strong>
+            </p>
+            <p class="text-sm">
+              Nội dung CK: <strong class="text-amber">{{ qrCodeDescription }}</strong>
+            </p>
           </div>
         </div>
       </div>
@@ -401,16 +407,36 @@ const handleClose = () => {
 }
 
 /* Alignment Helpers */
-.text-left { text-align: left; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.font-medium { font-weight: 500; }
-.font-bold { font-weight: 700; }
-.text-uppercase { text-transform: uppercase; }
-.text-red { color: #dc2626; }
-.text-amber { color: #d97706; }
-.mt-1 { margin-top: 8px; }
-.text-muted { color: #64748b; }
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-bold {
+  font-weight: 700;
+}
+.text-uppercase {
+  text-transform: uppercase;
+}
+.text-red {
+  color: #dc2626;
+}
+.text-amber {
+  color: #d97706;
+}
+.mt-1 {
+  margin-top: 8px;
+}
+.text-muted {
+  color: #64748b;
+}
 
 /* Summary */
 .summary-section {
