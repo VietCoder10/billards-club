@@ -101,7 +101,7 @@ let messError = {
       password: {
         max: 'Mật khẩu phải từ 10 đến 16 ký tự.',
         min: 'Mật khẩu phải từ 10 đến 16 ký tự.',
-        password_rule: 'Mật khẩu phải từ 10 đến 16 ký tự gồm chữ hoa, chữ thường, số và ký tự đặc biệt (!#$%&*+-=?@_).'
+        password_rule: 'Mật khẩu phải từ 10 đến 16 ký tự gồm chữ hoa, chữ thường và số.'
       },
       password_confirmation: {
         required: 'Vui lòng xác nhận mật khẩu.',

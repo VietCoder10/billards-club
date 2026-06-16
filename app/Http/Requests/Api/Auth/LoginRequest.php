@@ -26,8 +26,7 @@ class LoginRequest extends ApiFormRequest
             preg_match('/[a-z]/', $password, $outLower);
             preg_match('/[A-Z]/', $password, $outUpper);
             preg_match('/[0-9]/', $password, $outNumber);
-            preg_match('/[@$!%*?&]/', $password, $outSpecial);
-            if (!$outLower || !$outUpper || !$outNumber || !$outSpecial) {
+            if (!$outLower || !$outUpper || !$outNumber) {
                 $validator->errors()->add('password', "error");
             }
         });

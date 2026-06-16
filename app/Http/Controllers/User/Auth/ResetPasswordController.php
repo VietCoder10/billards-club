@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User\Auth;
 
+use App\Http\Requests\User\Auth\CustomerResetPasswordRequest;
 use App\Http\Controllers\BaseController;
 use App\Repositories\Customer\CustomerInterface;
 use Illuminate\Http\Request;
@@ -68,7 +69,7 @@ class ResetPasswordController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $token)
+    public function update(CustomerResetPasswordRequest $request, string $token)
     {
         //
         if (!$this->customer->checkToken($token)) {
@@ -76,11 +77,11 @@ class ResetPasswordController extends BaseController
             return redirect()->route('user.login.index')->with('error', 'Liên kết không hợp lệ hoặc đã hết hạn.');
         }
         if (!$this->customer->resetPassword($request, $token)) {
-            $this->setFlash(__('Đặt lại mật khẩu thất bại.'), 'error');
-            return redirect()->back()->with('error', 'パスワードのリセットに失敗しました。');
+            $this->setFlash(__('Đặt lại mật khẩu không thành công.'), 'error');
+            return redirect()->back()->with('error', __('Đặt lại mật khẩu không thành công.'));
         }
-        $this->setFlash(__('パスワードが正常にリセットされました。'));
-        return redirect()->route('admin.login.index')->with('success', 'パスワードが正常にリセットされました。');
+        $this->setFlash(__('Mật khẩu đã được đặt lại thành công.'));
+        return redirect()->route('user.login.index')->with('success', __('Mật khẩu đã được đặt lại thành công.'));
     }
 
     /**
