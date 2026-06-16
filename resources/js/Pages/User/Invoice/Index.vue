@@ -43,10 +43,10 @@ const showPopup = ref(false);
                   >
                     <td>{{ invoice.invoice_number }}</td>
                     <td>{{ invoice.created_user_name }}</td>
-                    <td>{{ invoice.table_total }}</td>
-                    <td>{{ invoice.service_total }}</td>
-                    <td>{{ invoice.total_amount }}</td>
-                    <td>{{ invoice.final_amount }}</td>
+                    <td>{{ Number(invoice.table_total).toLocaleString() }}</td>
+                    <td>{{ Number(invoice.service_total).toLocaleString() }}</td>
+                    <td>{{ Number(invoice.total_amount).toLocaleString() }}</td>
+                    <td>{{ Number(invoice.final_amount).toLocaleString() }}</td>
                     <td>{{ invoice.payment_method_label }}</td>
                     <td>
                       <BtnAction v-if="!invoice.deleted_at" :urlEdit="route('user.invoice.show', invoice.id)" :request="$page.props.data.request" :routeName="'user.invoice.index'"></BtnAction>
