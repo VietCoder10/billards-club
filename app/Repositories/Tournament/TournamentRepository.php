@@ -28,7 +28,7 @@ class TournamentRepository implements TournamentInterface
         $builder = $this->tournament->query();
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder->where(function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request['free_word']}%");
+                $query->where(CommonComponent::escapeLikeSentence('name', $request['free_word']));
             });
         }
         $tournaments = $builder->sortable(['created_at' => 'desc'])->paginate($newSizeLimit);

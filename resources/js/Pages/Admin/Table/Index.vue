@@ -46,7 +46,7 @@ import { Link, usePage } from '@inertiajs/inertia-vue3';
                     <td>{{ index + 1 }}</td>
                     <td>{{ table.table_name }}</td>
                     <td>{{ table.status_label }}</td>
-                    <td>{{ table.price_per_hour }}</td>
+                    <td>{{ Number(table.price_per_hour).toLocaleString() }}</td>
                     <td>
                       <BtnAction
                         :urlEdit="route('admin.table.edit', table.id)"

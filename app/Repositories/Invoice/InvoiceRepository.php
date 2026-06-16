@@ -42,6 +42,11 @@ class InvoiceRepository implements InvoiceInterface
                 'user_updated.name as updated_user_name ',
                 'invoices.*'
             );
+        if (isset($request['free_word']) && $request['free_word'] != '') {
+            $builder->where(function ($query) use ($request) {
+                $query->where(CommonComponent::escapeLikeSentence('invoice_number', $request['free_word']));
+            });
+        }
         $invoices = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);
         if (CommonComponent::checkPaginatorList($invoices)) {
             Paginator::currentPageResolver(function () {
