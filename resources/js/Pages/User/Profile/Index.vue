@@ -116,7 +116,11 @@ configure({
 });
 
 const onSubmit = () => {
-  useForm(state.model).post(route('user.profile.update'));
+  const formFields = { ...state.model };
+  if (!(formFields.avatar instanceof File)) {
+    delete formFields.avatar;
+  }
+  useForm(formFields).post(route('user.profile.update'));
 };
 </script>
 

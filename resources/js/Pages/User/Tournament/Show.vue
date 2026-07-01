@@ -85,6 +85,12 @@ const getAvatarGradient = (name) => {
   const index = Math.abs(hash) % gradients.length;
   return gradients[index];
 };
+
+const isDeadlinePassed = computed(() => {
+  const deadline = page.props.value.data.tournament.registration_deadline;
+  if (!deadline) return false;
+  return moment().isAfter(moment(deadline));
+});
 </script>
 
 <template>
@@ -234,6 +240,16 @@ const getAvatarGradient = (name) => {
                     <i class="pi pi-times-circle"></i>
                     Hủy đăng ký giải đấu
                   </button>
+                </div>
+
+                <!-- Registration deadline passed -->
+                <div
+                  v-else-if="isDeadlinePassed"
+                  class="p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 rounded-xl text-center"
+                >
+                  <i class="pi pi-calendar-times text-xl text-rose-500 mb-1.5 block"></i>
+                  <p class="text-sm font-bold text-rose-800 dark:text-rose-350">Hết hạn đăng ký</p>
+                  <p class="text-xs text-rose-650 dark:text-rose-450 mt-1">Giải đấu đã đóng đăng ký do quá hạn đăng ký.</p>
                 </div>
 
                 <!-- Registration limit reached -->

@@ -40,8 +40,19 @@ class TournamentController extends BaseController
     public function register(Request $request, $id)
     {
         $customerId = auth('customer')->id();
-        $data = $request->only(['special_name', 'rank']);
+        $tournament = $this->interface->getById($id);
 
+        if (!$tournament) {
+            $this->setFlash(__('Giải đấu không tồn tại.'), 'error');
+            return redirect()->route('user.tournament.index');
+        }
+
+        if ($tournament->registration_deadline && $tournament->registration_deadline->isPast()) {
+            $this->setFlash(__('Đã quá hạn đăng ký tham gia giải đấu.'), 'error');
+            return redirect()->route('user.tournament.show', $id);
+        }
+
+        $data = $request->only(['special_name', 'rank']);
         $result = $this->interface->registerParticipant($id, $customerId, $data);
 
         if ($result) {

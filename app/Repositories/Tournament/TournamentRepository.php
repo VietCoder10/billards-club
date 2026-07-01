@@ -123,6 +123,15 @@ class TournamentRepository implements TournamentInterface
 
     public function registerParticipant($tournamentId, $customerId, $data = [])
     {
+        $tournament = $this->tournament->find($tournamentId);
+        if (!$tournament) {
+            return false;
+        }
+
+        if ($tournament->registration_deadline && $tournament->registration_deadline->isPast()) {
+            return false;
+        }
+
         $exists = TournamentParticipant::where('tournament_id', $tournamentId)
             ->where('customer_id', $customerId)
             ->exists();
