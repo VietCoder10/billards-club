@@ -10,7 +10,7 @@ import Button from 'primevue/button';
 
 const state = reactive({
   model: {
-    email: '',
+    email: ''
   }
 });
 
@@ -28,9 +28,9 @@ const onInvalidSubmit = ({ errors }) => {
 };
 
 let messError = {
-  vi: {
+  en: {
     fields: {
-      email: { required: 'Vui lòng nhập email.', email: 'Định dạng email không hợp lệ.', max: 'Tối đa 255 ký tự.' },
+      email: { required: 'Vui lòng nhập email.', email: 'Định dạng email không hợp lệ.', max: 'Tối đa 255 ký tự.' }
     }
   }
 };
@@ -49,7 +49,13 @@ configure({ generateMessage: localize(messError) });
         <div class="mb-8">
           <label class="block text-zinc-300 font-medium mb-2">Địa chỉ Email</label>
           <Field name="email" rules="required|max:255|email" v-model="state.model.email" v-slot="{ field, meta, handleChange }">
-            <InputText v-model="state.model.email" v-bind="field" :class="{ 'p-invalid': !meta.valid && meta.touched, 'w-full bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-amber-500 focus:ring-amber-500': true }" @update:model-value="handleChange" placeholder="example@email.com" />
+            <InputText
+              v-model="state.model.email"
+              v-bind="field"
+              :class="{ 'p-invalid': !meta.valid && meta.touched, 'w-full bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-amber-500 focus:ring-amber-500': true }"
+              @update:model-value="handleChange"
+              placeholder="example@email.com"
+            />
           </Field>
           <ErrorMessage class="text-red-500 text-sm mt-1 block" name="email" />
         </div>

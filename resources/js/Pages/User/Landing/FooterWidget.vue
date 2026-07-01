@@ -34,7 +34,7 @@
         <ul class="space-y-4 text-zinc-400">
           <li class="flex items-start gap-3">
             <i class="pi pi-map-marker mt-1 text-amber-500"></i>
-            <span>Ở trong tim em</span>
+            <span>Triều Khúc, Hà Nội</span>
           </li>
           <li class="flex items-center gap-3">
             <i class="pi pi-phone text-amber-500"></i>

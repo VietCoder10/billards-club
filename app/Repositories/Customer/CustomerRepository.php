@@ -32,9 +32,9 @@ class CustomerRepository implements CustomerInterface
         $builder = $this->customer->query();
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder->where(function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request['free_word']}%");
-                $query->orWhere('email', 'like', "%{$request['free_word']}%");
-                $query->orWhere('phone', 'like', "%{$request['free_word']}%");
+                $query->where(CommonComponent::escapeLikeSentence('name', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('email', $request['free_word']));
+                $query->orWhere(CommonComponent::escapeLikeSentence('phone', $request['free_word']));
             });
         }
         $customers = $builder->sortable(['updated_at' => 'desc'])->paginate($newSizeLimit);

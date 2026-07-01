@@ -48,9 +48,9 @@ import moment from 'moment';
                     <td>{{ order.table_name }}</td>
                     <td>{{ moment(order.started_at).format('HH:mm - DD/MM/YYYY') }}</td>
                     <td>{{ moment(order.ended_at).format('HH:mm - DD/MM/YYYY') }}</td>
-                    <td>{{ order.table_total }}</td>
-                    <td>{{ order.service_total }}</td>
-                    <td>{{ order.final_total }}</td>
+                    <td>{{ Number(order.table_total).toLocaleString() }}</td>
+                    <td>{{ Number(order.service_total).toLocaleString() }}</td>
+                    <td>{{ Number(order.final_total).toLocaleString() }}</td>
                     <td>{{ order.order_status_label }}</td>
                     <td>
                       <BtnAction

@@ -28,7 +28,7 @@ class TournamentRepository implements TournamentInterface
         $builder = $this->tournament->query();
         if (isset($request['free_word']) && $request['free_word'] != '') {
             $builder->where(function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request['free_word']}%");
+                $query->where(CommonComponent::escapeLikeSentence('name', $request['free_word']));
             });
         }
         $tournaments = $builder->sortable(['created_at' => 'desc'])->paginate($newSizeLimit);
@@ -123,6 +123,15 @@ class TournamentRepository implements TournamentInterface
 
     public function registerParticipant($tournamentId, $customerId, $data = [])
     {
+        $tournament = $this->tournament->find($tournamentId);
+        if (!$tournament) {
+            return false;
+        }
+
+        if ($tournament->registration_deadline && $tournament->registration_deadline->isPast()) {
+            return false;
+        }
+
         $exists = TournamentParticipant::where('tournament_id', $tournamentId)
             ->where('customer_id', $customerId)
             ->exists();

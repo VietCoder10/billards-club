@@ -33,9 +33,8 @@ class CustomerRegisterRequest extends FormRequest
                 preg_match('/[a-z]/', $data['password'], $outLower);
                 preg_match('/[A-Z]/', $data['password'], $outUpper);
                 preg_match('/[0-9]/', $data['password'], $outNumber);
-                preg_match('/[@$!%*?&]/', $data['password'], $outSpecial);
-                if (!$outLower || !$outUpper || !$outNumber || !$outSpecial) {
-                    $validator->errors()->add('password', "Mật khẩu phải có ít nhất 1 chữ cái thường, 1 chữ cái hoa, 1 số và 1 ký tự đặc biệt");
+                if (!$outLower || !$outUpper || !$outNumber) {
+                    $validator->errors()->add('password', "Mật khẩu phải có ít nhất 1 chữ cái thường, 1 chữ cái hoa và 1 số");
                 }
             }
         });

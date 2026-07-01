@@ -32,7 +32,7 @@ const exportCsv = () => {
     <VeeForm as="div" v-slot="{ handleSubmit }">
       <form class="form-inline" method="POST" @submit="handleSubmit($event, onSubmit)" ref="formData">
         <div>
-          <InputText type="text" class="w-300" name="free_word" id="free_word" placeholder="Search" v-model="model.free_word" />
+          <InputText type="text" class="w-300" name="free_word" id="free_word" placeholder="Tìm kiếm" v-model="model.free_word" />
           <a :href="state.urlDownload" id="linkDownload" ref="linkDownload" download></a>
           <Button type="submit" class="ml-2"> <i class="pi pi-search"></i> &nbsp; Tìm kiếm </Button>
           <Link v-if="createUrl" :href="createUrl" class="ml-2"><Button icon="pi pi-plus" label="Thêm mới" /></Link>

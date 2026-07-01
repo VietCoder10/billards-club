@@ -101,7 +101,7 @@ let messError = {
       password: {
         max: 'Mật khẩu phải từ 10 đến 16 ký tự.',
         min: 'Mật khẩu phải từ 10 đến 16 ký tự.',
-        password_rule: 'Mật khẩu phải từ 10 đến 16 ký tự gồm chữ hoa, chữ thường, số và ký tự đặc biệt (!#$%&*+-=?@_).'
+        password_rule: 'Mật khẩu phải từ 10 đến 16 ký tự gồm chữ hoa, chữ thường và số.'
       },
       password_confirmation: {
         required: 'Vui lòng xác nhận mật khẩu.',
@@ -116,7 +116,11 @@ configure({
 });
 
 const onSubmit = () => {
-  useForm(state.model).post(route('user.profile.update'));
+  const formFields = { ...state.model };
+  if (!(formFields.avatar instanceof File)) {
+    delete formFields.avatar;
+  }
+  useForm(formFields).post(route('user.profile.update'));
 };
 </script>
 
@@ -126,7 +130,6 @@ const onSubmit = () => {
       <div class="py-4">
         <!-- Main Card Wrapper -->
         <div class="bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-100 dark:border-zinc-800 transition duration-300">
-          
           <!-- Decorative Top Gradient Header -->
           <div class="h-36 bg-gradient-to-r from-emerald-500 via-teal-600 to-indigo-600 flex items-center px-8 relative">
             <div class="absolute inset-0 bg-black/10"></div>
@@ -147,22 +150,15 @@ const onSubmit = () => {
           <div class="p-8 md:p-12">
             <VeeForm as="div" v-slot="{ handleSubmit }" @invalid-submit="onInvalidSubmit">
               <form @submit="handleSubmit($event, onSubmit)" id="profile-form" class="space-y-8">
-                
                 <div class="flex flex-col lg:flex-row gap-12">
-                  
                   <!-- Left column: Avatar and Card summary -->
                   <div class="w-full lg:w-1/3 flex flex-col items-center">
                     <div class="bg-gradient-to-b from-zinc-50 to-zinc-100/50 dark:from-zinc-800/50 dark:to-zinc-900/50 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800/80 shadow-inner w-full flex flex-col items-center">
-                      
                       <!-- Avatar Area -->
                       <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="onFileChange" />
                       <div class="relative group cursor-pointer mb-6" @click="triggerFileInput">
                         <div class="w-36 h-36 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white dark:border-zinc-800 shadow-xl relative transition duration-300 group-hover:scale-105">
-                          <img
-                            :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'"
-                            alt="Avatar"
-                            class="w-full h-full object-cover"
-                          />
+                          <img :src="previewUrl || state.model.avatar_url || '/images/default-avatar.svg'" alt="Avatar" class="w-full h-full object-cover" />
                         </div>
                         <!-- Upload Hover Overlay -->
                         <div class="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/40 rounded-full border-4 border-transparent">
@@ -174,7 +170,7 @@ const onSubmit = () => {
                       <div class="text-center w-full">
                         <h3 class="text-lg font-bold text-zinc-800 dark:text-zinc-100 truncate">{{ state.model.name || 'Thành viên mới' }}</h3>
                         <p class="text-emerald-500 font-bold text-xs uppercase tracking-wider mt-1 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-full inline-block">Hội viên VIP</p>
-                        
+
                         <div class="mt-6 pt-6 border-t border-zinc-200/60 dark:border-zinc-800 w-full space-y-3 text-left text-sm text-zinc-500 dark:text-zinc-400">
                           <div class="flex items-center gap-3">
                             <i class="pi pi-envelope text-zinc-400"></i>
@@ -190,7 +186,11 @@ const onSubmit = () => {
                           </div>
                         </div>
 
-                        <button type="button" @click="triggerFileInput" class="mt-6 w-full py-2.5 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          @click="triggerFileInput"
+                          class="mt-6 w-full py-2.5 px-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-xl transition duration-200 flex items-center justify-center gap-2"
+                        >
                           <i class="pi pi-image"></i>
                           Đổi ảnh đại diện
                         </button>
@@ -200,7 +200,6 @@ const onSubmit = () => {
 
                   <!-- Right column: Main profile info edit -->
                   <div class="flex-1 space-y-6">
-                    
                     <!-- Basic Info Panel -->
                     <div class="bg-zinc-50/50 dark:bg-zinc-800/20 rounded-2xl p-6 md:p-8 border border-zinc-100 dark:border-zinc-800/60 space-y-6">
                       <h4 class="text-md font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-2 pb-3 border-b border-zinc-200/60 dark:border-zinc-800">
@@ -213,15 +212,7 @@ const onSubmit = () => {
                         <div class="flex flex-col gap-1.5">
                           <label class="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Họ và tên <span class="text-red-500">*</span></label>
                           <Field name="name" rules="required|max:255" v-model="state.model.name" v-slot="{ field, meta, handleChange }">
-                            <InputText
-                              class="w-full !rounded-xl"
-                              type="text"
-                              v-model="state.model.name"
-                              v-on:update:model-value="handleChange"
-                              v-bind="field"
-                              :class="{ 'p-invalid': !meta.valid && meta.touched }"
-                              placeholder="Nhập họ và tên"
-                            />
+                            <InputText class="w-full !rounded-xl" type="text" v-model="state.model.name" v-on:update:model-value="handleChange" v-bind="field" :class="{ 'p-invalid': !meta.valid && meta.touched }" placeholder="Nhập họ và tên" />
                             <ErrorMessage class="text-red-500 text-xs mt-1 font-medium block" name="name" />
                           </Field>
                         </div>
@@ -230,15 +221,7 @@ const onSubmit = () => {
                         <div class="flex flex-col gap-1.5">
                           <label class="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Số điện thoại</label>
                           <Field name="phone" rules="max:20|telephone" v-model="state.model.phone" v-slot="{ field, meta, handleChange }">
-                            <InputText
-                              class="w-full !rounded-xl"
-                              type="text"
-                              v-model="state.model.phone"
-                              v-on:update:model-value="handleChange"
-                              v-bind="field"
-                              :class="{ 'p-invalid': !meta.valid && meta.touched }"
-                              placeholder="Nhập số điện thoại"
-                            />
+                            <InputText class="w-full !rounded-xl" type="text" v-model="state.model.phone" v-on:update:model-value="handleChange" v-bind="field" :class="{ 'p-invalid': !meta.valid && meta.touched }" placeholder="Nhập số điện thoại" />
                             <ErrorMessage class="text-red-500 text-xs mt-1 font-medium block" name="phone" />
                           </Field>
                         </div>
@@ -298,12 +281,7 @@ const onSubmit = () => {
                         <!-- Confirm Password -->
                         <div class="flex flex-col gap-1.5">
                           <label class="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Xác nhận mật khẩu mới</label>
-                          <Field
-                            name="password_confirmation"
-                            :rules="state.model.password ? 'required|confirmed:@password' : ''"
-                            v-model="state.model.password_confirmation"
-                            v-slot="{ field, meta, handleChange }"
-                          >
+                          <Field name="password_confirmation" :rules="state.model.password ? 'required|confirmed:@password' : ''" v-model="state.model.password_confirmation" v-slot="{ field, meta, handleChange }">
                             <Password
                               v-bind="field"
                               v-model="state.model.password_confirmation"
@@ -323,15 +301,11 @@ const onSubmit = () => {
                         </div>
                       </div>
                     </div>
-
                   </div>
-                  
                 </div>
-
               </form>
             </VeeForm>
           </div>
-
         </div>
       </div>
     </template>

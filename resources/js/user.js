@@ -41,9 +41,8 @@ defineRule('password_rule', (value) => {
   let lower = /[a-z]/g.test(value);
   let upper = /[A-Z]/g.test(value);
   let number = /[0-9]/g.test(value);
-  let special = /[!#$%&*+-=?@_]/g.test(value);
 
-  return lower && upper && number && special;
+  return lower && upper && number;
 });
 defineRule('telephone', (value) => {
   return /^0(\d-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{3}-\d{2}-\d{4})+$/i.test(value.trim()) || /^(070|080|090|050)(-\d{4}-\d{4})+$/i.test(value.trim()) || /^0(\d{2}-\d{3}-\d{4})+$/i.test(value.trim()) || /^0(\d{9,10})+$/i.test(value.trim());

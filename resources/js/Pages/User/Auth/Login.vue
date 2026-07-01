@@ -39,7 +39,7 @@ onMounted(() => {
 });
 
 let messError = {
-  vi: {
+  en: {
     fields: {
       email: {
         required: 'Vui lòng nhập email.',
